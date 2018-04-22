@@ -3,11 +3,21 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "production": "cross-env NODE_ENV=production webpack --hide-modules --progress",
+    "watch": "cross-env NODE_ENV=development webpack --watch-poll --hide-modules --progress"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
+    "cross-env": "^5.1.4",
+    "css-loader": "^0.28.11",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "node-sass": "^4.8.3",
+    "sass-loader": "^7.0.1",
+    "style-loader": "^0.21.0",
     "webpack": "^4.0.0-beta.3",
     "webpack-cli": "^2.0.15"
   }
