@@ -1,0 +1,40 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add webpack@next webpack-cli
+
+PATH: 
+  C:\ProgramData\Oracle\Java\javapath;C:\Python27\Scripts;C:\Program Files (x86)\Skype\Phone\;C:\Program Files\nodejs\;C:\Users\Mariam\AppData\Roaming\npm;C:\Program Files\nodejs\node_modules\npm;C:\Program Files\Git\cmd;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Yarn\bin\;C:\Users\Mariam\AppData\Local\Programs\Python\Python36\Scripts\;C:\Users\Mariam\AppData\Local\Programs\Python\Python36\;C:\Windows;C:\Windows\System32;C:\Python27;C:\Program Files\Microsoft VS Code\bin;C:\Users\Mariam\AppData\Local\Yarn\bin
+
+Yarn version: 
+  1.6.0
+
+Node version: 
+  8.9.3
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: connect ETIMEDOUT 104.16.59.173:443
+      at Object._errnoException (util.js:1024:11)
+      at _exceptionWithHostPort (util.js:1046:20)
+      at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1182:14)
+
+npm manifest: 
+  {
+    "name": "book_a_meal",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
