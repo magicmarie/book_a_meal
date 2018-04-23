@@ -1,4 +1,5 @@
 $form-padding: 0.5rem 1rem;
+$border-radius:0.5rem;
 .f-group {
 	margin-bottom: 1.25rem;
 }
@@ -13,7 +14,7 @@ input {
 	background-color: #fff;
 	background-clip: padding-box;
 	border: 1px solid #ced4da;
-	border-radius: 0rem;
+	border-radius: $border-radius;
 	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
@@ -28,6 +29,7 @@ input {
 	padding: $form-padding;
 	font-size: 1rem;
 	line-height: 1.5;
+	border-radius: $border-radius;
 	transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
 		border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 	&:hover {
@@ -38,4 +40,9 @@ input {
 		background-color: $primary;
 		border-color: $primary;
 	}
+	&.button-outline-primary {
+		color:$primary;
+		border-color: $primary;
+	}
+
 }

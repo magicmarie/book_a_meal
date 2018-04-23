@@ -2,10 +2,9 @@
   "name": "book_a_meal",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "production": "cross-env NODE_ENV=production webpack --hide-modules --progress",
-    "watch": "cross-env NODE_ENV=development webpack --watch-poll --hide-modules --progress"
+    "watch": "cross-env NODE_ENV=development webpack --watch --watch-poll --hide-modules --progress"
   },
   "keywords": [],
   "author": "",
