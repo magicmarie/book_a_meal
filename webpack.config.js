@@ -7,7 +7,7 @@ module.exports = {
         js: "./src/js/app.js"
     },
     output: {
-        path: path.resolve(__dirname, "dist"),
+        path: path.resolve(__dirname, "UI"),
         filename: "[name]/app.[name]"
     },
     module: {
