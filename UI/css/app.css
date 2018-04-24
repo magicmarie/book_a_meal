@@ -69,7 +69,8 @@ a {
   fill: inherit !important; }
 
 .f-group {
-  margin-bottom: 1.25rem; }
+  margin-bottom: 1.25rem;
+  display: flex; }
 
 input {
   display: block;
@@ -107,6 +108,12 @@ input {
   .button.button-outline-primary {
     color: #3f40b8;
     border-color: #3f40b8; }
+  .button .meal-list {
+    margin: 5px;
+    background-color: #eff4f7;
+    border: #b9d7ea 1px solid;
+    border-radius: 10px;
+    font-size: 1.2rem; }
 
 .box {
   background-color: #fff;
@@ -178,16 +185,46 @@ input {
     max-width: 100%; }
 
 .navbar {
-  border-top: 6px solid #3f40b8;
-  box-sizing: content-box; }
+  background-color: #3f40b8;
+  box-sizing: content-box;
+  left: 0;
+  top: 0;
+  margin-bottom: 10px; }
   .navbar .brand {
     padding: 10px;
     font-weight: 900;
-    font-size: 2rem; }
+    font-size: 2rem;
+    color: white; }
   .navbar .navbar-actions a {
     font-weight: 400;
     font-size: 1.25rem;
-    padding: 0.5rem; }
+    padding: 0.5rem;
+    color: white; }
+  .navbar a:hover {
+    background-color: #ddd;
+    color: black; }
+
+.sidebar {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 55;
+  left: 0;
+  background-color: white;
+  overflow-x: hidden;
+  padding-top: 20px;
+  color: grey; }
+
+.sidebar a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block; }
+
+.bar a:hover {
+  color: #f1f1f1; }
 
 #landing-page {
   border-top: 6px solid #3f40b8;
@@ -216,3 +253,21 @@ input {
     padding: 0.5rem 2rem;
     font-weight: 700;
     font-size: 1.25rem; }
+
+.order-button {
+  display: inline;
+  margin-top: 5px;
+  color: #fff;
+  font-size: 1rem;
+  padding: 5.5px;
+  width: 40%;
+  margin: auto;
+  background-color: #3f40b8; }
+
+.centered {
+  width: 50%;
+  margin-left: 25%;
+  margin-right: 25%;
+  padding: 2px;
+  display: flex;
+  justify-content: space-around; }
