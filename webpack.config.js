@@ -7,6 +7,7 @@ module.exports = {
         js: "./src/js/app.js"
     },
     output: {
+      UItemplates
         path: path.resolve(__dirname, "UI"),
         filename: "[name]/app.[name]"
     },
