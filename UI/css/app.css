@@ -105,6 +105,10 @@ input {
     color: #fff;
     background-color: #3f40b8;
     border-color: #3f40b8; }
+  .button.button-success {
+    color: #3f40b8;
+    background-color: grey;
+    border-color: grey; }
   .button.button-outline-primary {
     color: #3f40b8;
     border-color: #3f40b8; }
@@ -114,6 +118,9 @@ input {
     border: #b9d7ea 1px solid;
     border-radius: 10px;
     font-size: 1.2rem; }
+
+.meal-button {
+  margin-left: 10px; }
 
 .box {
   background-color: #fff;

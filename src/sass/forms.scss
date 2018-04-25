@@ -41,6 +41,11 @@ input {
 		background-color: $primary;
 		border-color: $primary;
 	}
+	&.button-success {
+		color: $primary;
+		background-color: grey;
+		border-color: grey;
+	}
 	&.button-outline-primary {
 		color:$primary;
 		border-color: $primary;
@@ -53,3 +58,7 @@ input {
 		font-size: 1.2rem;
 	}
 }
+
+	.meal-button{
+		margin-left: 10px;
+	}
