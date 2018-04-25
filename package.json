@@ -2,9 +2,11 @@
   "name": "book_a_meal",
   "version": "1.0.0",
   "description": "",
+ UItemplates
   "scripts": {
     "production": "cross-env NODE_ENV=production webpack --hide-modules --progress",
     "watch": "cross-env NODE_ENV=development webpack --watch --watch-poll --hide-modules --progress"
+  "main": "index.js"
   },
   "keywords": [],
   "author": "",

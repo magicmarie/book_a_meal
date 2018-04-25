@@ -2,6 +2,7 @@ $form-padding: 0.5rem 1rem;
 $border-radius:0.5rem;
 .f-group {
 	margin-bottom: 1.25rem;
+	display:flex;
 }
 input {
 	display: block;
@@ -44,5 +45,11 @@ input {
 		color:$primary;
 		border-color: $primary;
 	}
-
+	.meal-list{
+		margin:5px;
+		background-color: #eff4f7;
+		border:#b9d7ea 1px solid;
+		border-radius: 10px;
+		font-size: 1.2rem;
+	}
 }
