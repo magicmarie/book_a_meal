@@ -1,0 +1,29 @@
+.box {
+    background-color: $white;
+    box-shadow: $box-shadow;
+    color: $text;
+    max-width: 100%;
+    position: relative;
+  }
+  .box-header {
+    background-color: none;
+    align-items: stretch;
+    box-shadow: $box-shadow;
+    display: flex;
+  }
+  .box-title {
+    align-items: center;
+    color: $text-strong;
+    display: flex;
+    flex-grow: 1;
+    font-weight: $weight-bold;
+    padding: 0.75rem;
+    &.centered {
+      justify-content: center;
+    }
+  }
+
+  .box-content {
+    background-color: none;
+    padding: 1.5rem;
+  }

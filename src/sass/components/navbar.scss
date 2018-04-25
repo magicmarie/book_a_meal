@@ -1,0 +1,16 @@
+.navbar {
+	border-top: 6px solid $primary;
+	box-sizing: content-box;
+	.brand {
+		padding: 10px;
+		font-weight: 900;
+		font-size: 2rem;
+	}
+	.navbar-actions {
+		a {
+			font-weight: 400;
+			font-size: 1.25rem;
+			padding: 0.5rem;
+		}
+	}
+}
