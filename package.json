@@ -9,7 +9,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "image-process-loader": "^0.1.1",
+    "image-webpack-loader": "^4.2.0",
+    "img-loader": "^2.0.1"
+  },
   "devDependencies": {
     "cross-env": "^5.1.4",
     "css-loader": "^0.28.11",

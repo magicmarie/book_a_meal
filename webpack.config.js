@@ -4,7 +4,8 @@ module.exports = {
     mode: process.env.NODE_ENV,
     entry: {
         css: "./src/sass/app.scss",
-        js: "./src/js/app.js"
+        js: "./src/js/app.js",
+        images: "./src/images"
     },
     output: {
         path: path.resolve(__dirname, "UI"),
@@ -16,7 +17,7 @@ module.exports = {
                 test: path.resolve(__dirname, "src/sass/app.scss"),
                 use: ExtractTextPlugin.extract({
                     fallback: "style-loader",
-                    use: ["css-loader", "sass-loader"]
+                    use: ["css-loader", "sass-loader", "image-webpack-loader"]
                 })
             }
         ]
