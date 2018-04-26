@@ -5,11 +5,11 @@ module.exports = {
     entry: {
         css: "./src/sass/app.scss",
         js: "./src/js/app.js",
-        images: "./src/images"
     },
     output: {
         path: path.resolve(__dirname, "UI"),
-        filename: "[name]/app.[name]"
+        filename: "[name]/app.[name]",
+        publicPath: "UI"
     },
     module: {
         rules: [
@@ -17,8 +17,22 @@ module.exports = {
                 test: path.resolve(__dirname, "src/sass/app.scss"),
                 use: ExtractTextPlugin.extract({
                     fallback: "style-loader",
-                    use: ["css-loader", "sass-loader", "image-webpack-loader"]
+                    use: ["css-loader", "sass-loader"]
                 })
+            },
+            {
+                test: /\\.(jpg|jpeg|png|gif)/,
+                use: [
+                    {
+                        loader: "file-loader",
+                        options: {
+                            name: "images/[].[ext]"
+                        }
+                    },
+                    {
+                        loader: "img-loader"
+                    }
+                ]
             }
         ]
     },

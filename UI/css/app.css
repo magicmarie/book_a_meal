@@ -18,14 +18,11 @@ body {
   font-weight: 400;
   line-height: 1.5;
   color: #212529;
-  text-align: left;
-  background-color: #f5f8fa;
-  background-color: #f8f9fa; }
+  text-align: left; }
 
 html {
   font-family: sans-serif;
-  line-height: 1.15;
-  over-flow-x: hidden; }
+  line-height: 1.15; }
 
 a {
   text-decoration: none; }
