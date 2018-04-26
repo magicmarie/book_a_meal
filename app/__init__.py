@@ -2,7 +2,7 @@
 import os
 from flask import Flask
 from app.models import user
-from config import app_config
+from .config import app_config
 
 # local imports
 # import the user, business and review classes
