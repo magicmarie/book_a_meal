@@ -1,6 +1,9 @@
-from app import app
+import os
+from app import create_app
+
+config_name = os.getenv('FLASK_CONFIG', 'development')
+app = create_app(config_name)
 
 if __name__ == '__main__':
-    # runs the app on the local development server
-    # debug true allows server to reload incase of any changes made to files
-    app.run(debug=True)
+
+    app.run()

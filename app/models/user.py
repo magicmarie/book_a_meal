@@ -5,40 +5,40 @@ import jwt
 from datetime import datetime, timedelta
 
 # Third party imports
-from flask_login import logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
+usersArray = list()
+known_email = list()
 
 class User(object):
     """ A class to handle activities related to a user"""
 
     def __init__(self):
         # A list to hold all user objects
-        self.usersArray = []
+        # self.usersArray = []
+        pass
 
-    def generate_token(self, user_id):
-        """Generates the access token to be used as the Authorization header"""
+    # def generate_token(self, user_id):
+    #     """Generates the access token to be used as the Authorization header"""
+    #     try:     # set up a payload with an expiration time
+    #         payload = {
+    #             'exp': datetime.utcnow() + timedelta(minutes=30),
+    #             # international atomic time
+    #             'iat': datetime.utcnow(),
+    #             # default  to user id
+    #             'sub': user_id
+    #         }
+    #         # create the byte string token using the payload and the SECRET key
+    #         jwt_string = jwt.encode(
+    #             payload,
+    #             'hard to guess string',
+    #             algorithm='HS256'
+    #         )
+    #         return jwt_string
 
-        try:
-            # set up a payload with an expiration time
-            payload = {
-                'exp': datetime.utcnow() + timedelta(minutes=30),
-                # international atomic time
-                'iat': datetime.utcnow(),
-                # default  to user id
-                'sub': user_id
-            }
-            # create the byte string token using the payload and the SECRET key
-            jwt_string = jwt.encode(
-                payload,
-                'hard to guess string',
-                algorithm='HS256'
-            )
-            return jwt_string
-
-        except Exception as e:
-            # return an error in string format if an exception occurs
-            return str(e)
+    #     except Exception as e:
+    #         # return an error in string format if an exception occurs
+    #         return str(e)
 
     @staticmethod
     def decode_token(token):
@@ -53,20 +53,23 @@ class User(object):
 
     def signup(self, name, email, password, confirm_password):
         """method to sign up a user"""
-        user_details = {}
-        for user in self.usersArray:
-            if email = user["email"]:
-                return{"success": False, "msg": "email already exits"}
-            else:
-                # register user if all the details are valid
-                user_details['name'] = name
-                user_details['email'] = email
-                user_details['password'] = password
-                user_details['confirmpassword'] = confirmpassword
-                # uuid4 generates a random UUID
-                user_details['id'] = uuid.uuid4()
-                self.usersArray.append(user_details)
-                return 'Signup successful'
+        global usersArray
+        global known_email
+        # user_details = {}
+        if email in known_email:
+            return False
+        else:
+            user_details = dict()
+            user_details['name'] = name
+            user_details['email'] = email
+            user_details['password'] = password
+            user_details['confirm_password'] = confirm_password
+                            # uuid4 generates a random UUID
+            user_details['id'] = uuid.uuid4()
+                            # print(user_details)
+            usersArray.append(user_details)
+            known_email.append(email)
+            return True
 
     def login(self, email, password):
         """account login """
@@ -80,5 +83,5 @@ class User(object):
     def get_user_info(self, id):
         """retrieve user by their id"""
         for user in self.usersArray:
-            if user["id"] = user_id:
+            if user["id"] == user_id:
                 return user
