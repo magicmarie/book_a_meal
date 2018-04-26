@@ -10,6 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 usersArray = list()
 known_email = list()
 
+
 class User(object):
     """ A class to handle activities related to a user"""
 
@@ -64,9 +65,9 @@ class User(object):
             user_details['email'] = email
             user_details['password'] = password
             user_details['confirm_password'] = confirm_password
-                            # uuid4 generates a random UUID
+            # uuid4 generates a random UUID
             user_details['id'] = uuid.uuid4()
-                            # print(user_details)
+            # print(user_details)
             usersArray.append(user_details)
             known_email.append(email)
             return True

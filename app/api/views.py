@@ -46,13 +46,13 @@ def signup():
         #         return make_response(jsonify({'message': 'User already exists'}), 409)
         # # pass the details to the register method
         result = user_object.signup(name, email, password, confirm_password)
-        print(result)
+        # print(result)
         if result:
             response = {
                 "success": True,
-                "message": "Signup successful",
+                "message": "signup successful",
                 "Data": data
             }
             return make_response(jsonify(response), 201)
         else:
-            return jsonify({'message': 'user already exists'})
+            return make_response(jsonify({'message': 'user already exists'}), 200)
