@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.org/magicmarie/book_a_meal.svg?branch=flaskAPI)](https://travis-ci.org/magicmarie/book_a_meal/)
-
 [![Coverage Status](https://coveralls.io/repos/github/magicmarie/book_a_meal/badge.svg?branch=flaskAPI)](https://coveralls.io/github/magicmarie/book_a_meal?branch=flaskAPI)
 
 
