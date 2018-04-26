@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/magicmarie/book_a_meal.svg?branch=flaskAPI)](https://travis-ci.org/magicmarie/book_a_meal/)
 Book A Meal  is a web application  that allows customers to make food orders and
 helps the food vendor to know what the customers want to eat.
 ## Features
@@ -16,9 +17,23 @@ The application has a couple of features as listed below:-
 
 
 ## Setup
-To start using this application, first clone it to your local machine by running
+First clone it to your local machine by running
 
 ```
 git clone https://github.com/magicmarie/book_a_meal.git
 cd book_a_meal
+```
+## Starting the application
+In order to run the application set the environment
+variable below.
+```
+Windows
+set FLASK_APP=run.py
+
+Unix
+export FLASK_APP=run.py
+```
+Then run the command below to start the application.
+```
+python run.py
 ```
