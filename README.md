@@ -1,4 +1,8 @@
 [![Build Status](https://travis-ci.org/magicmarie/book_a_meal.svg?branch=flaskAPI)](https://travis-ci.org/magicmarie/book_a_meal/)
+
+[![Coverage Status](https://coveralls.io/repos/github/magicmarie/book_a_meal/badge.svg?branch=flaskAPI)](https://coveralls.io/github/magicmarie/book_a_meal?branch=flaskAPI)
+
+
 Book A Meal  is a web application  that allows customers to make food orders and
 helps the food vendor to know what the customers want to eat.
 ## Features
