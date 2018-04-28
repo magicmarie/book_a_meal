@@ -19,27 +19,27 @@ class User(object):
         # self.usersArray = []
         pass
 
-    # def generate_token(self, user_id):
-    #     """Generates the access token to be used as the Authorization header"""
-    #     try:     # set up a payload with an expiration time
-    #         payload = {
-    #             'exp': datetime.utcnow() + timedelta(minutes=30),
-    #             # international atomic time
-    #             'iat': datetime.utcnow(),
-    #             # default  to user id
-    #             'sub': user_id
-    #         }
-    #         # create the byte string token using the payload and the SECRET key
-    #         jwt_string = jwt.encode(
-    #             payload,
-    #             'hard to guess string',
-    #             algorithm='HS256'
-    #         )
-    #         return jwt_string
+    def generate_token(self, user_id):
+        """Generates the access token to be used as the Authorization header"""
+        try:     # set up a payload with an expiration time
+            payload = {
+                'exp': datetime.utcnow() + timedelta(minutes=30),
+                # international atomic time
+                'iat': datetime.utcnow(),
+                # default  to user id
+                'sub': user_id
+            }
+            # create the byte string token using the payload and the SECRET key
+            jwt_string = jwt.encode(
+                payload,
+                'hard to guess string',
+                algorithm='HS256'
+            )
+            return jwt_string
 
-    #     except Exception as e:
-    #         # return an error in string format if an exception occurs
-    #         return str(e)
+        except Exception as e:
+            # return an error in string format if an exception occurs
+            return str(e)
 
     @staticmethod
     def decode_token(token):
@@ -74,15 +74,15 @@ class User(object):
 
     def login(self, email, password):
         """account login """
-        if email in self.usersArray:
-            hashed_pswd = self.usersArray[email].password
+        if email in known_email:
+            hashed_pswd = known_email[email].password
             if check_password_hash(hashed_pswd, password):
-                return self.usersArray[email]
+                return known_email[email]
             return "Wrong email/password"
         return "The email does not exist, please signup"
 
-    def get_user_info(self, id):
-        """retrieve user by their id"""
-        for user in self.usersArray:
-            if user["id"] == user_id:
-                return user
+    # def get_user_info(self, id):
+    #     """retrieve user by their id"""
+    #     for user in self.usersArray:
+    #         if user["id"] == user_id:
+    #             return user

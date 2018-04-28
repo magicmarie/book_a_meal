@@ -9,7 +9,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "UI"),
         filename: "[name]/app.[name]",
-        publicPath: "UI"
+        publicPath: "../"
     },
     module: {
         rules: [
@@ -21,17 +21,14 @@ module.exports = {
                 })
             },
             {
-                test: /\\.(jpg|jpeg|png|gif)/,
+                test: /\\.(jpg|jpeg|png|gif)$/,
                 use: [
                     {
                         loader: "file-loader",
                         options: {
-                            name: "images/[].[ext]"
+                            name: "images/[name].[ext]"
                         }
                     },
-                    {
-                        loader: "img-loader"
-                    }
                 ]
             }
         ]
