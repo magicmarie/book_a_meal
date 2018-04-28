@@ -4,12 +4,13 @@ module.exports = {
     mode: process.env.NODE_ENV,
     entry: {
         css: "./src/sass/app.scss",
-        js: "./src/js/app.js"
+        js: "./src/js/app.js",
     },
     output: {
       UItemplates
         path: path.resolve(__dirname, "UI"),
-        filename: "[name]/app.[name]"
+        filename: "[name]/app.[name]",
+        publicPath: "../"
     },
     module: {
         rules: [
@@ -19,6 +20,17 @@ module.exports = {
                     fallback: "style-loader",
                     use: ["css-loader", "sass-loader"]
                 })
+            },
+            {
+                test: /\\.(jpg|jpeg|png|gif)$/,
+                use: [
+                    {
+                        loader: "file-loader",
+                        options: {
+                            name: "images/[name].[ext]"
+                        }
+                    },
+                ]
             }
         ]
     },
