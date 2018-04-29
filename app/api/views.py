@@ -50,3 +50,36 @@ class Signup(Resource):
 
 
 api.add_resource(Signup, '/api/v1/auth/signup')
+
+
+class Login(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('email', required=True)
+        parser.add_argument('password', required=True)
+
+        args = parser.parse_args()
+        email = args['email']
+        password = args['password']
+
+        for user in users_list:
+            if email == user.email and password == user.password:
+                admin = user.isAdmin
+                if admin == "True":
+                    access_token = user.generate_token(user.id)
+                    print(access_token)
+                    if access_token:
+                        return make_response(jsonify({"message": "Logged in succesfully",
+                                                      "email": user.email,
+                                                      "id": user.id,
+                                                      "Admin": user.isAdmin,
+                                                      "access_token": access_token}), 200)
+                return make_response(jsonify({"message": "Logged in succesfully",
+                                              "email": user.email,
+                                              "id": user.id,
+                                              "Admin": user.isAdmin,
+                                              }), 200)
+            return make_response(jsonify("wrong credentials"), 401)
+
+
+api.add_resource(Login, '/api/v1/auth/login')
