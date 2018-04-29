@@ -83,3 +83,38 @@ class Login(Resource):
 
 
 api.add_resource(Login, '/api/v1/auth/login')
+
+class MealsList(Resource):
+    def get(self):
+        items = []
+        for meal in meals_list:
+            meals_data = {}
+            meals_data["id"] = meal.id,
+            meals_data["price"] = meal.price,
+            meals_data["meal_name"] = meal.meal_name
+            items.append(meals_data)
+        return make_response(jsonify({"meals_items": items}), 200)
+
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('meal_name', required=True)
+        parser.add_argument('price', required=True)
+
+        # for user in users_list:
+        # admin = user.isAdmin
+        # if admin == "True":
+        args = parser.parse_args()
+        meal_name = args['meal_name']
+        price = args['price']
+
+        new_meal = Meal(meal_name, price)
+
+        for meal in meals_list:
+            if meal_name == meal.meal_name:
+                return jsonify("Meal  name exists already")
+        meals_list.append(new_meal)
+        return jsonify(new_meal.__dict__)
+        # return jsonify("Not authorized to create meals")
+
+
+api.add_resource(MealsList, '/api/v1/meals')
