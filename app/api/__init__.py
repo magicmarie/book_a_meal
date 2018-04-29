@@ -1,5 +1,5 @@
-from flask import Blueprint
+from flask import Flask
+from flask_restful import Resource, Api
 
-api = Blueprint('api', __name__)
-
-from . import views
+app = Flask(__name__)
+api = Api(app)
