@@ -140,3 +140,25 @@ class Menus(Resource):
 
 
 api.add_resource(Menus, '/api/v1/menu')
+
+class Orders(Resource):
+    def get(self):
+        #     return json.dumps(meals_list)
+        pass
+
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('meal_name', required=True)
+        parser.add_argument('price', required=True)
+
+        args = parser.parse_args()
+        meal_name = args['meal_name']
+        price = args['price']
+
+        new_order = Order(meal_name, price)
+
+        order_list.append(new_order)
+        return make_response(jsonify({"message": "Order succesfully sent", "order": new_order.__dict__}), 201)
+
+
+api.add_resource(Orders, '/api/v1/order')
