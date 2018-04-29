@@ -17,6 +17,9 @@ input {
 	border: 1px solid #ced4da;
 	border-radius: $border-radius;
 	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	&:focus {
+		outline: 0;
+		box-shadow: 0 0 0 0.3rem rgba(0, 0, 0, 0.25);
 }
 
 .button {
@@ -27,14 +30,21 @@ input {
 	vertical-align: middle;
 	user-select: none;
 	border: 1px solid transparent;
-	padding: $form-padding;
 	font-size: 1rem;
 	line-height: 1.5;
 	border-radius: $border-radius;
-	transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-		border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	border-radius: 1.5rem;
+	padding: 0.5rem 2rem;
+	font-weight: 700;
+	font-size: 1.25rem;
+	color: $white;
 	&:hover {
+		outline: 0;
 		cursor: pointer;
+		box-shadow: 0 0 0 0.3rem rgba(0, 0, 0, 0.25);
+	}
+	&:focus {
+		outline: 0;
 	}
 	&.button-primary {
 		color: #fff;
@@ -62,3 +72,4 @@ input {
 	.meal-button{
 		margin-left: 10px;
 	}
+}

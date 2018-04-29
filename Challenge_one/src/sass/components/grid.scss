@@ -1,0 +1,11 @@
+.cols {
+    display: flex;
+    //create a grid of  twelve columns
+
+    @for $i from 1 through 12 {
+        .col-#{$i} {
+            flex: 0 0 percentage((100/12) * $i/100);
+            max-width: percentage((100/12) * $i/100);
+        }
+    }
+}

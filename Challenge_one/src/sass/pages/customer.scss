@@ -1,0 +1,89 @@
+#customer {
+    margin-top: -10px;
+
+    .header {
+        font-size: 1.25rem;
+        font-weight: 700;
+        display: block;
+        padding: 1rem;
+        font-weight: bold;
+    }
+
+    .menu {
+        padding: 15px;
+        .menu-item {
+            display: flex;
+            font-size: 1.25rem;
+            flex: 0 0 1;
+            align-items: center;
+            justify-content: space-between;
+            .number {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 2px solid $primary;
+                width: 2rem;
+                height: 2rem;
+                border-radius: 50%;
+                vertical-align: middle;
+                text-align: center;
+            }
+            .price {
+                padding: 0.25em 0.4em;
+                font-size: 75%;
+                font-weight: 700;
+                line-height: 1;
+                text-align: center;
+                border-radius: 0.25rem;
+                color: #fff;
+                background-color: $primary;
+            }
+
+            .add {
+                font-size: 2rem;
+            }
+        }
+    }
+
+    .sidebar-link,
+    .menu-item {
+        display: block;
+        padding: 0.75rem 1.25rem;
+        margin-bottom: 1px;
+        background-color: $white;
+        b &:last-child {
+            border: none;
+        }
+    }
+    .sidebar-link {
+        &:hover {
+            cursor: pointer;
+            background-color: #eee;
+            border: none;
+            color: $primary;
+        }
+        &.active {
+            border-left: 4px solid $primary;
+            color: $primary;
+            font-weight: bold;
+        }
+    }
+    .sidebar {
+        min-height: 90vh;
+        width: 100%;
+        box-shadow: 1px 1px 1rem rgba(0, 0, 0, 0.125);
+    }
+
+    .sidebar-link {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
+
+    .menu-item {
+        border: 1px solid rgba(0, 0, 0, 0.125);
+    }
+    .ordered {
+        border-left: 1px solid rgba(0, 0, 0, 0.125);
+        min-height: 90vh;
+        box-shadow: 1px 0px 1rem rgba(0, 0, 0, 0.125);
+    }
+}

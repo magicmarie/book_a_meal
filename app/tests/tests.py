@@ -1,7 +1,9 @@
 import os
 import unittest
 import json
+from flask import jsonify
 from app import create_app
+from app.api.models.user import User
 
 config_name = os.getenv('FLASK_CONFIG', 'development')
 app = create_app(config_name)
@@ -9,16 +11,12 @@ app = create_app(config_name)
 
 class Test_auth(unittest.TestCase):
     client = app.test_client
-
-    # def setup(self):
-    # config_name = os.getenv('FLASK_CONFIG', 'development')
-
-    # self.client = app.test_client
+    # app_context = app.app_context()
 
     def test_signup(self):
         response = self.client().post(
             'api/v1/auth/signup',
-            data=json.dumps(
+            data=jsonify(
                 dict(
                     name="mariam",
                     email="marie@live.com",
@@ -33,7 +31,7 @@ class Test_auth(unittest.TestCase):
         # Add the same user and see...
         response = self.client().post(
             'api/v1/auth/signup',
-            data=json.dumps(
+            data=jsonify(
                 dict(
                     name="mariam",
                     email="marie@live.com",

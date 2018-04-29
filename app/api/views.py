@@ -141,6 +141,7 @@ class Menus(Resource):
 
 api.add_resource(Menus, '/api/v1/menu')
 
+
 class Orders(Resource):
     def get(self):
         #     return json.dumps(meals_list)
