@@ -1,58 +1,52 @@
-import re
-# t hird party imports
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask import request, jsonify, redirect, make_response, abort
+import json
+import jwt
+from datetime import datetime, timedelta
+# third party imports
+from flask import jsonify, make_response
+from flask_restful import Resource, Api, reqparse, abort
+import uuid
 
-# following https://somewebapp.com/api/v1/users
+# local imports
 from . import api
-from app import user_object
-# index
+
+from .models.user import User
+from .models.meal import Meal
+from .models.menu import Menu
+from .models.order import Order
+
+users_list = []
+meals_list = []
+menu_list = []
+order_list = []
 
 
-@api.route('/')
-def index():
-    return jsonify({"msg": "Welcome to Book-A-Meal"})
+class Signup(Resource):
 
-# sign up a user
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', type=str, required=True)
+        parser.add_argument('email', required=True)
+        parser.add_argument('password', required=True)
+        parser.add_argument('confirm_password', required=True)
+        parser.add_argument('isAdmin', type=str, required=True)
 
+        args = parser.parse_args()
+        name = args['name']
+        email = args['email']
+        password = args['password']
+        confirm_password = args['confirm_password']
+        isAdmin = args['isAdmin']
 
-@api.route('/api/v1/auth/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        # passes in json data to the variable called data
-        data = request.get_json(force=True)
-        name = data['name']
-        email = data['email']
-        password = data['password']
-        confirm_password = data['confirm_password']
-        if name.strip() == "":
-            error = {"message": "Invalid name"}
-            return jsonify(error)
-        if not re.match(r"([\w\.-]+)@([\w\.-]+)(\.[\w\.]+$)", email):
-            error = {"message": "Invalid Email"}
-            return jsonify(error)
-        if password.strip() == "":
-            error = {"message": "Invalid password"}
-            return jsonify(error)
-        if len(password) < 5:
-            error = {"message": "Password too short"}
-            return jsonify(error)
         if password != confirm_password:
-            error = {"message": "passwords do not match"}
-            return make_response(jsonify(error))
+            return make_response(jsonify({"message": "passwords don't match"}), 401)
 
-        # for user in user_object.usersArray:
-        #     if user['email'] == email:
-        #         return make_response(jsonify({'message': 'User already exists'}), 409)
-        # # pass the details to the register method
-        result = user_object.signup(name, email, password, confirm_password)
-        # print(result)
-        if result:
-            response = {
-                "success": True,
-                "message": "signup successful",
-                "Data": data
-            }
-            return make_response(jsonify(response), 201)
-        else:
-            return make_response(jsonify({'message': 'user already exists'}), 200)
+        new_user = User(name, email, password, confirm_password, isAdmin)
+
+        for user in users_list:
+            if email == user.email:
+                return make_response(jsonify({"message": "email in use already"}), 400)
+        users_list.append(new_user)
+        return make_response(jsonify(new_user.__dict__), 201)
+
+
+api.add_resource(Signup, '/api/v1/auth/signup')
