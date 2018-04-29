@@ -1,9 +1,8 @@
 import os
-from app import create_app
-
-config_name = os.getenv('FLASK_CONFIG', 'development')
-app = create_app(config_name)
+# from app import create_app
+from app.api import app
+from app.api.views import *
 
 if __name__ == '__main__':
 
-    app.run()
+    app.run(debug=True)
