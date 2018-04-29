@@ -84,6 +84,7 @@ class Login(Resource):
 
 api.add_resource(Login, '/api/v1/auth/login')
 
+
 class MealsList(Resource):
     def get(self):
         items = []
@@ -118,3 +119,24 @@ class MealsList(Resource):
 
 
 api.add_resource(MealsList, '/api/v1/meals')
+
+
+class Menus(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('menu_name', required=True)
+
+        args = parser.parse_args()
+        menu_name = args['menu_name']
+
+        new_menu = Menu(menu_name)
+        print(new_menu)
+        for menu in menu_list:
+            if menu_name == menu.menu_name:
+                return make_response(jsonify("Menu name exists already"), 422)
+        menu_list.append(new_menu)
+        return make_response(jsonify({"message": "Menu successfully created",
+                                      "menu": new_menu.__dict__}), 201)
+
+
+api.add_resource(Menus, '/api/v1/menu')
