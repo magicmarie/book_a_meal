@@ -1,18 +1,23 @@
-class Config(object):
+import os
+
+
+class BaseConfig(object):
     """
     Common configurations
     """
-
+    TESTING = False
+    DEBUG = False
+    SECRET_KEY = os.urandom(24)
     # Put any configurations here that are common across all environments
 
 
-class TestingConfig(Config):
+class TestingConfig(BaseConfig):
     """Configurations for Testing, with a separate test database."""
     TESTING = True
     DEBUG = True
 
 
-class DevelopmentConfig(Config):
+class DevelopmentConfig(BaseConfig):
     """
     Development configurations
     """
@@ -20,7 +25,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
 
 
-class ProductionConfig(Config):
+class ProductionConfig(BaseConfig):
     """
     Production configurations
     """
