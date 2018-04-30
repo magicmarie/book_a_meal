@@ -17,37 +17,38 @@ class User:
     def __str__(self):
         return self.name
 
-    def generate_token(self, user_id):
-        """Generates the access token to be used as the Authorization header"""
 
-        try:
-            # set up a payload with an expiration time
-            payload = {
-                'exp': datetime.utcnow() + timedelta(minutes=30),
-                # international atomic time
-                'iat': datetime.utcnow(),
-                # default  to user id
-                'sub': user_id
-            }
-            # create the byte string token using the payload and the SECRET key
-            jwt_string = jwt.encode(
-                payload,
-                current_app.config.get('SECRET_KEY'),
-                algorithm='HS256'
-            ).decode('utf-8')
-            return jwt_string
+def generate_token(user_id):
+    """Generates the access token to be used as the Authorization header"""
 
-        except Exception as e:
-            # return an error in string format if an exception occurs
-            return str(e)
+    try:
+        # set up a payload with an expiration time
+        payload = {
+            'exp': datetime.utcnow() + timedelta(minutes=30),
+            # international atomic time
+            'iat': datetime.utcnow(),
+            # default  to user id
+            'sub': user_id
+        }
+        # create the byte string token using the payload and the SECRET key
+        jwt_string = jwt.encode(
+            payload,
+            current_app.config.get('SECRET_KEY'),
+            algorithm='HS256'
+        )
+        return jwt_string
 
-    @staticmethod
-    def decode_token(token):
-        """Decode the access token from the Authorization header."""
-        try:
-            payload = jwt.decode(token, current_app.config.get('SECRET_KEY'))
-            return payload['sub']
-        except jwt.ExpiredSignatureError:
-            return "Expired token. Please log in to get a new token"
-        except jwt.InvalidTokenError:
-            return "Invalid token. Please register or login"
+    except Exception as e:
+        # return an error in string format if an exception occurs
+        return str(e)
+
+
+def decode_token(token):
+    """Decode the access token from the Authorization header."""
+    try:
+        payload = jwt.decode(token, current_app.config.get('SECRET_KEY'))
+        return payload['sub']
+    except jwt.ExpiredSignatureError:
+        return "Expired token. Please log in to get a new token"
+    except jwt.InvalidTokenError:
+        return "Invalid token. Please register or login"

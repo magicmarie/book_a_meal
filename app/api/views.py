@@ -131,6 +131,19 @@ class MealOne(Resource):
                 item.append(meal_data)
         return make_response(jsonify({"meal_item": item[0]}), 200)
 
+    def put(self, meal_id):
+        meal_item = []
+        for meal in meals_list:
+            if meal.id == meal_id:
+                args = parser.parse_args()
+                meal_name = args['meal_name']
+                meal.price = args['price']
+
+                new_meal = Meal(meal_name, price)
+                meal_item
+
+                return
+
 
 api.add_resource(MealOne, '/api/v1/meals/<meal_id>')
 
