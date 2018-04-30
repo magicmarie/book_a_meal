@@ -2,14 +2,15 @@ import json
 import jwt
 from datetime import datetime, timedelta
 # third party imports
-from flask import jsonify, make_response
+from flask import jsonify, make_response, request
 from flask_restful import Resource, Api, reqparse, abort
 import uuid
 
 # local imports
-from . import api
+from app import app
+from app import my_api as api
 
-from .models.user import User
+from .models.user import User, generate_token, decode_token
 from .models.meal import Meal
 from .models.menu import Menu
 from .models.order import Order
@@ -18,6 +19,8 @@ users_list = []
 meals_list = []
 menu_list = []
 order_list = []
+
+# api = Api(app)
 
 
 class Signup(Resource):
@@ -66,15 +69,10 @@ class Login(Resource):
             if email == user.email and password == user.password:
                 admin = user.isAdmin
                 if admin == "True":
-                    access_token = user.generate_token(user.id)
-                    print(access_token)
+                    access_token = "{}".format(generate_token(user.id))
                     if access_token:
-                        return make_response(jsonify({"message": "Logged in succesfully",
-                                                      "email": user.email,
-                                                      "id": user.id,
-                                                      "Admin": user.isAdmin,
-                                                      "access_token": access_token}), 200)
-                return make_response(jsonify({"message": "Logged in succesfully",
+                        return access_token
+                return make_response(jsonify({"message": access_token,
                                               "email": user.email,
                                               "id": user.id,
                                               "Admin": user.isAdmin,
@@ -121,7 +119,33 @@ class MealsList(Resource):
 api.add_resource(MealsList, '/api/v1/meals')
 
 
+class MealOne(Resource):
+    def get(self, meal_id):
+        item = []
+        for meal in meals_list:
+            if meal.id == meal_id:
+                meal_data = {}
+                meal_data["id"] = meal.id,
+                meal_data["price"] = meal.price,
+                meal_data["meal_name"] = meal.meal_name
+                item.append(meal_data)
+        return make_response(jsonify({"meal_item": item[0]}), 200)
+
+
+api.add_resource(MealOne, '/api/v1/meals/<meal_id>')
+
+
 class Menus(Resource):
+    def get(self):
+        items = []
+        for meal in meals_list:
+            meals_data = {}
+            meals_data["id"] = meal.id,
+            meals_data["price"] = meal.price,
+            meals_data["meal_name"] = meal.meal_name
+            items.append(meals_data)
+        return make_response(jsonify({"meals_items": items}), 200)
+
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('menu_name', required=True)
