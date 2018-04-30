@@ -1,5 +1,6 @@
 import json
 import jwt
+
 from datetime import datetime, timedelta
 # third party imports
 from flask import jsonify, make_response, request
@@ -70,6 +71,7 @@ class Login(Resource):
                 admin = user.isAdmin
                 if admin == "True":
                     access_token = "{}".format(generate_token(user.id))
+                    return jsonify({"token": access_token})
                     if access_token:
                         return access_token
                 return make_response(jsonify({"message": access_token,
@@ -132,17 +134,19 @@ class MealOne(Resource):
         return make_response(jsonify({"meal_item": item[0]}), 200)
 
     def put(self, meal_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('meal_name', required=True)
+        parser.add_argument('price', required=True)
         meal_item = []
         for meal in meals_list:
             if meal.id == meal_id:
                 args = parser.parse_args()
-                meal_name = args['meal_name']
+                meal.meal_name = args['meal_name']
                 meal.price = args['price']
 
-                new_meal = Meal(meal_name, price)
-                meal_item
-
-                return
+                # new_meal = Meal(meal_name, price)
+                # meal_item.append(new_meal)
+                return make_response(jsonify({"meal_item": "lol"}))
 
 
 api.add_resource(MealOne, '/api/v1/meals/<meal_id>')
