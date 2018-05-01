@@ -1,7 +1,7 @@
 from flask_testing import TestCase
 from app import app, app_config
 import json
-from app.api.views import users_list, meals_list, menu_list
+from app.api.views import users_list, meals_list, menu_list, order_list
 
 
 class BaseTestCase(TestCase):
@@ -10,22 +10,25 @@ class BaseTestCase(TestCase):
         app.config.from_object(app_config["testing"])
         return app
 
+    def setUp(self):
+
+
     def tearDown(self):
         users_list[:] = []
         meals_list[:] = []
         menu_list[:] = []
+        order_list[:] = []
 
     def register_user(self):
         return self.client.post(
             'api/v1/auth/signup',
-            data=json.dumps(
-                dict(
-                    name="mariam",
-                    email="marie@live.com",
-                    password="magic",
-                    confirm_password="magic",
-                    isAdmin="true"
-                )
+            data=json.dumps(dict(
+                name="mariam",
+                email="marie@live.com",
+                password="magic",
+                confirm_password="magic",
+                isAdmin="true"
+            )
             ),
             content_type='application/json'
         )
@@ -69,3 +72,8 @@ class BaseTestCase(TestCase):
         return self.client.delete(
             'api/vi/<meal_id>'
         )
+
+    def get_meals(self):
+        return self.client.get('api/v1/meals',
+                               content_type='application/json'
+                               )

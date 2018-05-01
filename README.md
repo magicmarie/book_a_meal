@@ -1,5 +1,6 @@
-[![Build Status](https://travis-ci.org/magicmarie/book_a_meal.svg?branch=flaskAPI)](https://travis-ci.org/magicmarie/book_a_meal/)
-[![Coverage Status](https://coveralls.io/repos/github/magicmarie/book_a_meal/badge.svg?branch=flaskAPI)](https://coveralls.io/github/magicmarie/book_a_meal?branch=flaskAPI)
+[![Build Status](https://travis-ci.org/magicmarie/book_a_meal.svg?branch=flaskAPI-restful)](https://travis-ci.org/magicmarie/book_a_meal/)
+[![Coverage Status](https://coveralls.io/repos/github/magicmarie/book_a_meal/badge.svg?branch=flaskAPI-estful)]
+(https://coveralls.io/github/magicmarie/book_a_meal?branch=flaskAPI-restful)
 
 
 Book A Meal  is a web application  that allows customers to make food orders and
@@ -27,16 +28,23 @@ git clone https://github.com/magicmarie/book_a_meal.git
 cd book_a_meal
 ```
 ## Starting the application
-In order to run the application set the environment
-variable below.
-```
-Windows
-set FLASK_APP=run.py
-
-Unix
-export FLASK_APP=run.py
-```
-Then run the command below to start the application.
+In order to run the application, run the command below to start the application.
 ```
 python run.py
 ```
+##How to setup the API backend
+For windows
+
+Prerequisites
+
+*. Git
+
+*. python 3.6 or higher
+
+c. Install pip here
+
+d. To install virtual environment pip install virtualenv
+
+e. To setup virtual environment virtualenv venv
+
+f. To activate virtual environment venv\Scripts\activate

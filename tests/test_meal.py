@@ -16,7 +16,11 @@ class Test_meal_options(BaseTestCase):
             self.assertEqual(data1.get('message'), "Meal name already exists")
 
     def test_get_meals(self):
-        pass
+        with self.client:
+            response = self.add_meal()
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data.get('message'), "")
 
     def delete_meal(self):
         with self.client:

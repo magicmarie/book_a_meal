@@ -3,10 +3,9 @@ import uuid
 
 
 class Order:
-    def __init__(self, meal_name, price):
+    def __init__(self, order_name):
         self.id = uuid.uuid4().hex
-        self.meal_name = meal_name
-        self.price = price
+        self.order_name = order_name
 
     def __str__(self):
-        return self.meal_name
+        return self.order_name
