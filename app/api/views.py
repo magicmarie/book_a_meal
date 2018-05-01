@@ -1,17 +1,9 @@
-import json
-import jwt
+from flask import jsonify, make_response
+from flask_restful import Resource, reqparse
 
-from datetime import datetime, timedelta
-# third party imports
-from flask import jsonify, make_response, request
-from flask_restful import Resource, Api, reqparse, abort
-import uuid
-
-# local imports
-from app import app
 from app import my_api as api
 
-from .models.user import User, generate_token, decode_token
+from .models.user import User, generate_token
 from .models.meal import Meal
 from .models.menu import Menu
 from .models.order import Order
@@ -20,8 +12,6 @@ users_list = []
 meals_list = []
 menu_list = []
 order_list = []
-
-# api = Api(app)
 
 
 class Signup(Resource):
@@ -48,9 +38,12 @@ class Signup(Resource):
 
         for user in users_list:
             if email == user.email:
-                return make_response(jsonify({"message": "email in use already"}), 400)
+                return make_response(jsonify({"message": "email already in use"}), 400)
         users_list.append(new_user)
-        return make_response(jsonify(new_user.__dict__), 201)
+        return make_response(jsonify({
+            'message': 'User successfully created',
+            'status': 'success'
+        }), 201)
 
 
 api.add_resource(Signup, '/api/v1/auth/signup')
@@ -137,7 +130,7 @@ class MealOne(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('meal_name', required=True)
         parser.add_argument('price', required=True)
-        meal_item = []
+
         for meal in meals_list:
             if meal.id == meal_id:
                 args = parser.parse_args()
@@ -147,6 +140,12 @@ class MealOne(Resource):
                 # new_meal = Meal(meal_name, price)
                 # meal_item.append(new_meal)
                 return make_response(jsonify({"meal_item": "lol"}))
+
+    def delete(self, meal_id):
+        for meal in meals_list:
+            if meal.id == meal_id:
+                meals_list.remove(meal)
+                return jsonify("meal deleted succesfully")
 
 
 api.add_resource(MealOne, '/api/v1/meals/<meal_id>')

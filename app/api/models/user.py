@@ -35,7 +35,7 @@ def generate_token(user_id):
             payload,
             current_app.config.get('SECRET_KEY'),
             algorithm='HS256'
-        )
+        ).decode('UTF-8')
         return jwt_string
 
     except Exception as e:
