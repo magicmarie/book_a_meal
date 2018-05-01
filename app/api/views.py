@@ -100,9 +100,11 @@ class MealsList(Resource):
 
         for meal in meals_list:
             if meal_name == meal.meal_name:
-                return jsonify("Meal  name exists already")
+                return jsonify("Meal name exists already")
         meals_list.append(new_meal)
-        return jsonify(new_meal.__dict__)
+        return make_response(jsonify({
+            'message': 'Meal successfully created',
+            'status': 'success'}), 201)
         # return jsonify("Not authorized to create meals")
 
 
@@ -168,10 +170,10 @@ class Menus(Resource):
         print(new_menu)
         for menu in menu_list:
             if menu_name == menu.menu_name:
-                return make_response(jsonify("Menu name exists already"), 422)
+                return make_response(jsonify("Menu name already  exists"), 400)
         menu_list.append(new_menu)
         return make_response(jsonify({"message": "Menu successfully created",
-                                      "menu": new_menu.__dict__}), 201)
+                                      "status": "success"}), 201)
 
 
 api.add_resource(Menus, '/api/v1/menu')
