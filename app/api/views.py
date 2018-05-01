@@ -100,7 +100,7 @@ class MealsList(Resource):
 
         for meal in meals_list:
             if meal_name == meal.meal_name:
-                return jsonify("Meal name exists already")
+                return make_response(jsonify({"message": 'Meal name already exists'}), 400)
         meals_list.append(new_meal)
         return make_response(jsonify({
             'message': 'Meal successfully created',
@@ -142,22 +142,22 @@ class MealOne(Resource):
         for meal in meals_list:
             if meal.id == meal_id:
                 meals_list.remove(meal)
-                return jsonify("meal deleted succesfully")
+                return jsonify("Meal deleted succesfully")
 
 
 api.add_resource(MealOne, '/api/v1/meals/<meal_id>')
 
 
 class Menus(Resource):
-    def get(self):
-        items = []
-        for meal in meals_list:
-            meals_data = {}
-            meals_data["id"] = meal.id,
-            meals_data["price"] = meal.price,
-            meals_data["meal_name"] = meal.meal_name
-            items.append(meals_data)
-        return make_response(jsonify({"meals_items": items}), 200)
+    def get(self, menu_id):
+        item = []
+        for menu in menu_list:
+            if menu.id == menu_id:
+                menu_data = {}
+                menu_data["id"] = menu.id
+                menu_data["menu__name"] = menu.menu_name
+                item.append(menu_data)
+        return make_response(jsonify({"menu_item": item[0]}), 200)
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -170,13 +170,30 @@ class Menus(Resource):
         print(new_menu)
         for menu in menu_list:
             if menu_name == menu.menu_name:
-                return make_response(jsonify("Menu name already  exists"), 400)
+                return make_response(jsonify({"message": "Menu name already  exists",
+                                              "status": "success"}), 400)
         menu_list.append(new_menu)
         return make_response(jsonify({"message": "Menu successfully created",
                                       "status": "success"}), 201)
 
 
 api.add_resource(Menus, '/api/v1/menu')
+
+
+class OrderOne(Resource):
+
+    def put(self, menu_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('menu_name', required=True)
+
+        for menu in menu_list:
+            if menu.id == menu_id:
+                args = parser.parse_args()
+                menu.menu_name = args['menu_name']
+                return make_response(jsonify({"message": "Menu updated successfully"}))
+
+
+api.add_resource(OrderOne, '/api/v1/orders/<order_id>')
 
 
 class Orders(Resource):
@@ -196,7 +213,7 @@ class Orders(Resource):
         new_order = Order(meal_name, price)
 
         order_list.append(new_order)
-        return make_response(jsonify({"message": "Order succesfully sent", "order": new_order.__dict__}), 201)
+        return make_response(jsonify({"message": "Order succesfully sent"}), 201)
 
 
 api.add_resource(Orders, '/api/v1/order')
