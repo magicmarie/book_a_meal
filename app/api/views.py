@@ -61,16 +61,11 @@ class Login(Resource):
 
         for user in users_list:
             if email == user.email and password == user.password:
-                admin = user.isAdmin
-                if admin == "True":
-                    access_token = "{}".format(generate_token(user.id))
-                    return jsonify({"token": access_token})
-                    if access_token:
-                        return access_token
-                return make_response(jsonify({"message": access_token,
-                                              "email": user.email,
-                                              "id": user.id,
-                                              "Admin": user.isAdmin,
+                # admin = user.isAdmin
+                # if admin == "True":
+                access_token = "{}".format(generate_token(user.id))
+                return make_response(jsonify({"token": access_token,
+                                              "message": "User logged in successfully"
                                               }), 200)
             return make_response(jsonify("wrong credentials"), 401)
 
