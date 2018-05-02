@@ -22,18 +22,13 @@ class Signup(Resource):
         parser.add_argument('name', type=str, required=True)
         parser.add_argument('email', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
-        parser.add_argument('confirm_password', type=str, required=True)
         parser.add_argument('isAdmin', type=str, required=True)
 
         args = parser.parse_args()
         name = args['name']
         email = args['email']
         password = args['password']
-        confirm_password = args['confirm_password']
         isAdmin = args['isAdmin']
-
-        if password != confirm_password:
-            return make_response(jsonify({"message": "passwords don't match"}), 401)
 
         if name.strip() == "":
             return make_response(jsonify({"message": "invalid, Enter name please"}), 401)
@@ -47,7 +42,7 @@ class Signup(Resource):
         if len(password) < 5:
             return make_response(jsonify({"message": "Password is too short, < 5"}), 401)
 
-        new_user = User(name, email, password, confirm_password, isAdmin)
+        new_user = User(name, email, password, isAdmin)
 
         for user in users_list:
             if email == user.email:
@@ -76,8 +71,7 @@ class Login(Resource):
                 return make_response(jsonify({"token": access_token,
                                               "message": "User logged in successfully"
                                               }), 200)
-            return make_response(jsonify({"message": "wrong credentials"}), 401)
-        return make_response(jsonify({"message": "Doesn't exist, Create an account please"}), 401)
+        return make_response(jsonify({"message": "wrong credentials"}), 401)
 
 
 api.add_resource(Login, '/api/v1/auth/login')
@@ -119,7 +113,8 @@ class MealsList(Resource):
                 meals_list.append(new_meal)
                 return make_response(jsonify({
                     'message': 'Meal successfully created',
-                    'status': 'success'}), 201)
+                    'status': 'success'},
+                ), 201)
             return make_response(jsonify({"message": "Customer is not authorized to create meals"}), 401)
         return make_response(jsonify({"message": "Doesn't exist, Create an account please"}), 401)
 
@@ -186,87 +181,64 @@ class Menus(Resource):
             return make_response(jsonify({"menu_item": item[0]}), 200)
         return make_response(jsonify({"message": "Doesn't exist, Create an account please"}))
 
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('menu_name', type=str, required=True)
-        for user in users_list:
-            admin = user.isAdmin
-            if admin == "True":
-                args = parser.parse_args()
-                menu_name = args['menu_name']
-
-                new_menu = Menu(menu_name)
-                print(new_menu)
-                for menu in menu_list:
-                    if menu_name == menu.menu_name:
-                        return make_response(jsonify({"message": "Menu name already  exists",
-                                                      "status": "success"}), 400)
-                menu_list.append(new_menu)
-                return make_response(jsonify({"message": "Menu successfully created",
-                                              "status": "success"}), 201)
-            return make_response(jsonify({"message": "Customer is not allowed to do this"}), 400)
-
 
 api.add_resource(Menus, '/api/v1/menu')
 
 
 class OrderOne(Resource):
 
-    def put(self, order_id):
-        parser = reqparse.RequestParser()
-        parser.add_argument('menu_name', type=str, required=True)
-
+    def delete(self, order_id):
         for user in users_list:
             admin = user.isAdmin
             if admin == "False":
-                for order in order_list:
-                    if order.id == order_id:
-                        args = parser.parse_args()
-                        order.order_name = args['order_name']
-                        order.meal_id = args['meal_id']
-                        order.user_id = args['user_id']
-                        return make_response(jsonify({"message": "Order updated successfully"}), 204)
+                for meal in meals_list:
+                    if meal.id == id:
+                        order_list.remove(meal)
+                        return make_ressponse(jsonify({"meassage": "Order deleted succesfully"}), 200)
 
 
 api.add_resource(OrderOne, '/api/v1/orders/<order_id>')
 
 
-class Orders(Resource):
-    def get(self):
-        items = []
+class MenuPost(Resource):
+    def post(self, meal_id):
         for user in users_list:
             admin = user.isAdmin
             if admin == "True":
-                for order in order_list:
-                    order_data = {}
-                    order_data["id"] = order.id,
-                    order_data["order_name"] = order.order_name,
-                    order_data["meal_id"] = order.meal_id
-                    order_data["user_id"] = order.user_id
-                    items.append(order_data)
-                return make_response(jsonify({"Order_items": items}), 200)
+                for meal in meals_list:
+                    if meal_id == meal.id:
+                        menu_list.append(meal)
+                        return make_response(jsonify({"message": "Meal successfully added to menu",
+                                                      "status": "success"}), 201)
+                    return make_response(jsonify({"meassage": "Meal does not exist"}))
+            return make_response(jsonify({"message": "Customer is not allowed to do this"}), 400)
+
+
+api.add_resource(MenuPost, '/api/v1/menu/<meal_id>')
+
+
+class OrderPost(Resource):
+    def post(self, meal_id):
+        for user in users_list:
+            for meal in meals_list:
+                if meal_id == meal.id:
+                    order_list.append(meal)
+                    return make_response(jsonify({"message": "Order sent successfully",
+                                                  "status": "success"}), 201)
+                return make_response(jsonify({"meassage": "Meal does not exist"}))
+
+
+api.add_resource(OrderPost, '/api/v1/orders/<meal_id>')
+
+
+class OrdersGet(Resource):
+    def get(self):
+        for user in users_list:
+            admin = user.isAdmin
+            if admin == "True":
+                return make_response(jsonify({"Orders": order_list}), 200)
             return make_response(jsonify({"message": "Customer is not allowed to view this"}), 401)
         return make_response(jsonify({"message": "Doesn't exist, Create an account please"}), 401)
 
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('order_name', type=str, required=True)
-        parser.add_argument('meal_id', required=True)
-        parser.add_argument('user_id', required=True)
 
-        for user in users_list:
-            admin = user.isAdmin
-            if admin == "False":
-                args = parser.parse_args()
-                order_name = args['order_name']
-                meal_id = args['meal_id']
-                user_id = args['user_id']
-
-                new_order = Order(order_name, meal_id, user_id)
-
-                order_list.append(new_order)
-                return make_response(jsonify({"message": "Order succesfully sent"}), 201)
-            return make_response(jsonify({"message": "You can not make an order"}), 201)
-
-
-api.add_resource(Orders, '/api/v1/orders')
+api.add_resource(OrdersGet, '/api/v1/orders')
