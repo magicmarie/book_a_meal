@@ -6,12 +6,11 @@ from flask import current_app
 
 
 class User:
-    def __init__(self, name, email, password, confirm_password, isAdmin):
+    def __init__(self, name, email, password, isAdmin):
         self.id = uuid.uuid4().int
         self.name = name
         self.email = email
         self.password = password
-        self.confirm_password = confirm_password
         self.isAdmin = isAdmin
 
     def __str__(self):

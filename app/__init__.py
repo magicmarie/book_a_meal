@@ -16,5 +16,9 @@ app = create_app()
 app.config.from_object(app_config["development"])
 
 
-my_api = Api(app)
-from .api import views
+# my_api = Api(app)
+from .api.views import users, meals, menus, orders
+app.register_blueprint(users)
+app.register_blueprint(meals)
+app.register_blueprint(menus)
+app.register_blueprint(orders)
