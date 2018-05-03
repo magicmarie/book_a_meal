@@ -1,0 +1,24 @@
+[report]
+omit=
+    */python?.?/*
+    */site-packages/nose/*
+    */werkzeug*
+    */markupsafe*
+    */jinja2*
+    */flask*
+    */jwt*
+    */click*
+    */colorama*
+    */concurrent*
+    */asyncio*
+    */ctypes*
+    *decimal.py*
+    */ht*/*
+    *mime*.*
+    */multi*/*
+    *numbers.py*
+    *stringprep.py*
+    *uuid.py*
+    */encodings/*
+    *hmac.py*
+    *itsdangerous.py*
