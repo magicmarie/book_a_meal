@@ -5,7 +5,7 @@ import re
 import json
 from . import orders
 from app.api.models.order import Order
-from .user_views import users_list, meals_list, order_list
+from .user_views import users_list, order_list, menu_list
 
 from app.api.models.user import decode_token
 
@@ -48,9 +48,11 @@ class OrderPost(Resource):
             return make_response(jsonify({"message": decoded["message"]}), 400)
 
         new_order = Order(meal_id, decoded["id"])
-        for meal in meals_list:
+        for meal in menu_list:
             if meal_id == meal["id"]:
-                order_list.append(json.loads(new_order.json()))
+                order_list.append(
+                    {"IDs": json.loads(new_order.json()), "meal_name": meal['meal_name',
+                                                                            "admin_id": "meal['admin_id']"]})
                 return make_response(jsonify({"message": "Order sent successfully",
                                               "status": "success"}), 201)
         return make_response(jsonify({"meassage": "Meal does not exist"}))
@@ -69,13 +71,15 @@ class OrdersGet(Resource):
         decoded = decode_token(args['token'])
         if decoded["status"] == "Failure":
             return make_response(jsonify({"message": decoded["message"]}), 400)
-
-        for user in users_list:
-            if user['id'] == decoded['id']:
-                if decoded['isAdmin'] == "True":
-                    return make_response(jsonify({"Orders": order_list, "message":"Order sent successfully"}), 200)
-            return make_response(jsonify({"message": "Customer is not allowed to view this"}), 401)
-        return make_response(jsonify({"message": "Doesn't exist, Create an account please"}), 401)
+        my_orders = []
+        total = 0
+        if decoded['isAdmin'] == "True":
+            for order in order_list:
+                if order.meal['admin_id'] == decoded['id']:
+                    my_orders.append(order)
+                    return make_response(jsonify({"Orders": my_orders,
+                                                  "Total": total, "status": "success"}), 200)
+        return make_response(jsonify({"message": "Customer is not allowed to view this"}), 401)
 
 
 api.add_resource(OrdersGet, '/api/v1/orders')

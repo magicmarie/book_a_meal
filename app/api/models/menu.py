@@ -4,7 +4,7 @@ import json
 
 
 class Menu:
-    def __init__(self, menu_name):
+    def __init__(self, meals):
         self.id = uuid.uuid4().hex
         self.meals = meals
 

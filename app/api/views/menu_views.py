@@ -39,19 +39,22 @@ class MenuPost(Resource):
         if not args['token']:
             return make_response(jsonify({"message": "Token is missing"}), 400)
         decoded = decode_token(args['token'])
+        if decoded["status"] == "Failure":
+            return make_response(jsonify({"message": decoded["message"]}), 400)
 
-        for user in users_list:
-            if user['id'] == decoded['id']:
-                if decoded['isAdmin'] == "True":
-                    for meal in menu_list:
-                        if meal_id == meal['id']:
-                            return make_response(jsonify({"message": "Meal already exists in menu"}), 409)
-                    for meal in meals_list:
-                        if meal_id == meal['id']:
-                            menu_list.append(meal)
-                            return make_response(jsonify({"message": "Meal successfully added to menu",
-                                                          "status": "success"}), 200)
-                    return make_response(jsonify({"message": "Meal does not exist"}))
+        if decoded['isAdmin'] == "True":
+            for meal in menu_list:
+                if meal_id == meal['id'] and meal['admin_id'] == decoded['id']:
+                    return make_response(jsonify({"message": "Meal already exists in menu"}), 409)
+                return make_response(jsonify({"message": "You are not allowed to add this meal to menu"}), 409)
+
+            for meal in meals_list:
+                if meal_id == meal['id'] and meal['admin_id'] == decoded['id']:
+                    menu_list.append(meal)
+                    return make_response(jsonify({"message": "Meal successfully added to menu",
+                                                  "status": "success"}), 200)
+                return make_response(jsonify({"message": "You are not allowed to add this meal to menu"}))
+            return make_response(jsonify({"message": "Meal does not exist"}))
         return make_response(jsonify({"message": "Customer is not allowed to do this"}), 400)
 
 

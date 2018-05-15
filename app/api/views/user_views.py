@@ -32,7 +32,7 @@ class Signup(Resource):
         if name.strip() == "" or len(name.strip()) < 2:
             return make_response(jsonify({"message": "invalid, Enter name please"}), 401)
 
-        if re.compile('[!@#$%^&*:;?><.]').match(name):
+        if re.compile('[!@#$%^&*:;?><.0-9]').match(name):
             return make_response(jsonify({"message": "Invalid characters not allowed"}))
 
         if not re.match(r"([\w\.-]+)@([\w\.-]+)(\.[\w\.]+$)", email):

@@ -20,21 +20,22 @@ class MealsList(Resource):
         if not args['token']:
             return make_response(jsonify({"message": "Token is missing"}), 400)
         decoded = decode_token(args['token'])
-        items = []
-        for user in users_list:
-            if user['id'] == decoded['id']:
-                if decoded['isAdmin'] == "True":
-                    for meal in meals_list:
+        if decoded["status"] == "Failure":
+            return make_response(jsonify({"message": decoded["message"]}), 400)
 
-                        meals_data = {
-                            "id": meal["id"],
-                            "price": meal['price'],
-                            "meal_name": meal['meal_name']
-                        }
-                        items.append(meals_data)
-                    return make_response(jsonify({"meals_items": items}), 200)
+        items = []
+        if decoded['isAdmin'] == "False":
             return make_response(jsonify({"message": "Customer is not allowed to view this"}), 401)
-        return make_response(jsonify({"message": "Doesn't exist, Create an account please"}), 400)
+        for meal in meals_list:
+            if meal['admin_id'] == decoded['id']:
+                meals_data = {
+                    "id": meal["id"],
+                    "price": meal['price'],
+                    "meal_name": meal['meal_name'],
+                    "admin_id": meal['admin_id']
+                }
+                items.append(meals_data)
+        return make_response(jsonify({"meals_items": items}), 200)
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -45,9 +46,10 @@ class MealsList(Resource):
         if not args['token']:
             return make_response(jsonify({"message": "Token is missing"}), 400)
         decoded = decode_token(args['token'])
-        # print(decoded)
+        if decoded["status"] == "Failure":
+            return make_response(jsonify({"message": decoded["message"]}), 400)
+
         for user in users_list:
-            # print(user)
             if user['id'] == decoded['id']:
                 if decoded['isAdmin'] == "True":
                     meal_name = args['meal_name']
@@ -55,15 +57,17 @@ class MealsList(Resource):
                     if meal_name.strip() == "" or len(meal_name.strip()) < 2:
                         return make_response(jsonify({"message": "invalid, Enter name please"}), 401)
 
-                    if re.compile('[!@#$%^&*:;?><.]').match(meal_name):
+                    if re.compile('[!@#$%^&*:;?><.0-9]').match(meal_name):
                         return make_response(jsonify({"message": "Invalid characters not allowed"}))
 
                     new_meal = Meal(meal_name, price)
 
                     for meal in meals_list:
-                        if meal_name == meal['meal_name']:
+                        if meal_name == meal['meal_name'] and meal['admin_id'] == decoded['id']:
                             return make_response(jsonify({"message": 'Meal name already exists'}), 400)
-                    meals_list.append(json.loads(new_meal.json()))
+                    meal = json.loads(new_meal.json())
+                    meal['admin_id'] = decoded['id']
+                    meals_list.append(meal)
                     return make_response(jsonify({
                         'message': 'Meal successfully created',
                         'status': 'success'},
@@ -83,21 +87,21 @@ class MealOne(Resource):
         if not args['token']:
             return make_response(jsonify({"message": "Token is missing"}), 400)
         decoded = decode_token(args['token'])
+        if decoded["status"] == "Failure":
+            return make_response(jsonify({"message": decoded["message"]}), 400)
 
-        for user in users_list:
-            if user['id'] == decoded['id']:
-                if decoded['isAdmin'] == "True":
-                    for meal in meals_list:
-                        if meal['id'] == meal_id:
-                            meal_data = {
-                                "id": meal['id'],
-                                "price": meal['price'],
-                                "meal_name": meal['meal_name']
-                            }
-                            return make_response(jsonify({"meal_item": meal_data}), 200)
-                    return make_response(jsonify({"message": "Meal not found"}), 200)
-                return make_response(jsonify({"message": "Customer is not allowed to view this"}))
-        return make_response(jsonify({"message": "Doesn't exist, Create an account please"}), 401)
+        if decoded['isAdmin'] == "True":
+            for meal in meals_list:
+                if meal['id'] == meal_id and meal['admin_id'] == decoded['id']:
+                    meal_data = {
+                        "id": meal['id'],
+                        "price": meal['price'],
+                        "meal_name": meal['meal_name'],
+                        "admin_id": meal['admin_id']
+                    }
+                    return make_response(jsonify({"meal_item": meal_data}), 200)
+            return make_response(jsonify({"message": "Meal not found"}), 404)
+        return make_response(jsonify({"message": "Customer is not allowed to view this"}), 401)
 
     def put(self, meal_id):
         parser = reqparse.RequestParser()
@@ -107,6 +111,8 @@ class MealOne(Resource):
         args = parser.parse_args()
         if not args['token']:
             return make_response(jsonify({"message": "Token is missing"}), 400)
+        if decoded["status"] == "Failure":
+            return make_response(jsonify({"message": decoded["message"]}), 400)
         decoded = decode_token(args['token'])
 
         for user in users_list:
@@ -129,6 +135,8 @@ class MealOne(Resource):
         args = parser.parse_args()
         if not args['token']:
             return make_response(jsonify({"message": "Token is missing"}), 400)
+        if decoded["status"] == "Failure":
+            return make_response(jsonify({"message": decoded["message"]}), 400)
         decoded = decode_token(args['token'])
         for user in users_list:
             if user['id'] == decoded['id']:
