@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.org/magicmarie/book_a_meal.svg?branch=flask-api-restful)](https://travis-ci.org/magicmarie/book_a_meal)
 [![Coverage Status](https://coveralls.io/repos/github/magicmarie/book_a_meal/badge.svg?branch=flask-api-restful)](https://coveralls.io/github/magicmarie/book_a_meal?branch=flask-api-restful)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9c86a6940c82472ea181f0adecd25390)](https://www.codacy.com/app/magicmarie/book_a_meal?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=magicmarie/book_a_meal&amp;utm_campaign=Badge_Grade)
-(https://coveralls.io/github/magicmarie/book_a_meal?branch=flaskAPI-restful-tests)
 
 
 Book A Meal  is a web application  that allows customers to make food orders and
