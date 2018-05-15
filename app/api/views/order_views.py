@@ -5,7 +5,7 @@ import re
 import json
 from . import orders
 from app.api.models.order import Order
-from .user_views import users_list, order_list, menu_list
+from .user_views import users_list, order_list, menu_list, meals_list
 
 from app.api.models.user import decode_token
 
@@ -51,8 +51,7 @@ class OrderPost(Resource):
         for meal in menu_list:
             if meal_id == meal["id"]:
                 order_list.append(
-                    {"IDs": json.loads(new_order.json()), "meal_name": meal['meal_name',
-                                                                            "admin_id": "meal['admin_id']"]})
+                    {"IDs": json.loads(new_order.json()), "meal_name": meal['meal_name']})
                 return make_response(jsonify({"message": "Order sent successfully",
                                               "status": "success"}), 201)
         return make_response(jsonify({"meassage": "Meal does not exist"}))
@@ -75,10 +74,14 @@ class OrdersGet(Resource):
         total = 0
         if decoded['isAdmin'] == "True":
             for order in order_list:
-                if order.meal['admin_id'] == decoded['id']:
-                    my_orders.append(order)
-                    return make_response(jsonify({"Orders": my_orders,
-                                                  "Total": total, "status": "success"}), 200)
+                for meal in meals_list:
+                    if order['IDs']['meal_id'] == meal['id']:
+                        if meal['admin_id'] == decoded['id']:
+                            my_orders.append(order)
+                            total += meal['price']
+                            return make_response(jsonify({"Orders": my_orders,
+                                                          "Total": total, "status": "success"}), 200)
+            return make_response(jsonify({"message": "No orders found"}), 404)
         return make_response(jsonify({"message": "Customer is not allowed to view this"}), 401)
 
 

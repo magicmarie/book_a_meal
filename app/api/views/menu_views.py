@@ -44,9 +44,10 @@ class MenuPost(Resource):
 
         if decoded['isAdmin'] == "True":
             for meal in menu_list:
-                if meal_id == meal['id'] and meal['admin_id'] == decoded['id']:
-                    return make_response(jsonify({"message": "Meal already exists in menu"}), 409)
-                return make_response(jsonify({"message": "You are not allowed to add this meal to menu"}), 409)
+                if meal_id == meal['id']:
+                    if meal['admin_id'] == decoded['id']:
+                        return make_response(jsonify({"message": "Meal already exists in menu"}), 409)
+                    return make_response(jsonify({"message": "You are not allowed to add this meal to menu"}), 409)
 
             for meal in meals_list:
                 if meal_id == meal['id'] and meal['admin_id'] == decoded['id']:

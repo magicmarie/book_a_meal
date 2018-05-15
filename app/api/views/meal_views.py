@@ -111,9 +111,9 @@ class MealOne(Resource):
         args = parser.parse_args()
         if not args['token']:
             return make_response(jsonify({"message": "Token is missing"}), 400)
+        decoded = decode_token(args['token'])
         if decoded["status"] == "Failure":
             return make_response(jsonify({"message": decoded["message"]}), 400)
-        decoded = decode_token(args['token'])
 
         for user in users_list:
             if user['id'] == decoded['id']:
