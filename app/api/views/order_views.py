@@ -14,6 +14,10 @@ api = Api(orders)
 
 class OrderOne(Resource):
     def put(self, order_id):
+        """
+        Returns an order made by authenticated user
+        token is required to get user Id
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('meal_id', type=str, required=True)
         parser.add_argument('token', location='headers')
@@ -38,6 +42,10 @@ api.add_resource(OrderOne, '/api/v1/orders/<order_id>')
 
 class OrderPost(Resource):
     def post(self, meal_id):
+        """
+        Allows authenticated user to make an order from the menu
+        token is required to get user Id
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('token', location='headers')
         args = parser.parse_args()
@@ -52,8 +60,7 @@ class OrderPost(Resource):
             if meal_id == meal["id"]:
                 order_list.append(
                     {"IDs": json.loads(new_order.json()), "meal_name": meal['meal_name']})
-                return make_response(jsonify({"message": "Order sent successfully",
-                                              "status": "success"}), 201)
+                return make_response(jsonify({"message": "Order sent successfully"}), 201)
         return make_response(jsonify({"meassage": "Meal does not exist"}))
 
 
@@ -62,6 +69,10 @@ api.add_resource(OrderPost, '/api/v1/orders/<meal_id>')
 
 class OrdersGet(Resource):
     def get(self):
+        """
+        Returns all orders made for authenticated admin
+        token is required to get admin id
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('token', location='headers')
         args = parser.parse_args()
@@ -79,10 +90,39 @@ class OrdersGet(Resource):
                         if meal['admin_id'] == decoded['id']:
                             my_orders.append(order)
                             total += meal['price']
-                            return make_response(jsonify({"Orders": my_orders,
-                                                          "Total": total, "status": "success"}), 200)
+            if my_orders:
+                return make_response(jsonify({"Orders": my_orders,
+                                              "Total": total, "status": "success"}), 200)
             return make_response(jsonify({"message": "No orders found"}), 404)
         return make_response(jsonify({"message": "Customer is not allowed to view this"}), 401)
 
 
 api.add_resource(OrdersGet, '/api/v1/orders')
+
+
+class OrderGet(Resource):
+    def get(self, user_id):
+        """
+        Return all orders made by authenticated user
+        token is required to get user Id
+        """
+        parser = reqparse.RequestParser()
+        parser.add_argument('token', location='headers')
+        args = parser.parse_args()
+        if not args['token']:
+            return make_response(jsonify({"message": "Token is missing"}), 400)
+        decoded = decode_token(args['token'])
+        if decoded["status"] == "Failure":
+            return make_response(jsonify({"message": decoded["message"]}), 400)
+
+        ma_orders = []
+        for order in order_list:
+            if order['IDs']['user_id'] == decoded['id']:
+                ma_orders.append(order)
+
+        if ma_orders:
+            return make_response(jsonify({"Orders": ma_orders, "status": "success"}), 200)
+        return make_response(jsonify({"message": "No orders found"}), 404)
+
+
+api.add_resource(OrderGet, '/api/v1/orders/<user_id>')

@@ -13,6 +13,10 @@ api = Api(menus)
 
 class Menus(Resource):
     def get(self):
+        """
+        Return the menu created by authenticated admin
+        token is required to get the admin Id
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('token', location='headers')
         args = parser.parse_args()
@@ -33,6 +37,10 @@ api.add_resource(Menus, '/api/v1/menu')
 
 class MenuPost(Resource):
     def post(self, meal_id):
+        """
+        Allows authenticated admin to create a menu by adding a meal by Id from the meals_list
+        token is required to get the admin Id
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('token', location='headers')
         args = parser.parse_args()
@@ -47,14 +55,15 @@ class MenuPost(Resource):
                 if meal_id == meal['id']:
                     if meal['admin_id'] == decoded['id']:
                         return make_response(jsonify({"message": "Meal already exists in menu"}), 409)
-                    return make_response(jsonify({"message": "You are not allowed to add this meal to menu"}), 409)
+                    return make_response(jsonify({"message": "You cannot add this meal to menu"}), 409)
 
             for meal in meals_list:
-                if meal_id == meal['id'] and meal['admin_id'] == decoded['id']:
-                    menu_list.append(meal)
-                    return make_response(jsonify({"message": "Meal successfully added to menu",
-                                                  "status": "success"}), 200)
-                return make_response(jsonify({"message": "You are not allowed to add this meal to menu"}))
+                if meal_id == meal['id']:
+                    if meal['admin_id'] == decoded['id']:
+                        menu_list.append(meal)
+                        return make_response(jsonify({"message": "Meal successfully added to menu",
+                                                      "status": "success"}), 200)
+                    return make_response(jsonify({"message": "You are not allowed to add this meal to menu"}))
             return make_response(jsonify({"message": "Meal does not exist"}))
         return make_response(jsonify({"message": "Customer is not allowed to do this"}), 400)
 

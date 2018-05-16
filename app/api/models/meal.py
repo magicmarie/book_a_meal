@@ -10,6 +10,9 @@ class Meal:
         self.price = price
 
     def json(self):
+        """
+        json representation of the Meal model
+        """
         return json.dumps({
             'id': self.id,
             'meal_name': self.meal_name,

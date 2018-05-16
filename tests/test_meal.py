@@ -4,6 +4,9 @@ import json
 
 class Test_meal_options(BaseTestCase):
     def test_add_meal(self):
+        """
+        Test that an authenticated admin can add a meal
+        """
         with self.client:
             self.register_user()
             token = self.get_token()
@@ -18,6 +21,9 @@ class Test_meal_options(BaseTestCase):
             self.assertEqual(data1.get('message'), "Meal name already exists")
 
     def test_get_meals(self):
+        """
+        Test that an authenticated admin can get all his meals
+        """
         with self.client:
             self.register_user()
             token = self.get_token()
@@ -29,6 +35,9 @@ class Test_meal_options(BaseTestCase):
                           data['meals_items'][0]['meal_name'])
 
     def test_delete_meal(self):
+        """
+        Test that an authenticated admin can delete a meal
+        """
         with self.client:
             self.register_user()
             token = self.get_token()
@@ -42,6 +51,9 @@ class Test_meal_options(BaseTestCase):
             self.assertIn("Meal deleted succesfully", data)
 
     def test_put_meal(self):
+        """
+        Test that an authenticated admin can edit meal details
+        """
         with self.client:
             self.register_user()
             token = self.get_token()

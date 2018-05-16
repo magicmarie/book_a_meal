@@ -7,6 +7,10 @@ from flask import current_app
 
 
 class User:
+    """
+    Class to represent the User model
+    """
+
     def __init__(self, name, email, password, isAdmin):
         self.id = uuid.uuid4().int
         self.name = name
@@ -15,6 +19,10 @@ class User:
         self.isAdmin = isAdmin
 
     def json(self):
+        """
+        json representation of the User model
+        """
+
         return json.dumps({
             'id': self.id,
             'name': self.name,
@@ -51,7 +59,7 @@ def generate_token(user_id, isAdmin):
 
 
 def decode_token(token):
-    """Decode the access token from the Authorization header."""
+    """Decode the access token to get the payload and return user_id and isAdmin field results"""
     try:
         payload = jwt.decode(token, current_app.config.get('SECRET_KEY'))
         return {"id": payload['sub'], "isAdmin": payload['isAdmin'], "status": "Success"}

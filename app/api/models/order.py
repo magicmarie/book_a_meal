@@ -10,6 +10,9 @@ class Order:
         self.user_id = user_id
 
     def json(self):
+        """
+        json representation of the Order model
+        """
         return json.dumps({
             'id': self.id,
             'meal_id': self.meal_id,

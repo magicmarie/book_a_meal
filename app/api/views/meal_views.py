@@ -14,6 +14,10 @@ api = Api(meals)
 
 class MealsList(Resource):
     def get(self):
+        """
+        Return all meals created by authenticated admin
+        token is required to get admin Id
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('token', location='headers')
         args = parser.parse_args()
@@ -38,6 +42,10 @@ class MealsList(Resource):
         return make_response(jsonify({"meals_items": items}), 200)
 
     def post(self):
+        """
+        Allows authenticated admin to create a meal
+        token is required to get admin Id
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('meal_name', type=str, required=True)
         parser.add_argument('price', type=int, required=True)
@@ -81,6 +89,10 @@ api.add_resource(MealsList, '/api/v1/meals')
 
 class MealOne(Resource):
     def get(self, meal_id):
+        """
+        Return a meal by Id created by authenticated admin
+        token is required to get admin Id
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('token', location='headers')
         args = parser.parse_args()
@@ -104,6 +116,10 @@ class MealOne(Resource):
         return make_response(jsonify({"message": "Customer is not allowed to view this"}), 401)
 
     def put(self, meal_id):
+        """
+        Allows admin to edit the meal details from the meals_list if it exists.
+        token is required to get admin Id
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('meal_name', type=str, required=True)
         parser.add_argument('price', type=int, required=True)
@@ -130,14 +146,18 @@ class MealOne(Resource):
             return make_response(jsonify({"message": "Customer is not allowed to do this"}))
 
     def delete(self, meal_id):
+        """
+        Deletes a meal from the meals_list if it exists
+        token is required to get admin Id
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('token', location='headers')
         args = parser.parse_args()
         if not args['token']:
             return make_response(jsonify({"message": "Token is missing"}), 400)
+        decoded = decode_token(args['token'])
         if decoded["status"] == "Failure":
             return make_response(jsonify({"message": decoded["message"]}), 400)
-        decoded = decode_token(args['token'])
         for user in users_list:
             if user['id'] == decoded['id']:
                 if decoded['isAdmin'] == "True":

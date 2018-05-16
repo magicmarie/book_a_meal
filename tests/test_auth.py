@@ -4,6 +4,9 @@ import json
 
 class Test_auth(BaseTestCase):
     def test_signup(self):
+        """
+        Test a user is successfully created through the api
+        """
         with self.client:
             response = self.register_user()
             data = json.loads(response.data.decode())
@@ -16,6 +19,9 @@ class Test_auth(BaseTestCase):
             self.assertEqual(data1.get('message'), "email already in use")
 
     def test_login(self):
+        """
+        Test a registered user  is logged in successfully through the api
+        """
         with self.client:
             self.register_user()
             response = self.login_user()

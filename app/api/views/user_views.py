@@ -17,6 +17,10 @@ api = Api(users)
 
 class Signup(Resource):
     def post(self):
+        """
+        Allows users(admins and customers) to create accounts
+        """
+
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str, required=True)
         parser.add_argument('email', type=str, required=True)
@@ -59,6 +63,10 @@ api.add_resource(Signup, '/api/v1/auth/signup')
 
 class Login(Resource):
     def post(self):
+        """
+        Allows users to login to their accounts
+        """
+
         parser = reqparse.RequestParser()
         parser.add_argument('email', type=str, required=True)
         parser.add_argument('password', type=str, required=True)

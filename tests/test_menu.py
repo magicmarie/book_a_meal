@@ -4,6 +4,9 @@ import json
 
 class Test_menu_options(BaseTestCase):
     def test_add_menu(self):
+        """
+        Test that an authenticated admin can add a meal to the menu
+        """
         with self.client:
             self.register_user()
             token = self.get_token()
@@ -15,7 +18,7 @@ class Test_menu_options(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertIn("Meal successfully added to menu",
                           data.get('message'))
-            # Add the same menu and see...
+            # Add the same meal to the menu and see...
             res = self.add_menu(id, token)
             data1 = json.loads(res.data.decode())
             self.assertEqual(res.status_code, 409)
@@ -23,6 +26,9 @@ class Test_menu_options(BaseTestCase):
                              "Meal already exists in menu")
 
     def test_get_menu(self):
+        """
+        Test that an authenticated user can view the menu
+        """
         with self.client:
             self.register_user()
             token = self.get_token()

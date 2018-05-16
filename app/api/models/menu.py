@@ -9,7 +9,10 @@ class Menu:
         self.meals = meals
 
     def json(self):
+        """
+        json representation of the Menu model
+        """
         return json.dumps({
             'id': self.id,
-            'meals': self.meals
+            'meal': self.meals
         })
