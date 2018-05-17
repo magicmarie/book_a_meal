@@ -14,6 +14,7 @@ api = Api(orders)
 
 
 class OrderOne(Resource):
+    @swag_from('../apidocs/edit_order.yml')
     def put(self, order_id):
         """
         Returns an order made by authenticated user
@@ -33,9 +34,9 @@ class OrderOne(Resource):
             if order['id'] == order_id:
                 if order["user_id"] == decoded["id"]:
                     order["meal_id"] = args['meal_id']
-                    return make_response(jsonify({"message": "Order deleted succesfully"}), 200)
+                    return make_response(jsonify({"message": "Order updated succesfully"}), 200)
                 return make_response(jsonify({"message": "You can not update that order"}), 401)
-        return make_response(jsonify({"message": "Order not found"}), 400)
+        return make_response(jsonify({"message": "Order not found"}), 404)
 
 
 api.add_resource(OrderOne, '/api/v1/orders/<order_id>')
@@ -70,6 +71,7 @@ api.add_resource(OrderPost, '/api/v1/orders/<meal_id>')
 
 
 class OrdersGet(Resource):
+    @swag_from('../apidocs/get_orders.yml')
     def get(self):
         """
         Returns all orders made for authenticated admin
@@ -103,6 +105,7 @@ api.add_resource(OrdersGet, '/api/v1/orders')
 
 
 class OrderGet(Resource):
+    @swag_from('../apidocs/get_order.yml')
     def get(self, user_id):
         """
         Return all orders made by authenticated user

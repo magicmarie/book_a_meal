@@ -1,0 +1,59 @@
+Endpoint to edit an order by id by an authenticated user
+---
+tags:
+  - Order
+parameters:
+  - name: body
+    description: this contains edit an order details
+    in: body
+    required: true
+  - name: id
+    description: The unique id of the meal
+    type: string
+    in: path
+    required: true
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+
+responses:
+  201:
+    description: Order successfully edited
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Order updated succesfully"
+  404:
+    description: Order non existent
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Order not found"
+  401:
+    description: Failed to edit order
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "You can not update that order"
+  400:
+    description: Failed to edit meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "token missing"
+            - "Expired token. Please log in to get a new token"
+            - "Invalid token. Please register or login"
