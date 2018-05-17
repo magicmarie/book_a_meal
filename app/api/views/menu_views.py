@@ -1,6 +1,6 @@
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
-
+from flasgger.utils import swag_from
 import re
 from . import menus
 from app.api.models.menu import Menu
@@ -12,6 +12,7 @@ api = Api(menus)
 
 
 class Menus(Resource):
+    @swag_from('../apidocs/get_menu.yml')
     def get(self):
         """
         Return the menu created by authenticated admin
@@ -36,6 +37,7 @@ api.add_resource(Menus, '/api/v1/menu')
 
 
 class MenuPost(Resource):
+    @swag_from('../apidocs/add_menu.yml')
     def post(self, meal_id):
         """
         Allows authenticated admin to create a menu by adding a meal by Id from the meals_list
@@ -55,7 +57,7 @@ class MenuPost(Resource):
                 if meal_id == meal['id']:
                     if meal['admin_id'] == decoded['id']:
                         return make_response(jsonify({"message": "Meal already exists in menu"}), 409)
-                    return make_response(jsonify({"message": "You cannot add this meal to menu"}), 409)
+                    return make_response(jsonify({"message": "You cannot add this meal to menu"}), 401)
 
             for meal in meals_list:
                 if meal_id == meal['id']:
@@ -63,8 +65,8 @@ class MenuPost(Resource):
                         menu_list.append(meal)
                         return make_response(jsonify({"message": "Meal successfully added to menu",
                                                       "status": "success"}), 200)
-                    return make_response(jsonify({"message": "You are not allowed to add this meal to menu"}))
-            return make_response(jsonify({"message": "Meal does not exist"}))
+                    return make_response(jsonify({"message": "You are not allowed to add this meal to menu"}), 401)
+            return make_response(jsonify({"message": "Meal does not exist"}), 404)
         return make_response(jsonify({"message": "Customer is not allowed to do this"}), 400)
 
 
