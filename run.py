@@ -7,7 +7,7 @@ from flask import render_template
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('/app/templates/home.html')
+    return render_template('home.html')
 
 
 if __name__ == '__main__':
