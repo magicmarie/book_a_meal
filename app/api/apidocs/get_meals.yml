@@ -1,0 +1,40 @@
+Endpoint to get all meals added by a registered admin
+---
+tags:
+  - Meal
+parameters:
+
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+
+responses:
+  200:
+    description: All Meal options created by specific admin are returned
+    schema:
+      type: object
+      properties:
+        "meals_items":
+          type: array
+  401:
+    description: Failed to return all meals
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Customer is not authorized to view this"
+  400:
+    description: Failed to return all meals
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "token missing"
+            - "Expired token. Please log in to get a new token"
+            - "Invalid token. Please register or login"

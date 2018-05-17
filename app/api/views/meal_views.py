@@ -14,6 +14,7 @@ api = Api(meals)
 
 
 class MealsList(Resource):
+    @swag_from('../apidocs/get_meals.yml')
     def get(self):
         """
         Return all meals created by authenticated admin
@@ -68,7 +69,7 @@ class MealsList(Resource):
                         return make_response(jsonify({"message": "invalid, Enter name please"}), 401)
 
                     if re.compile('[!@#$%^&*:;?><.0-9]').match(meal_name):
-                        return make_response(jsonify({"message": "Invalid characters not allowed"}))
+                        return make_response(jsonify({"message": "Invalid characters not allowed"}), 401)
 
                     new_meal = Meal(meal_name, price)
 
@@ -90,6 +91,7 @@ api.add_resource(MealsList, '/api/v1/meals')
 
 
 class MealOne(Resource):
+    @swag_from('../apidocs/get_meal.yml')
     def get(self, meal_id):
         """
         Return a meal by Id created by authenticated admin
@@ -117,6 +119,7 @@ class MealOne(Resource):
             return make_response(jsonify({"message": "Meal not found"}), 404)
         return make_response(jsonify({"message": "Customer is not allowed to view this"}), 401)
 
+    @swag_from('../apidocs/edit_meal.yml')
     def put(self, meal_id):
         """
         Allows admin to edit the meal details from the meals_list if it exists.
@@ -133,20 +136,28 @@ class MealOne(Resource):
         if decoded["status"] == "Failure":
             return make_response(jsonify({"message": decoded["message"]}), 400)
 
-        for user in users_list:
-            if user['id'] == decoded['id']:
-                if decoded['isAdmin'] == "True":
-                    for meal in meals_list:
-                        if meal['id'] == meal_id:
-                            args = parser.parse_args()
-                            meal['meal_name'] = args['meal_name']
-                            meal['price'] = args['price']
+        if decoded['isAdmin'] == "True":
+            for meal in meals_list:
+                if meal['id'] == meal_id:
+                    if meal['admin_id'] == decoded['id']:
+                        args = parser.parse_args()
+                        meal['meal_name'] = args['meal_name']
+                        meal['price'] = args['price']
+                        if args['meal_name'].strip() == "" or len(args['meal_name'].strip()) < 2:
+                            return make_response(jsonify({"message": "invalid, Enter name please"}), 401)
 
-                            return make_response(jsonify({"message": "Meal updated successfully",
-                                                          "list": "meals_list"}), 201)
-                    return make_response(jsonify({"message": "Meal not found"}), 200)
-            return make_response(jsonify({"message": "Customer is not allowed to do this"}))
+                        if re.compile('[!@#$%^&*:;?><.0-9]').match(args['meal_name']):
+                            return make_response(jsonify({"message": "Invalid characters not allowed"}), 401)
 
+                        if args['meal_name'] == meal['meal_name']:
+                            return make_response(jsonify({"message": 'Meal name already exists'}), 400)
+
+                        return make_response(jsonify({"message": "Meal updated successfully",
+                                                      "list": "meals_list"}), 201)
+            return make_response(jsonify({"message": "Meal not found"}), 404)
+        return make_response(jsonify({"message": "Customer is not allowed to do this"}), 401)
+
+    @swag_from('../apidocs/delete_meal.yml')
     def delete(self, meal_id):
         """
         Deletes a meal from the meals_list if it exists
@@ -163,13 +174,11 @@ class MealOne(Resource):
         for user in users_list:
             if user['id'] == decoded['id']:
                 if decoded['isAdmin'] == "True":
-                    print(meals_list)
-                    print(meal_id)
                     for meal in meals_list:
                         if meal['id'] == meal_id:
                             meals_list.remove(meal)
-                            return jsonify("Meal deleted succesfully")
-                    return make_response(jsonify({"message": "Meal not found"}), 200)
+                            return make_response(jsonify({"message": "Meal deleted succesfully"}), 200)
+                    return make_response(jsonify({"message": "Meal not found"}), 404)
                 return make_response(jsonify({"message": "Customer is not allowed to do this"}))
 
 
