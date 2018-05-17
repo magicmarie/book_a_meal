@@ -24,3 +24,13 @@ omit=
     *itsdangerous.py*
     *six.py*
     *socketserver.py*
+    */chardet*/*
+    *certifi*/*
+    *cgi.py*
+    *flasgger*/*
+    *idna*/*
+    *jsonschema*/*
+    *mistune.py*
+    *requests*/*
+    *urllib*/*
+    *yaml*/*
