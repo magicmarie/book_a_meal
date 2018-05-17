@@ -1,0 +1,54 @@
+Endpoint to get a specific meal by id added by a registered admin
+---
+tags:
+  - Meal
+parameters:
+
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: The unique id of the meal
+    type: string
+    in: path
+    required: true
+
+responses:
+  200:
+    description: A specific Meal option created by a specific admin is returned
+    schema:
+      type: object
+      properties:
+        "meal_item":
+          type: array
+  401:
+    description: Failed to return the meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Customer is not authorized to view this"
+  404:
+    description: Meal non-existent
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal not found"
+  400:
+    description: Failed to return the meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "token missing"
+            - "Expired token. Please log in to get a new token"
+            - "Invalid token. Please register or login"
