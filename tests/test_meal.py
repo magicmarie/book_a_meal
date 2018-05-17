@@ -48,7 +48,7 @@ class Test_meal_options(BaseTestCase):
             response = self.delete_meal(id, token)
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertIn("Meal deleted succesfully", data)
+            self.assertIn("Meal deleted succesfully", data.get('message'))
 
     def test_put_meal(self):
         """

@@ -3,7 +3,6 @@ from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from
 import re
 from . import menus
-from app.api.models.menu import Menu
 from .user_views import users_list, meals_list, menu_list
 from app.api.models.user import decode_token
 

@@ -149,11 +149,7 @@ class MealOne(Resource):
                         if re.compile('[!@#$%^&*:;?><.0-9]').match(args['meal_name']):
                             return make_response(jsonify({"message": "Invalid characters not allowed"}), 401)
 
-                        if args['meal_name'] == meal['meal_name']:
-                            return make_response(jsonify({"message": 'Meal name already exists'}), 400)
-
-                        return make_response(jsonify({"message": "Meal updated successfully",
-                                                      "list": "meals_list"}), 201)
+                        return make_response(jsonify({"message": "Meal updated successfully"}), 201)
             return make_response(jsonify({"message": "Meal not found"}), 404)
         return make_response(jsonify({"message": "Customer is not allowed to do this"}), 401)
 
