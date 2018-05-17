@@ -1,5 +1,6 @@
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
+from flasgger.utils import swag_from
 
 import re
 import json
@@ -41,6 +42,7 @@ class MealsList(Resource):
                 items.append(meals_data)
         return make_response(jsonify({"meals_items": items}), 200)
 
+    @swag_from('../apidocs/add_meal.yml')
     def post(self):
         """
         Allows authenticated admin to create a meal
