@@ -1,5 +1,6 @@
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
+from flasgger.utils import swag_from
 
 import re
 import json
@@ -41,6 +42,7 @@ api.add_resource(OrderOne, '/api/v1/orders/<order_id>')
 
 
 class OrderPost(Resource):
+    @swag_from('../apidocs/add_order.yml')
     def post(self, meal_id):
         """
         Allows authenticated user to make an order from the menu
@@ -61,7 +63,7 @@ class OrderPost(Resource):
                 order_list.append(
                     {"IDs": json.loads(new_order.json()), "meal_name": meal['meal_name']})
                 return make_response(jsonify({"message": "Order sent successfully"}), 201)
-        return make_response(jsonify({"meassage": "Meal does not exist"}))
+        return make_response(jsonify({"meassage": "Meal does not exist"}), 404)
 
 
 api.add_resource(OrderPost, '/api/v1/orders/<meal_id>')
