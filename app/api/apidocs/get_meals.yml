@@ -1,4 +1,4 @@
-Endpoint to get all meals added by a registered admin
+Endpoint to get all meals added by an authenticated admin
 ---
 tags:
   - Meal

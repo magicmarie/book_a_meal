@@ -1,4 +1,4 @@
-Endpoint to get a specific meal by id added by a registered admin
+Endpoint to get a specific meal by id added by an authenticated admin
 ---
 tags:
   - Meal
