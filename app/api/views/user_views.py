@@ -1,5 +1,6 @@
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
+from flasgger.utils import swag_from
 
 import re
 import json
@@ -16,6 +17,7 @@ api = Api(users)
 
 
 class Signup(Resource):
+    @swag_from('../apidocs/signup.yml')
     def post(self):
         """
         Allows users(admins and customers) to create accounts

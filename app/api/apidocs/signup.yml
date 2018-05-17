@@ -1,0 +1,44 @@
+Endpoint to register a new user
+---
+tags:
+  - User
+parameters:
+  - name: body
+    description: this contains user registration details
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "email"
+        - "password"
+        - "isAdmin"
+      properties:
+        email:
+          type: "string"
+          example: "mz@gmail.com"
+        password:
+          type: "string"
+          format: password
+          example: "mz0987"
+
+responses:
+  200:
+    description: User successfully registered
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "User successfully created"
+  400:
+    description: User failed to register
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "email already in use"
