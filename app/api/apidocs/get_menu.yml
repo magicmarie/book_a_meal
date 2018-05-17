@@ -1,0 +1,31 @@
+Endpoint to get the menu added by an authorised user
+---
+tags:
+  - Menu
+parameters:
+
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+
+responses:
+  200:
+    description: A menu is returned
+    schema:
+      type: object
+      properties:
+        "menu":
+          type: array
+  400:
+    description: Failed to return all meals
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "token missing"
+            - "Expired token. Please log in to get a new token"
+            - "Invalid token. Please register or login"
