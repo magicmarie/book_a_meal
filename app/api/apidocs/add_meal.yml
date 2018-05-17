@@ -44,6 +44,7 @@ responses:
           type: string
           enum:
             - "invalid, Enter name please"
+            - "Invalid characters not allowed"
             - "Customer is not authorized to create meals"
             - "Doesn't exist, Create an account please"
   400:
