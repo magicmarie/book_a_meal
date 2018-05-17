@@ -15,6 +15,9 @@ parameters:
         - "password"
         - "isAdmin"
       properties:
+        name:
+          type: "string"
+          example: "mz"
         email:
           type: "string"
           example: "mz@gmail.com"
@@ -22,6 +25,9 @@ parameters:
           type: "string"
           format: password
           example: "mz0987"
+        isAdmin:
+          type: "string"
+          example: "True"
 
 responses:
   200:
