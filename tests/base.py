@@ -16,6 +16,7 @@ class BaseTestCase(TestCase):
         """
         Create the database and commits any changes made permanently
         """
+        self.client = APP.test_client(self)
         DB.create_all()
         DB.session.commit()
 
