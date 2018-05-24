@@ -27,17 +27,17 @@ class BaseTestCase(TestCase):
         DB.session.remove()
         DB.drop_all()
 
-    def register_user(self):
+    def register_user(self, name, email, password, isAdmin):
         """
         Method for registering a user with dummy data
         """
         return self.client.post(
             'api/v1/auth/signup',
             data=json.dumps(dict(
-                name="matthew",
-                email="mariam@live.com",
-                password="magic",
-                isAdmin="True"
+                name=name,
+                email=email,
+                password=password,
+                isAdmin=isAdmin
             )
             ),
             content_type='application/json'
