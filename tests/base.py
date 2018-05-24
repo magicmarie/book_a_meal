@@ -42,3 +42,18 @@ class BaseTestCase(TestCase):
             ),
             content_type='application/json'
         )
+
+    def login_user(self, email, password):
+        """
+        Method for logging a user with dummy data
+        """
+        return self.client.post(
+            'api/v1/auth/login',
+            data=json.dumps(
+                dict(
+                    email=email,
+                    password=password
+                )
+            ),
+            content_type='application/json'
+        )

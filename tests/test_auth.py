@@ -86,3 +86,15 @@ class Test_auth(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Email in use already")
             self.assertEqual(response.status_code, 400)
+
+    def test_login(self):
+        """
+        Test a registered user  is logged in successfully through the api
+        """
+        with self.client:
+            self.register_user("marie", "marie@live.com", "marie", True)
+            response = self.login_user("marie@live.com", "marie")
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data.get('message'),
+                             "User logged in successfully")
