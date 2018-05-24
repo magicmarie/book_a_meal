@@ -1,7 +1,6 @@
 from tests.base import BaseTestCase
 from api.models import User
 from api import DB
-import unittest
 import json
 
 
@@ -12,8 +11,8 @@ class Test_auth(BaseTestCase):
         """
         with self.client:
             response = self.register_user()
-            self.assertEqual(response.data, 201)
-            self.assertEqual(response.get('status'), "success")
-            self.assertEqual(response.get('message'),
-                             "User successfully created")
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 201)
+            self.assertEqual(data.get('status'), "success")
+            self.assertEqual(data.get('message'), "User successfully created")
             self.assertEqual(response.content_type, 'application/json')

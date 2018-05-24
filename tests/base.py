@@ -34,10 +34,10 @@ class BaseTestCase(TestCase):
         return self.client.post(
             'api/v1/auth/signup',
             data=json.dumps(dict(
-                name="mariam",
-                email="marie@live.com",
+                name="matthew",
+                email="mariam@live.com",
                 password="magic",
-                isAdmin=True
+                isAdmin="True"
             )
             ),
             content_type='application/json'

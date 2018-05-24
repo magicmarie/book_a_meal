@@ -43,11 +43,10 @@ class Signup(Resource):
             return make_response(jsonify({"message": "Password is too short, < 5"}), 401)
 
         user = User.query.filter_by(email=email).first()
-        if not user:
+        if user:
             return make_response(jsonify({"message": "Email in use already"}))
         new_user = User(name=name, email=email,
                         password=password, isAdmin=isAdmin)
-        print("mmmmmmmmmmmmmmmmmmmmm")
         DB.session.add(new_user)
         DB. session.commit()
         return make_response(jsonify({"status": "success", "message": "User successfully created"}), 201)
