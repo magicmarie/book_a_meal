@@ -17,6 +17,12 @@ class User(DB.Model):
     orders = DB.relationship('Order', backref='users')
     meals = DB.relationship('Meal', backref='users')
 
+    def __init__(self, name, email, password, isAdmin):
+        self.name = name
+        self.email = email
+        self.password = password
+        self.isAdmin = isAdmin
+
     def __repr__(self):
         return "userId:{} name:{} email:{} isAdmin:{} orders:{}".format(self.userId, self.name, self.email, self.isAdmin, self.orders)
 

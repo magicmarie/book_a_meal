@@ -34,7 +34,7 @@ class Signup(Resource):
             return make_response(jsonify({"message": "Invalid characters not allowed"}))
 
         if not re.match(r"([\w\.-]+)@([\w\.-]+)(\.[\w\.]+$)", email):
-            return make_response(jsonify({"message": "Enter valid email "}), 401)
+            return make_response(jsonify({"message": "Enter valid email"}), 401)
 
         if password.strip() == "":
             return make_response(jsonify({"message": "Enter password"}), 401)
@@ -44,7 +44,7 @@ class Signup(Resource):
 
         user = User.query.filter_by(email=email).first()
         if user:
-            return make_response(jsonify({"message": "Email in use already"}))
+            return make_response(jsonify({"message": "Email in use already"}), 400)
         new_user = User(name=name, email=email,
                         password=password, isAdmin=isAdmin)
         DB.session.add(new_user)
