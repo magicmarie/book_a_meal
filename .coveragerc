@@ -25,6 +25,7 @@ omit=
     *hmac.py*
     *itsdangerous.py*
     *six.py*
+    *typing.py*
     *socketserver.py*
     */chardet*/*
     *certifi*/*
