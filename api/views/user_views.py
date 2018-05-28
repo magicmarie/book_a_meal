@@ -2,9 +2,11 @@ from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
 import re
 import json
+import jwt
 from . import users
+#from api.models import generate_token
 
-from api.models import User, DB
+from api.models import User, DB, generate_token
 
 api = Api(users)
 
@@ -31,7 +33,7 @@ class Signup(Resource):
             return make_response(jsonify({"message": "invalid, Enter name please"}), 401)
 
         if re.compile('[!@#$%^&*:;?><.0-9]').match(name):
-            return make_response(jsonify({"message": "Invalid characters not allowed"}))
+            return make_response(jsonify({"message": "Invalid characters not allowed"}), 401)
 
         if not re.match(r"([\w\.-]+)@([\w\.-]+)(\.[\w\.]+$)", email):
             return make_response(jsonify({"message": "Enter valid email"}), 401)
@@ -44,7 +46,7 @@ class Signup(Resource):
 
         user = User.query.filter_by(email=email).first()
         if user:
-            return make_response(jsonify({"message": "Email in use already"}), 400)
+            return make_response(jsonify({"message": "Email in use already"}), 401)
         new_user = User(name=name, email=email,
                         password=password, isAdmin=isAdmin)
         DB.session.add(new_user)
@@ -53,3 +55,30 @@ class Signup(Resource):
 
 
 api.add_resource(Signup, '/api/v1/auth/signup')
+
+
+class Login(Resource):
+    def post(self):
+        """
+        Allows users to login to their accounts
+        """
+        parser = reqparse.RequestParser()
+        parser.add_argument('email', type=str, required=True)
+        parser.add_argument('password', type=str, required=True)
+
+        args = parser.parse_args()
+        email = args['email']
+        password = args['password']
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return make_response(jsonify({"message": "User does not exist"}), 401)
+        if email == user.email and password == user.password:
+            access_token = generate_token(user.id, user.isAdmin)
+            return make_response(jsonify({"token": access_token,
+                                          "message": "User logged in successfully"
+                                          }), 200)
+        return make_response(jsonify({"message": "wrong password"}), 401)
+
+
+api.add_resource(Login, '/api/v1/auth/login')
