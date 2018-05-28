@@ -39,6 +39,7 @@ class Test_auth(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Invalid characters not allowed")
+            self.assertEqual(response.status_code, 401)
 
     def test_missing_password_details(self):
         """
@@ -85,7 +86,33 @@ class Test_auth(BaseTestCase):
                 "marie", "marie@gmail.com", "marie", True)
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Email in use already")
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
+
+    def test_invalid_email_details(self):
+        """
+        Test a user with invalid login details
+        """
+        with self.client:
+            self.register_user("marie", "marie@live.com", "marie", True)
+            # wrong email
+            response = self.login_user("mariam@live.com", "marie")
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(data.get('message'),
+                             "User does not exist")
+
+    def test_invalid_password_details(self):
+        """
+        Test a user with invalid login details
+        """
+        with self.client:
+            self.register_user("marie", "marie@live.com", "marie", True)
+            # wrong password
+            response = self.login_user("marie@live.com", "maries")
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(data.get('message'),
+                             "wrong password")
 
     def test_login(self):
         """
