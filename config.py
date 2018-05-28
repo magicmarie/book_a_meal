@@ -1,3 +1,4 @@
+"""configurations for app"""
 import os
 
 
@@ -7,7 +8,6 @@ class BaseConfig(object):
     """
     TESTING = False
     DEBUG = False
-    SECRET_KEY = os.urandom(24)
     # Put any configurations here that are common across all environments
 
 
@@ -21,7 +21,10 @@ class DevelopmentConfig(BaseConfig):
     """
     Development configurations
     """
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:magic@localhost/bookAmeal"
+    # SQLALCHEMY_DATABASE_URI = "postgresql://postgres:magic@localhost/BookAmeal"
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    SQLALCHEMY_DATABASE_URI = os.path.join(
+        BASE_DIR, "postgresql://postgres:magic@localhost/BookAmeal")
     DEBUG = True
 
 
@@ -40,4 +43,4 @@ app_config = {
 }
 
 if __name__ == '__main__':
-    app_config['testing']
+    app_config['development']
