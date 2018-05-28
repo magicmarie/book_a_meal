@@ -57,3 +57,27 @@ class BaseTestCase(TestCase):
             ),
             content_type='application/json'
         )
+
+    def get_token(self):
+        """
+        Returns a user token
+        """
+        response = self.login_user("marie@gmail.com", "marie")
+        data = json.loads(response.data.decode())
+        return data['token']
+
+    def add_meal(self, token, meal_name, price):
+        """
+        Function to create a meal
+        """
+        return self.client.post(
+            'api/v1/meals',
+            data=json.dumps(
+                dict(
+                    meal_name=meal_name,
+                    price=price
+                )
+            ),
+            content_type='application/json',
+            headers=({"token": token})
+        )
