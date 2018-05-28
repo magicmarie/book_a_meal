@@ -1,5 +1,5 @@
 """control properties of the user, order, meal and menu objects"""
-from api import DB
+from api import DB, APP
 import jwt
 import uuid
 from datetime import datetime, timedelta
@@ -83,7 +83,7 @@ def generate_token(user_id, isAdmin):
         # create the byte string token using the payload and the SECRET key
         jwt_string = jwt.encode(
             payload,
-            current_app.config.get('SECRET_KEY'),
+            APP.config['SECRET_KEY'],
             algorithm='HS256'
         ).decode('UTF-8')
         return jwt_string
@@ -101,4 +101,4 @@ def decode_token(token):
     except jwt.ExpiredSignatureError:
         return {"status": "Failure", "message": "Expired token. Please log in to get a new token"}
     except jwt.InvalidTokenError:
-        return {"status": "Failure", "message": "Invalid token. Please register or login"}
+        return {"status": "Failure", "message": "Invalid token. Please register and login"}
