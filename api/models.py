@@ -1,7 +1,6 @@
 """control properties of the user, order, meal and menu objects"""
 from api import DB, APP
 import jwt
-import uuid
 from datetime import datetime, timedelta
 from flask import current_app
 
@@ -9,13 +8,10 @@ from flask import current_app
 class User(DB.Model):
     __tablename__ = "users"
     id = DB.Column(DB.Integer, primary_key=True)
-    userId = DB.Column(DB.Integer, unique=True)
     name = DB.Column(DB.String(50))
     email = DB.Column(DB.String, unique=True)
     password = DB.Column(DB.String)
-    isAdmin = DB.Column(DB.Boolean, default=False)
-    orders = DB.relationship('Order', backref='users')
-    meals = DB.relationship('Meal', backref='users')
+    isAdmin = DB.Column(DB.String, default=False)
 
     def __init__(self, name, email, password, isAdmin):
         self.name = name
@@ -24,47 +20,53 @@ class User(DB.Model):
         self.isAdmin = isAdmin
 
     def __repr__(self):
-        return "userId:{} name:{} email:{} isAdmin:{} orders:{}".format(self.userId, self.name, self.email, self.isAdmin, self.orders)
+        return "id:{} name:{} email:{} isAdmin:{}".format(self.userId,
+                                                          self.name,
+                                                          self.email,
+                                                          self.isAdmin)
 
 
 class Order(DB.Model):
     __tablename__ = "orders"
     id = DB.Column(DB.Integer, primary_key=True)
-    orderId = DB.Column(DB.Integer, unique=True)
     mealId = DB.Column(DB.String(50))
-    userId = DB.Column(DB.Integer, DB.ForeignKey("users.userId"))
-    menuName = DB.Column(DB.String(50), DB.ForeignKey("menus.menuName"))
+    userId = DB.Column(DB.Integer, DB.ForeignKey("users.id"))
 
     def __repr__(self):
-        return "orderId:{} mealId:{} userId:{}".format(self.orderId, self.mealId, self.userId)
+        return "id:{} mealId:{} userId:{}".format(self.orderId,
+                                                  self.mealId,
+                                                  self.userId)
 
 
 class Meal(DB.Model):
     __tablename__ = "meals"
     id = DB.Column(DB.Integer, primary_key=True)
-    mealId = DB.Column(DB.Integer, unique=True)
-    mealName = DB.Column(DB.String(50), unique=True)
+    meal_name = DB.Column(DB.String(50), unique=True)
     price = DB.Column(DB.Integer)
-    userId = DB.Column(DB.Integer, DB.ForeignKey("users.userId"))
-    menus = DB.relationship('Menu', backref='meals')
+    userId = DB.Column(DB.Integer, DB.ForeignKey("users.id"))
+    user = DB.relationship('User', backref='meals')
 
     def __repr__(self):
-        return "mealId:{} mealName:{} price:{} userId:{} menus:{}".format(self.mealId, self.mealName, self.price, self.userId, self.menus)
+        return "id:{} meal_name:{} price:{} userId:{}".format(self.id,
+                                                              self.meal_name,
+                                                              self.price,
+                                                              self.userId)
 
 
 class Menu(DB.Model):
     __tablename__ = "menus"
     id = DB.Column(DB.Integer, primary_key=True)
-    menuId = DB.Column(DB.Integer, unique=True)
     menuName = DB.Column(DB.String(50))
-    mealId = DB.Column(DB.Integer, DB.ForeignKey("meals.mealId"))
-    orders = DB.relationship('Order', backref='menus')
+    mealId = DB.Column(DB.Integer, DB.ForeignKey("meals.id"))
+    userId = DB.Column(DB.Integer, DB.ForeignKey("users.id"))
+    meal = DB.relationship('Meal', backref='meals')
+    user = DB.relationship('User', backref='users')
 
     def __repr__(self):
-        return "menuId:{} menuName:{} mealId:{} orders:{}".format(self.menuId, self.menuName, self.mealId, self.orders)
-
-
-DB.create_all()
+        return "id:{} menuName:{} mealId:{} userId:{}".format(self.id,
+                                                              self.menuName,
+                                                              self.mealId,
+                                                              self.userId)
 
 
 def generate_token(user_id, isAdmin):
@@ -94,11 +96,19 @@ def generate_token(user_id, isAdmin):
 
 
 def decode_token(token):
-    """Decode the access token to get the payload and return user_id and isAdmin field results"""
+    """
+    Decode the access token to get the payload and
+    return user_id and isAdmin field results
+    """
     try:
         payload = jwt.decode(token, current_app.config.get('SECRET_KEY'))
-        return {"id": payload['sub'], "isAdmin": payload['isAdmin'], "status": "Success"}
-    except jwt.ExpiredSignatureError:
-        return {"status": "Failure", "message": "Expired token. Please log in to get a new token"}
+        return {
+            "id": payload['sub'],
+            "isAdmin": payload['isAdmin'],
+            "status": "Success"
+        }
     except jwt.InvalidTokenError:
-        return {"status": "Failure", "message": "Invalid token. Please register and login"}
+        return {
+            "status": "Failure",
+            "message": "Invalid token. Please register or login"
+        }

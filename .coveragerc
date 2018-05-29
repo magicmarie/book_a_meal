@@ -37,3 +37,4 @@ omit=
     *requests*/*
     *urllib*/*
     *yaml*/*
+    *psy*/*
