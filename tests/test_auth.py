@@ -12,7 +12,7 @@ class Test_auth(BaseTestCase):
         """
         with self.client:
             response = self.register_user(
-                "marie", "marie@gmail.com", "marie", True)
+                "marie", "marie@gmail.com", "marie", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
             self.assertEqual(data.get('status'), "success")
@@ -24,7 +24,8 @@ class Test_auth(BaseTestCase):
         Test that the name details are set when sending request
         """
         with self.client:
-            response = self.register_user("", "marie@live.com", "marie", True)
+            response = self.register_user(
+                "", "marie@live.com", "marie", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "invalid, Enter name please")
             self.assertEqual(response.status_code, 401)
@@ -35,7 +36,7 @@ class Test_auth(BaseTestCase):
         """
         with self.client:
             response = self.register_user(
-                "@#$%&", "marie@live.com", "marie", True)
+                "@#$%&", "marie@live.com", "marie", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Invalid characters not allowed")
@@ -46,7 +47,7 @@ class Test_auth(BaseTestCase):
         Test that the password details are set when sending request
         """
         with self.client:
-            response = self.register_user("name", "marie@live.com", "", True)
+            response = self.register_user("name", "marie@live.com", "", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Enter password")
             self.assertEqual(response.status_code, 401)
@@ -57,7 +58,7 @@ class Test_auth(BaseTestCase):
         """
         with self.client:
             response = self.register_user(
-                "name", "marie@live.com", "mari", True)
+                "name", "marie@live.com", "mari", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Password is too short, < 5")
             self.assertEqual(response.status_code, 401)
@@ -68,7 +69,7 @@ class Test_auth(BaseTestCase):
         """
         with self.client:
             response = self.register_user(
-                "name", "marielive.com", "marie", True)
+                "marie", "marielive.com", "marie", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Enter valid email")
             self.assertEqual(response.status_code, 401)
@@ -77,13 +78,13 @@ class Test_auth(BaseTestCase):
         """
         Test that the user already exists with similar email.
         """
-        user = User("marie", "marie@gmail.com", "marie", True)
+        user = User("marie", "marie@gmail.com", "marie", "True")
         DB.session.add(user)
         DB.session.commit()
 
         with self.client:
             response = self.register_user(
-                "marie", "marie@gmail.com", "marie", True)
+                "marie", "marie@gmail.com", "marie", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Email in use already")
             self.assertEqual(response.status_code, 401)
@@ -93,7 +94,7 @@ class Test_auth(BaseTestCase):
         Test a user with invalid login details
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", True)
+            self.register_user("marie", "marie@live.com", "marie", "True")
             # wrong email
             response = self.login_user("mariam@live.com", "marie")
             data = json.loads(response.data.decode())
@@ -106,7 +107,7 @@ class Test_auth(BaseTestCase):
         Test a user with invalid login details
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", True)
+            self.register_user("marie", "marie@live.com", "marie", "True")
             # wrong password
             response = self.login_user("marie@live.com", "maries")
             data = json.loads(response.data.decode())
@@ -119,7 +120,7 @@ class Test_auth(BaseTestCase):
         Test a registered user  is logged in successfully through the api
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", True)
+            self.register_user("marie", "marie@live.com", "marie", "True")
             response = self.login_user("marie@live.com", "marie")
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)

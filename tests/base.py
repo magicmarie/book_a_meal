@@ -62,7 +62,7 @@ class BaseTestCase(TestCase):
         """
         Returns a user token
         """
-        response = self.login_user("marie@gmail.com", "marie")
+        response = self.login_user("marie@live.com", "marie")
         data = json.loads(response.data.decode())
         return data['token']
 
