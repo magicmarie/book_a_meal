@@ -1,12 +1,12 @@
-from flask import jsonify, make_response
-from flask_restful import Resource, reqparse, Api
 import re
 import json
 import jwt
-from . import users
-#from api.models import generate_token
+from flask import jsonify, make_response
+from flask_restful import Resource, reqparse, Api
 
-from api.models import User, DB, generate_token
+from . import users
+from api.models import User, generate_token
+from api import DB
 
 api = Api(users)
 
@@ -21,7 +21,7 @@ class Signup(Resource):
         parser.add_argument('name', type=str, required=True)
         parser.add_argument('email', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
-        parser.add_argument('isAdmin', type=bool, required=True)
+        parser.add_argument('isAdmin', type=str, required=True)
 
         args = parser.parse_args()
         name = args['name']
@@ -30,28 +30,43 @@ class Signup(Resource):
         isAdmin = args['isAdmin']
 
         if name.strip() == "" or len(name.strip()) < 2:
-            return make_response(jsonify({"message": "invalid, Enter name please"}), 401)
+            return make_response(jsonify({
+                "message": "invalid, Enter name please"
+            }), 401)
 
         if re.compile('[!@#$%^&*:;?><.0-9]').match(name):
-            return make_response(jsonify({"message": "Invalid characters not allowed"}), 401)
+            return make_response(jsonify({
+                "message": "Invalid characters not allowed"
+            }), 401)
 
         if not re.match(r"([\w\.-]+)@([\w\.-]+)(\.[\w\.]+$)", email):
-            return make_response(jsonify({"message": "Enter valid email"}), 401)
+            return make_response(jsonify({
+                "message": "Enter valid email"
+            }), 401)
 
         if password.strip() == "":
-            return make_response(jsonify({"message": "Enter password"}), 401)
+            return make_response(jsonify({
+                "message": "Enter password"
+            }), 401)
 
         if len(password) < 5:
-            return make_response(jsonify({"message": "Password is too short, < 5"}), 401)
+            return make_response(jsonify({
+                "message": "Password is too short, < 5"
+            }), 401)
 
         user = User.query.filter_by(email=email).first()
         if user:
-            return make_response(jsonify({"message": "Email in use already"}), 401)
+            return make_response(jsonify({
+                "message": "Email in use already"
+            }), 401)
         new_user = User(name=name, email=email,
                         password=password, isAdmin=isAdmin)
         DB.session.add(new_user)
         DB. session.commit()
-        return make_response(jsonify({"status": "success", "message": "User successfully created"}), 201)
+        return make_response(jsonify({
+            "status": "success",
+            "message": "User successfully created"
+        }), 201)
 
 
 api.add_resource(Signup, '/api/v1/auth/signup')
@@ -72,13 +87,18 @@ class Login(Resource):
 
         user = User.query.filter_by(email=email).first()
         if not user:
-            return make_response(jsonify({"message": "User does not exist"}), 401)
+            return make_response(jsonify({
+                "message": "User does not exist"
+            }), 401)
         if email == user.email and password == user.password:
             access_token = generate_token(user.id, user.isAdmin)
-            return make_response(jsonify({"token": access_token,
-                                          "message": "User logged in successfully"
-                                          }), 200)
-        return make_response(jsonify({"message": "wrong password"}), 401)
+            return make_response(jsonify({
+                "token": access_token,
+                "message": "User logged in successfully"
+            }), 200)
+        return make_response(jsonify({
+            "message": "wrong password"
+        }), 401)
 
 
 api.add_resource(Login, '/api/v1/auth/login')
