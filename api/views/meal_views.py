@@ -12,7 +12,7 @@ from api import DB
 api = Api(meals)
 
 
-class MealsList(Resource):
+class Mealsdb(Resource):
     def post(self):
         """
         Allows authenticated admin to create a meal
@@ -32,8 +32,7 @@ class MealsList(Resource):
             return make_response(jsonify({
                 "message": decoded["message"]
             }), 400)
-        user = User.query.filter_by(
-            id=decoded['id'], isAdmin="True").first()
+        user = User.query.filter_by(id=decoded['id'], isAdmin="True").first()
         if not user:
             return make_response(jsonify({
                 "message": "Customer is not authorized to create meals"
@@ -61,5 +60,38 @@ class MealsList(Resource):
             'message': 'Meal successfully created'
         }), 201)
 
+    def get(self):
+        """
+        Return all meals created by authenticated admin
+        token is required to get admin Id
+        """
+        parser = reqparse.RequestParser()
+        parser.add_argument('token', location='headers')
+        args = parser.parse_args()
+        if not args['token']:
+            return make_response(jsonify({"message": "Token is missing"}), 400)
+        decoded = decode_token(args['token'])
+        if decoded["status"] == "Failure":
+            return make_response(jsonify({"message": decoded["message"]}), 400)
 
-api.add_resource(MealsList, '/api/v1/meals')
+        user = User.query.filter_by(id=decoded['id'], isAdmin="True").first()
+        if not user:
+            return make_response(jsonify({
+                "message": "Customer is not authorized to view meals"
+            }), 401)
+        meals = Meal.query.filter_by(userId=decoded['id']).all()
+        meal_items = []
+        for meal in meals:
+            meal_data = {
+                "id": meal.id,
+                "price": meal.price,
+                "meal_name": meal.meal_name,
+                "userId": meal.userId
+            }
+            meal_items.append(meal_data)
+        return make_response(jsonify({
+            "meal_items": meal_items
+        }), 200)
+
+
+api.add_resource(Mealsdb, '/api/v1/meals')
