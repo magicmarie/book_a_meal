@@ -81,3 +81,9 @@ class BaseTestCase(TestCase):
             content_type='application/json',
             headers=({"token": token})
         )
+
+    def get_meals(self, token):
+        """
+        function to return meals
+        """
+        return self.client.get('api/v1/meals', headers=({"token": token}))
