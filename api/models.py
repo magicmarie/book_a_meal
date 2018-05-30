@@ -110,5 +110,5 @@ def decode_token(token):
     except jwt.InvalidTokenError:
         return {
             "status": "Failure",
-            "message": "Invalid token. Please register or login"
+            "message": "Invalid token.Please login"
         }
