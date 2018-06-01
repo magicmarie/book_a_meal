@@ -87,3 +87,9 @@ class BaseTestCase(TestCase):
         function to return meals
         """
         return self.client.get('api/v1/meals', headers=({"token": token}))
+
+    def delete_meal(self, token, id):
+        """
+        function to delete a meal
+        """
+        return self.client.delete('api/v1/meals/{}'.format(id), headers=({"token": token}))
