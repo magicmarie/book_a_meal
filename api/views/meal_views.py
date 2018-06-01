@@ -95,3 +95,37 @@ class Mealsdb(Resource):
 
 
 api.add_resource(Mealsdb, '/api/v1/meals')
+
+
+class MealOne(Resource):
+    def delete(self, meal_id):
+        """
+        Deletes a meal from the database if it exists
+        token is required to get admin Id
+        """
+        parser = reqparse.RequestParser()
+        parser.add_argument('token', location='headers')
+        args = parser.parse_args()
+        if not args['token']:
+            return make_response(jsonify({"message": "Token is missing"}), 400)
+        decoded = decode_token(args['token'])
+        if decoded["status"] == "Failure":
+            return make_response(jsonify({"message": decoded["message"]}), 400)
+
+        user = User.query.filter_by(id=decoded['id'],  isAdmin="True").first()
+        if not user:
+            return make_response(jsonify({
+                "message": "Customer is not allowed to do this"
+            }), 401)
+
+        meal = Meal.query.filter_by(userId=decoded['id'], id=meal_id).first()
+        if not meal:
+            return make_response(jsonify({
+                "message": "Meal not found"
+            }), 404)
+        DB.session.delete(meal)
+        DB.session.commit()
+        return make_response(jsonify({"message": "Meal deleted succesfully"}), 200)
+
+
+api.add_resource(MealOne, '/api/v1/meals/<int:meal_id>')

@@ -62,7 +62,7 @@ class Signup(Resource):
         new_user = User(name=name, email=email,
                         password=password, isAdmin=isAdmin)
         DB.session.add(new_user)
-        DB. session.commit()
+        DB.session.commit()
         return make_response(jsonify({
             "status": "success",
             "message": "User successfully created"
