@@ -148,3 +148,85 @@ class Test_meal_options(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
+
+    def test_delete_meal(self):
+        """
+        Test that an authenticated admin can delete a meal
+        """
+        with self.client:
+            self.register_user("marie", "marie@live.com", "marie", "True")
+            token = self.get_token()
+            self.add_meal(token, "pilawo", 15000)
+            get_meal = self.get_meals(token)
+            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
+            print(id)
+            response = self.delete_meal(token, id)
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertIn("Meal deleted succesfully", data.get('message'))
+
+    def test_invalid_token_delete(self):
+        """
+        Test for valid token when sending delete request
+        """
+        with self.client:
+            self.register_user("marie", "marie@live.com", "marie", "True")
+            token = self.get_token()
+            self.add_meal(token, "pilawo", 15000)
+            get_meal = self.get_meals(token)
+            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
+            response = self.delete_meal("12345", id)
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(data.get('message'), "Invalid token.Please login")
+
+    def test_token_missing_delete(self):
+        """
+        Test for token when delete request
+        """
+        with self.client:
+            self.register_user("marie", "marie@live.com", "marie", "True")
+            token = self.get_token()
+            self.add_meal(token, "pilawo", 15000)
+            get_meal = self.get_meals(token)
+            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
+            response = self.delete_meal("", id)
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(data.get('message'), "Token is missing")
+
+    def test_invalid_admin_delete(self):
+        """
+        Test invalid admin on deleting a meal
+        """
+
+        with self.client:
+            self.register_user("marie", "marie@live.com", "marie", "False")
+            token = self.get_token()
+            self.add_meal(token, "fries", 10000)
+            get_meal = self.get_meals(token)
+            print(get_meal)
+            id = json.loads(get_meal.data.decode())
+            print(id)
+            response = self.delete_meal(token, id)
+            data = json.loads(response.data.decode())
+            print(data)
+            self.assertEqual(data.get('message'),
+                             "Customer is not allowed to do this")
+            self.assertEqual(response.status_code, 401)
+
+    def test_wrong_admin_delete(self):
+        """
+        Test wrong admin on deleting a meal
+        """
+
+        with self.client:
+            self.register_user("marie", "marie@live.com", "marie", "True")
+            token = self.get_token()
+            self.add_meal(token, "fries", 10000)
+            get_meal = self.get_meals(token)
+            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
+            response = self.delete_meal(token, 7)
+            data = json.loads(response.data.decode())
+            self.assertEqual(data.get('message'), "Meal not found")
+            self.assertEqual(response.status_code, 404)
