@@ -58,11 +58,11 @@ class BaseTestCase(TestCase):
             content_type='application/json'
         )
 
-    def get_token(self):
+    def get_token(self, email="marie@live.com", password="marie"):
         """
         Returns a user token
         """
-        response = self.login_user("marie@live.com", "marie")
+        response = self.login_user(email, password)
         data = json.loads(response.data.decode())
         return data['token']
 
@@ -92,4 +92,26 @@ class BaseTestCase(TestCase):
         """
         function to delete a meal
         """
-        return self.client.delete('api/v1/meals/{}'.format(id), headers=({"token": token}))
+        return self.client.delete('api/v1/meals/{}'.format(id), headers=({
+            "token": token
+        }))
+
+    def put_meal(self, id, token, meal_name, price):
+        """
+        function to edit a meal
+        """
+        return self.client.put('api/v1/meals/{}'.format(id),
+                               data=json.dumps(dict(
+                                   meal_name=meal_name,
+                                   price=price
+                               )),
+                               content_type='application/json',
+                               headers=({"token": token}))
+
+    def add_menu(self, id, token):
+        """
+        function to create a menu
+        """
+        return self.client.post(
+            'api/v1/menu/{}'.format(id),
+            content_type='application/json', headers=({"token": token}))
