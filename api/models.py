@@ -20,6 +20,7 @@ class User(DB.Model):
         self.isAdmin = isAdmin
 
     def __repr__(self):
+        """defines the representation of an object"""
         return "id:{} name:{} email:{} isAdmin:{}".format(self.userId,
                                                           self.name,
                                                           self.email,
@@ -31,6 +32,9 @@ class Order(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     mealId = DB.Column(DB.String(50))
     userId = DB.Column(DB.Integer, DB.ForeignKey("users.id"))
+    adminId = DB.Column(DB.Integer, DB.ForeignKey("meals.userId"))
+    user = DB.relationship('User', backref='orders')
+    admin = DB.relationship('Meal', backref='orders')
 
     def __repr__(self):
         return "id:{} mealId:{} userId:{}".format(self.orderId,
@@ -56,17 +60,11 @@ class Meal(DB.Model):
 class Menu(DB.Model):
     __tablename__ = "menus"
     id = DB.Column(DB.Integer, primary_key=True)
-    menuName = DB.Column(DB.String(50))
     mealId = DB.Column(DB.Integer, DB.ForeignKey("meals.id"))
-    userId = DB.Column(DB.Integer, DB.ForeignKey("users.id"))
-    meal = DB.relationship('Meal', backref='meals')
-    user = DB.relationship('User', backref='users')
+    meal = DB.relationship('Meal', backref='menus')
 
     def __repr__(self):
-        return "id:{} menuName:{} mealId:{} userId:{}".format(self.id,
-                                                              self.menuName,
-                                                              self.mealId,
-                                                              self.userId)
+        return "id:{} mealId:{}".format(self.id, self.mealId)
 
 
 def generate_token(user_id, isAdmin):
