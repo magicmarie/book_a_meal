@@ -22,7 +22,6 @@ class DevelopmentConfig(BaseConfig):
     Development configurations
     """
     SQLALCHEMY_DATABASE_URI = "postgresql://postgres:magic@localhost/BookAmeal"
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:magic@localhost/book_test_db"
 
     DEBUG = True
 
