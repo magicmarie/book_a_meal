@@ -4,6 +4,7 @@ import jwt
 
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
+from flasgger.utils import swag_from
 
 from . import orders
 from api.models import User, Menu, Meal, Order, decode_token
@@ -13,6 +14,7 @@ api = Api(orders)
 
 
 class OrderPost(Resource):
+    @swag_from('../apidocs/add_order.yml')
     def post(self, meal_id):
         """
         Allows authenticated user to make an order from the menu
@@ -44,6 +46,7 @@ api.add_resource(OrderPost, '/api/v1/orders/<meal_id>')
 
 
 class OrdersGet(Resource):
+    @swag_from('../apidocs/get_orders.yml')
     def get(self):
         """
         Returns all orders made for authenticated admin
@@ -83,6 +86,7 @@ api.add_resource(OrdersGet, '/api/v1/orders')
 
 
 class OrderGet(Resource):
+    @swag_from('../apidocs/get_order.yml')
     def get(self, user_id):
         """
         Return all orders made by authenticated user
@@ -109,7 +113,8 @@ class OrderGet(Resource):
             }
             my_order_items.append(my_order_data)
         return make_response(jsonify({
-            "Orders": my_order_items, "status": "success"
+            "Orders": my_order_items, 
+            "status": "success"
         }), 200)
 
 

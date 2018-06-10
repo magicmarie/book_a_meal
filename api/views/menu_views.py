@@ -4,6 +4,7 @@ import jwt
 
 from flask import jsonify, make_response, request
 from flask_restful import Resource, reqparse, Api
+from flasgger.utils import swag_from
 
 from . import menus
 from api.models import User, Menu, Meal, decode_token
@@ -13,6 +14,7 @@ api = Api(menus)
 
 
 class MenuPost(Resource):
+    @swag_from('../apidocs/add_menu.yml')
     def post(self, meal_id):
         """
         Allows authenticated admin to create a menu by adding a meal by Id from
@@ -64,6 +66,7 @@ api.add_resource(MenuPost, '/api/v1/menu/<int:meal_id>')
 
 
 class Menus(Resource):
+    @swag_from('../apidocs/get_menu.yml')
     def get(self):
         """
         Return the menu created by authenticated admin

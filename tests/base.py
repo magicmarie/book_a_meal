@@ -115,3 +115,28 @@ class BaseTestCase(TestCase):
         return self.client.post(
             'api/v1/menu/{}'.format(id),
             content_type='application/json', headers=({"token": token}))
+
+    def get_menu(self, token):
+        """
+        function to return the menu
+        """
+        return self.client.get('api/v1/menu', headers=({"token": token}))
+
+    def add_order(self, id, token):
+        """
+        function to make an order
+        """
+        return self.client.post('api/v1/orders/{}'.format(id), headers=({"token": token}))
+
+    def get_orders(self, token):
+        """
+        function to return orders for authenticated admin
+        """
+        return self.client.get('api/v1/orders', headers=({"token": token}))
+
+
+    def get_user_orders(self, id, token):
+        """
+        function to return all orders for a customer
+        """
+        return self.client.get('api/v1/orders/{}'.format(id), headers=({"token": token}))
