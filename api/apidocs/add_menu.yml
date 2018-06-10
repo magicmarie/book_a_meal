@@ -1,0 +1,65 @@
+Endpoint to add a meal to the menu
+---
+tags:
+  - Menu
+parameters:
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: Meal id
+    type: string
+    in: path
+    required: true
+
+responses:
+  200:
+    description: Meal successfully added to menu
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal successfully added to menu"
+  409:
+    description: Meal already exists in menu
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal already exists in menu"
+  401:
+    description: Failed to add meal to menu
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "You are not allowed to add this meal to menu"
+            - "You cannot add this meal to menu"
+  404:
+    description: Meal non-existent
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal not found"
+  400:
+    description: Failed to add meal to the menu
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "token missing"
+            - "Expired token. Please log in to get a new token"
+            - "Invalid token. Please register or login"
