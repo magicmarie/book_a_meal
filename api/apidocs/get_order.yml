@@ -1,0 +1,45 @@
+Endpoint to get orders made by an authorised user
+---
+tags:
+  - Order
+parameters:
+
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: The unique id of customer
+    type: string
+    in: path
+    required: true
+
+responses:
+  200:
+    description: Order options created by a specific user are returned
+    schema:
+      type: object
+      properties:
+        "Orders":
+          type: array
+  404:
+    description: Orders non-existent
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Orders not found"
+  400:
+    description: Failed to return the orders
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "token missing"
+            - "Expired token. Please log in to get a new token"
+            - "Invalid token. Please register or login"

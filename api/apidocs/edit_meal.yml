@@ -1,0 +1,75 @@
+Endpoint to edit a specific meal by id by a registered admin
+---
+tags:
+  - Meal
+parameters:
+  - name: body
+    description: this contains edit a meal details
+    in: body
+    required: true
+  - name: id
+    description: The unique id of the meal
+    type: string
+    in: path
+    required: true
+    schema:
+      type: object
+      required:
+        - "meal_name"
+        - "price"
+      properties:
+        meal_name:
+          type: "string"
+          example: "Fish fillet"
+        price:
+          type: "integer"
+          example: 15000
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+
+responses:
+  201:
+    description: Meal successfully edited
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal updated successfully"
+  404:
+    description: Meal non existent
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal not found"
+  401:
+    description: Failed to edit meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "invalid, Enter name please"
+            - "Invalid characters not allowed"
+            - "Customer is not authorized to edit a meal"
+            - "Doesn't exist, Create an account please"
+  400:
+    description: Failed to edit meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "token missing"
+            - "Expired token. Please log in to get a new token"
+            - "Invalid token. Please register or login"
+            - "Meal name already exists"

@@ -1,0 +1,40 @@
+Endpoint to get specific orders made to a specific admin
+---
+tags:
+  - Order
+parameters:
+
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+
+responses:
+  200:
+    description: All order options made for a specific are returned
+    schema:
+      type: object
+      properties:
+        "Orders":
+          type: array
+  404:
+    description: Orders non-existent
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Orders not found"
+  400:
+    description: Failed to return the orders
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "token missing"
+            - "Expired token. Please log in to get a new token"
+            - "Invalid token. Please register or login"
