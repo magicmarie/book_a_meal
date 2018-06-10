@@ -48,7 +48,7 @@ class Test_meal_options(BaseTestCase):
         """
         with self.client:
             self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
+            self.get_token()
             response = self.add_meal("", "pilawo", 15000)
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
@@ -224,8 +224,6 @@ class Test_meal_options(BaseTestCase):
             self.register_user("marie", "marie@live.com", "marie", "True")
             token = self.get_token()
             self.add_meal(token, "fries", 10000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
             response = self.delete_meal(token, 7)
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal not found")

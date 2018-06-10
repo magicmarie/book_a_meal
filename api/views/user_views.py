@@ -3,6 +3,7 @@ import json
 import jwt
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
+from flasgger.utils import swag_from
 
 from . import users
 from api.models import User, generate_token, decode_token
@@ -12,6 +13,7 @@ api = Api(users)
 
 
 class Signup(Resource):
+    @swag_from('../apidocs/signup.yml')
     def post(self):
         """
         Allows users(admins and customers) to create accounts
@@ -73,6 +75,7 @@ api.add_resource(Signup, '/api/v1/auth/signup')
 
 
 class Login(Resource):
+    @swag_from('../apidocs/login.yml')
     def post(self):
         """
         Allows users to login to their accounts

@@ -4,6 +4,7 @@ import jwt
 
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
+from flasgger.utils import swag_from
 
 from . import meals
 from api.models import User, Meal, decode_token
@@ -13,6 +14,7 @@ api = Api(meals)
 
 
 class Mealsdb(Resource):
+    @swag_from('../apidocs/add_meal.yml')
     def post(self):
         """
         Allows authenticated admin to create a meal
@@ -33,7 +35,6 @@ class Mealsdb(Resource):
                 "message": decoded["message"]
             }), 400)
         user = User.query.filter_by(id=decoded['id'], isAdmin="True").first()
-        print(user)
         if not user:
             return make_response(jsonify({
                 "message": "Customer is not authorized to create meals"
@@ -50,7 +51,6 @@ class Mealsdb(Resource):
             }), 401)
 
         meal = Meal.query.filter_by(meal_name=meal_name, userId=decoded['id']).first()
-        print(meal)
         if meal:
             return make_response(jsonify({
                 "message": 'Meal name already exists'
@@ -63,6 +63,7 @@ class Mealsdb(Resource):
                 'message': 'Meal successfully created'
             }), 201)
 
+    @swag_from('../apidocs/get_meals.yml')
     def get(self):
         """
         Return all meals created by authenticated admin
@@ -101,6 +102,7 @@ api.add_resource(Mealsdb, '/api/v1/meals')
 
 
 class MealOne(Resource):
+    @swag_from('../apidocs/delete_meal.yml')
     def delete(self, meal_id):
         """
         Deletes a meal from the database if it exists
@@ -130,6 +132,7 @@ class MealOne(Resource):
         DB.session.commit()
         return make_response(jsonify({"message": "Meal deleted succesfully"}), 200)
 
+    @swag_from('../apidocs/edit_meal.yml')
     def put(self, meal_id):
         """
         Allows admin to edit the meal details from the meals_list if it exists.
