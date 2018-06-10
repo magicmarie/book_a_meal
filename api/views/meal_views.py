@@ -33,6 +33,7 @@ class Mealsdb(Resource):
                 "message": decoded["message"]
             }), 400)
         user = User.query.filter_by(id=decoded['id'], isAdmin="True").first()
+        print(user)
         if not user:
             return make_response(jsonify({
                 "message": "Customer is not authorized to create meals"
@@ -48,17 +49,19 @@ class Mealsdb(Resource):
                 "message": "Invalid characters not allowed"
             }), 401)
 
-        meal = Meal.query.filter_by(meal_name=meal_name).first()
+        meal = Meal.query.filter_by(meal_name=meal_name, userId=decoded['id']).first()
+        print(meal)
         if meal:
             return make_response(jsonify({
                 "message": 'Meal name already exists'
             }), 400)
-        new_meal = Meal(meal_name=meal_name, price=price, userId=decoded['id'])
-        DB.session.add(new_meal)
-        DB. session.commit()
-        return make_response(jsonify({
-            'message': 'Meal successfully created'
-        }), 201)
+        else:
+            new_meal = Meal(meal_name=meal_name, price=price, userId=decoded['id'])
+            DB.session.add(new_meal)
+            DB. session.commit()
+            return make_response(jsonify({
+                'message': 'Meal successfully created'
+            }), 201)
 
     def get(self):
         """

@@ -32,7 +32,7 @@ class OrderPost(Resource):
             return make_response(jsonify({
                 "meassage": "Meal does not exist"
             }), 404)
-        new_order = Order(mealId=meal_id, userId=decoded['id'])
+        new_order = Order(mealId=meal_id, userId=decoded['id'], adminId=order.meal.userId)
         DB.session.add(new_order)
         DB.session.commit()
         return make_response(jsonify({
@@ -57,7 +57,6 @@ class OrdersGet(Resource):
         decoded = decode_token(args['token'])
         if decoded["status"] == "Failure":
             return make_response(jsonify({"message": decoded["message"]}), 400)
-        my_orders = []
         total = 0
         user = User.query.filter_by(id=decoded['id'], isAdmin="True").first()
         if not user:
@@ -69,13 +68,14 @@ class OrdersGet(Resource):
         for order in orderz:
             order_data = {
                 "id": order.id,
-                "mealId": order.meal_id,
+                "mealId": order.mealId,
                 "userId": order.userId
             }
             order_items.append(order_data)
-            total += meal['price']
+            total += order.meal.price
         return make_response(jsonify({
-            "order_items": order_items
+            "order_items": order_items,
+            "Total": total
         }), 200)
 
 
@@ -101,13 +101,13 @@ class OrderGet(Resource):
         my_order_items = []
         if not order:
             return make_response(jsonify({"message": "No orders found"}), 404)
-        for my_order_item in order:
+        for item in order:
             my_order_data = {
-                "id": order.id,
-                "mealId": order.meal_id,
-                "userId": order.userId
+                "id": item.id,
+                "mealId": item.mealId,
+                "userId": item.userId
             }
-            my_order_items.append(my_order_item)
+            my_order_items.append(my_order_data)
         return make_response(jsonify({
             "Orders": my_order_items, "status": "success"
         }), 200)

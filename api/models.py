@@ -21,7 +21,7 @@ class User(DB.Model):
 
     def __repr__(self):
         """defines the representation of an object"""
-        return "id:{} name:{} email:{} isAdmin:{}".format(self.userId,
+        return "id:{} name:{} email:{} isAdmin:{}".format(self.id,
                                                           self.name,
                                                           self.email,
                                                           self.isAdmin)
@@ -30,11 +30,11 @@ class User(DB.Model):
 class Order(DB.Model):
     __tablename__ = "orders"
     id = DB.Column(DB.Integer, primary_key=True)
-    mealId = DB.Column(DB.String(50))
+    mealId = DB.Column(DB.Integer, DB.ForeignKey("meals.id"))
     userId = DB.Column(DB.Integer, DB.ForeignKey("users.id"))
-    adminId = DB.Column(DB.Integer, DB.ForeignKey("meals.userId"))
+    adminId = DB.Column(DB.Integer)
     user = DB.relationship('User', backref='orders')
-    admin = DB.relationship('Meal', backref='orders')
+    meal = DB.relationship('Meal', backref='orders')
 
     def __repr__(self):
         return "id:{} mealId:{} userId:{}".format(self.orderId,
@@ -45,7 +45,7 @@ class Order(DB.Model):
 class Meal(DB.Model):
     __tablename__ = "meals"
     id = DB.Column(DB.Integer, primary_key=True)
-    meal_name = DB.Column(DB.String(50), unique=True)
+    meal_name = DB.Column(DB.String(50))
     price = DB.Column(DB.Integer)
     userId = DB.Column(DB.Integer, DB.ForeignKey("users.id"))
     user = DB.relationship('User', backref='meals')

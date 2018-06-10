@@ -5,7 +5,7 @@ from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
 
 from . import users
-from api.models import User, generate_token
+from api.models import User, generate_token, decode_token
 from api import DB
 
 api = Api(users)
@@ -94,6 +94,7 @@ class Login(Resource):
             access_token = generate_token(user.id, user.isAdmin)
             return make_response(jsonify({
                 "token": access_token,
+                "user_id": decode_token(access_token)['id'],
                 "message": "User logged in successfully"
             }), 200)
         return make_response(jsonify({

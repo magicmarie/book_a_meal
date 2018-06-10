@@ -2,7 +2,7 @@ import re
 import json
 import jwt
 
-from flask import jsonify, make_response
+from flask import jsonify, make_response, request
 from flask_restful import Resource, reqparse, Api
 
 from . import menus
@@ -40,7 +40,7 @@ class MenuPost(Resource):
             return make_response(jsonify({
                 "message": "Meal not found"
             }), 404)
-
+        
         mymeal = Menu.query.filter_by(mealId=meal_id).first()
         if not mymeal:
             menu = Menu(mealId=meal_id)
@@ -85,12 +85,15 @@ class Menus(Resource):
             }))
         menu = Menu.query.all()
         menu_items = []
+        if not menu:
+            return make_response(jsonify({
+                "message": "Menu name does not exist"
+            }))
         for menu_item in menu:
             menu_data = {
-                "id": menu_item.id,
-                "price": menu_item.meal.price,
+                "meal_id": menu_item.meal.id,
                 "meal_name": menu_item.meal.meal_name,
-                "AdminId": menu_item.meal.userId
+                "price": menu_item.meal.price
             }
             menu_items.append(menu_data)
         return make_response(jsonify({"menu": menu_items}), 200)
