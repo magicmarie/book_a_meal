@@ -76,6 +76,7 @@ class OrdersGet(Resource):
             }
             order_items.append(order_data)
             total += order.meal.price
+            print(order_items)
         return make_response(jsonify({
             "order_items": order_items,
             "Total": total

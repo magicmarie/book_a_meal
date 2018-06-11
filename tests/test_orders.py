@@ -33,7 +33,7 @@ class Test_order_options(BaseTestCase):
         response = self.get_orders(token)
         data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 200)
-        self.assertIn(u"1", data['order_items'][0]['mealId'])
+        self.assertEqual(data['order_items'][0]['mealId'], 1)
 
     def test_get_user_orders(self):
         """
