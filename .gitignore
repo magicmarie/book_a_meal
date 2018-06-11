@@ -106,5 +106,4 @@ wenv/
 # vscode
 .vscode/
 
-# migrations
-migrations/
+    
