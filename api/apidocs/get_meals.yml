@@ -14,10 +14,22 @@ responses:
   200:
     description: All Meal options created by specific admin are returned
     schema:
-      type: object
-      properties:
-        "meal_items":
-          type: array
+     type: object
+     properties:
+      meal_items:
+        type: array
+        items: 
+          type: object
+          properties:
+            id:
+              type: integer
+            price:
+              type: integer
+            meal_name:
+              type: string
+            user_id:
+              type: integer
+
   401:
     description: Failed to return all meals
     schema:

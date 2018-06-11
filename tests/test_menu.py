@@ -33,5 +33,5 @@ class Test_menu_options(BaseTestCase):
             self.add_menu(id, token)
             response = self.add_menu(id, token)
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 409)
             self.assertIn("Meal already exists in menu",data.get('message'))
