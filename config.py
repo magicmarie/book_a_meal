@@ -46,4 +46,4 @@ app_config = {
 }
 
 if __name__ == '__main__':
-    app_config['development']
+    app_config['production']
