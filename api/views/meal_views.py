@@ -1,6 +1,4 @@
 import re
-import json
-import jwt
 
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
@@ -50,13 +48,15 @@ class Mealsdb(Resource):
                 "message": "Invalid characters not allowed"
             }), 401)
 
-        meal = Meal.query.filter_by(meal_name=meal_name, userId=decoded['id']).first()
+        meal = Meal.query.filter_by(meal_name=meal_name, 
+        userId=decoded['id']).first()
         if meal:
             return make_response(jsonify({
                 "message": 'Meal name already exists'
             }), 400)
         else:
-            new_meal = Meal(meal_name=meal_name, price=price, userId=decoded['id'])
+            new_meal = Meal(meal_name=meal_name, 
+            price=price, userId=decoded['id'])
             DB.session.add(new_meal)
             DB. session.commit()
             return make_response(jsonify({
@@ -73,10 +73,14 @@ class Mealsdb(Resource):
         parser.add_argument('token', location='headers')
         args = parser.parse_args()
         if not args['token']:
-            return make_response(jsonify({"message": "Token is missing"}), 400)
+            return make_response(jsonify({
+                "message": "Token is missing"
+            }), 400)
         decoded = decode_token(args['token'])
         if decoded["status"] == "Failure":
-            return make_response(jsonify({"message": decoded["message"]}), 400)
+            return make_response(jsonify({
+                "message": decoded["message"]
+            }), 400)
 
         user = User.query.filter_by(id=decoded['id'], isAdmin="True").first()
         if not user:
@@ -117,7 +121,7 @@ class MealOne(Resource):
         if decoded["status"] == "Failure":
             return make_response(jsonify({"message": decoded["message"]}), 400)
 
-        user = User.query.filter_by(id=decoded['id'],  isAdmin="True").first()
+        user = User.query.filter_by(id=decoded['id'], isAdmin="True").first()
         if not user:
             return make_response(jsonify({
                 "message": "Customer is not allowed to do this"
@@ -130,7 +134,9 @@ class MealOne(Resource):
             }), 404)
         DB.session.delete(meal)
         DB.session.commit()
-        return make_response(jsonify({"message": "Meal deleted succesfully"}), 200)
+        return make_response(jsonify({
+            "message": "Meal deleted succesfully"
+        }), 200)
 
     @swag_from('../apidocs/edit_meal.yml')
     def put(self, meal_id):
@@ -163,7 +169,7 @@ class MealOne(Resource):
         args = parser.parse_args()
         meal.meal_name = args['meal_name']
         meal.price = args['price']
-        if args['meal_name'].strip() == "" or len(args['meal_name'].strip()) <2:
+        if args['meal_name'].strip() == "" or len(args['meal_name'].strip())<2:
             return make_response(jsonify({
                 "message": "invalid, Enter meal name please"
             }), 400)

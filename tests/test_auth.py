@@ -113,7 +113,7 @@ class Test_auth(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'),
-                             "wrong password")
+                             "wrong email or password")
 
     def test_login(self):
         """

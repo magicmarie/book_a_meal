@@ -32,11 +32,13 @@ class ProductionConfig(BaseConfig):
 
     DEBUG = False
 
+
 class HerokuConfig(BaseConfig):
     """
     Heroku Configurations
     """
     SQLALCHEMY_DATABASE_URI = "postgres://msrcptnhjmkcjg:9e39ca49dbdc3b5dd1dde34378239c7cc0449c19d7579e96d13e16c2cc593820@ec2-23-23-226-190.compute-1.amazonaws.com:5432/dbrf2b14uph6cl"
+
 
 app_config = {
     'development': DevelopmentConfig,
@@ -46,4 +48,4 @@ app_config = {
 }
 
 if __name__ == '__main__':
-    app_config['production']
+    app_config['development']

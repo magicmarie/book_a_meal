@@ -18,8 +18,6 @@ API = Api(APP)
 DB = SQLAlchemy(APP)
 
 from .models import *
-# with APP.app_context():
-#     DB.create_all()
 
 APP.config['swagger'] = {'swagger': '2.0', 'title': 'Book-a-meal-api', \
             'description': "is a web based app that enables users to \
