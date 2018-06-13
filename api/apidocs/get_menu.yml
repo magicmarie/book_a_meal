@@ -12,12 +12,23 @@ parameters:
 
 responses:
   200:
-    description: A menu is returned
+    description: A menu is returned with all admins' meals
     schema:
-      type: object
-      properties:
-        "menu":
-          type: array
+     type: object
+     properties:
+      menu:
+        type: array
+        items: 
+          type: object
+          properties:
+            meal_id:
+              type: integer
+            price:
+              type: integer
+            meal_name:
+              type: string
+            user_id:
+              type: integer
   400:
     description: Failed to return all meals
     schema:
