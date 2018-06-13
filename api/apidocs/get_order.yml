@@ -19,10 +19,19 @@ responses:
   200:
     description: Order options created by a specific user are returned
     schema:
-      type: object
-      properties:
-        "Orders":
-          type: array
+     type: object
+     properties:
+      my_order_items:
+        type: array
+        items: 
+          type: object
+          properties:
+            order_id:
+              type: integer
+            meal_id:
+              type: integer
+            user_id:
+              type: integer
   404:
     description: Orders non-existent
     schema:

@@ -12,12 +12,22 @@ parameters:
 
 responses:
   200:
-    description: All order options made for a specific are returned
+    description: All order options made for specific admin are returned
     schema:
-      type: object
-      properties:
-        "Orders":
-          type: array
+     type: object
+     properties:
+      Orders:
+        type: array
+        items: 
+          type: object
+          properties:
+            order_id:
+              type: integer
+            meal_id:
+              type: integer
+            user_id:
+              type: integer
+    
   404:
     description: Orders non-existent
     schema:
