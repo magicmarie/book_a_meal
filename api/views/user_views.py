@@ -1,6 +1,5 @@
 import re
-import json
-import jwt
+
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from
@@ -101,7 +100,7 @@ class Login(Resource):
                 "message": "User logged in successfully"
             }), 200)
         return make_response(jsonify({
-            "message": "wrong password"
+            "message": "wrong email or password"
         }), 401)
 
 

@@ -1,6 +1,4 @@
 import re
-import json
-import jwt
 
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
@@ -76,7 +74,6 @@ class OrdersGet(Resource):
             }
             order_items.append(order_data)
             total += order.meal.price
-            print(order_items)
         return make_response(jsonify({
             "order_items": order_items,
             "Total": total
