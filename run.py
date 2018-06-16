@@ -1,7 +1,6 @@
 
 # from app import create_app
 from app import app
-from app.api.views import *
 from flask import render_template
 
 

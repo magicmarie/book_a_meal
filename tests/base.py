@@ -34,7 +34,7 @@ class BaseTestCase(TestCase):
                 name="mariam",
                 email="marie@live.com",
                 password="magic",
-                isAdmin="True"
+                is_admin="True"
             )
             ),
             content_type='application/json'
@@ -44,6 +44,7 @@ class BaseTestCase(TestCase):
         """
         Method for logging a user with dummy data
         """
+        self.register_user()
         return self.client.post(
             'api/v1/auth/login',
             data=json.dumps(
@@ -63,10 +64,11 @@ class BaseTestCase(TestCase):
         data = json.loads(response.data.decode())
         return data['token']
 
-    def add_meal(self, token):
+    def add_meal(self):
         """
         Function to create a meal
         """
+        token = self.get_token()
         return self.client.post(
             'api/v1/meals',
             data=json.dumps(
@@ -78,62 +80,91 @@ class BaseTestCase(TestCase):
             content_type='application/json',
             headers=({"token": token})
         )
+    
+    def get_meals(self):
+        """
+        function to return meals
+        """
+        self.add_meal()
+        token = self.get_token()
+        return self.client.get('api/v1/meals', headers=({"token": token}))
 
-    def add_order(self, id, token):
-        """
-        function to make an order
-        """
-        return self.client.post('api/v1/orders/'+id, headers=({"token": token}))
+    def get_id(self):
+        res = self.get_meals()
+        id = json.loads(res.data.decode())['meals_items'][0]['id']
+        return id
 
-    def get_orders(self, token):
+    def delete_meal(self):
         """
-        function to return orders for authenticated admin
+        function to delete a meal
         """
-        return self.client.get('api/v1/orders', headers=({"token": token}))
+        id = self.get_id()
+        token = self.get_token()
+        return self.client.delete('api/v1/meals/' + id, headers=({
+            "token": token
+            }))
 
-    def get_user_order(self, id, token):
+    def put_meal(self):
         """
-        function to return specific order for a customer
+        function to edit a meal
         """
-        return self.client.get('api/v1/orders/'+id, headers=({"token": token}))
+        id = self.get_id()
+        token = self.get_token()
+        return self.client.put('api/v1/meals/'+id,
+                               data=json.dumps(dict(
+                                   meal_name="beans and rice",
+                                   price="15000")),
+                                   content_type='application/json',
+                                   headers=({"token": token}))
 
-    def get_user_orders(self, id, token):
-        """
-        function to return all orders for a customer
-        """
-        return self.client.get('api/v1/orders/'+id, headers=({"token": token}))
 
-    def add_menu(self, id, token):
+    def add_menu(self):
         """
         function to create a menu
         """
+        id = self.get_id()
+        token = self.get_token()
         return self.client.post(
             'api/v1/menu/' + id,
             content_type='application/json', headers=({"token": token}))
 
-    def delete_meal(self, id, token):
-        """
-        function to delete a meal
-        """
-        return self.client.delete('api/v1/meals/' + id, headers=({"token": token}))
 
-    def get_meals(self, token):
-        """
-        function to return meals
-        """
-        return self.client.get('api/v1/meals', headers=({"token": token}))
-
-    def put_meal(self, id, token):
-        """
-        function to edit a meal
-        """
-        return self.client.put('api/v1/meals/'+id,
-                               data=json.dumps(dict(
-                                   meal_name="beans and rice",
-                                   price="15000")), content_type='application/json', headers=({"token": token}))
-
-    def get_menu(self, token):
+    def get_menu(self):
         """
         function to return the menu
         """
+        self.add_menu()
+        token = self.get_token()
         return self.client.get('api/v1/menu', headers=({"token": token}))
+
+
+    def add_order(self):
+        """
+        function to make an order
+        """
+        self.get_menu()
+        id = self.get_id()
+        token = self.get_token()
+        return self.client.post('api/v1/orders/'+id, headers=({
+            "token": token
+        }))
+
+    def get_orders(self):
+        """
+        function to return orders for authenticated admin
+        """
+        self.add_order()
+        token = self.get_token()
+        return self.client.get('api/v1/orders', headers=({"token": token}))
+
+    def get_user_orders(self):
+        """
+        function to return all orders for a customer
+        """
+        self.add_order()
+        token = self.get_token()
+        return self.client.get('api/v1/user/orders', headers=({
+            "token": token
+        }))
+
+    

@@ -1,5 +1,6 @@
 """ control properties of the meal object"""
 import uuid
+import re
 import json
 
 
@@ -18,3 +19,12 @@ class Meal:
             'meal_name': self.meal_name,
             'price': self.price
         })
+
+
+def validate_inputs(meal_name=""):
+    if meal_name.strip() == "" or len(meal_name.strip()) < 2:
+        return {"status": False, "message": "invalid, Enter name please"}
+        
+    if not bool(re.fullmatch('^[A-Za-z ]*$', meal_name)):
+        return {"status": False,"message": "Invalid characters not allowed"}
+    return{"status": True}

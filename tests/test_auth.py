@@ -12,7 +12,13 @@ class Test_auth(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
             self.assertEqual(data.get('message'), "User successfully created")
-            # Add the same user and see...
+
+    def test_existing_user(self):
+        """
+        Test an existing email can't be reused through the api
+        """
+        with self.client:
+            self.register_user()
             res = self.register_user()
             data1 = json.loads(res.data.decode())
             self.assertEqual(res.status_code, 400)
@@ -23,7 +29,6 @@ class Test_auth(BaseTestCase):
         Test a registered user  is logged in successfully through the api
         """
         with self.client:
-            self.register_user()
             response = self.login_user()
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)

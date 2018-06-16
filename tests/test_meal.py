@@ -3,32 +3,51 @@ import json
 
 
 class Test_meal_options(BaseTestCase):
+
+
     def test_add_meal(self):
         """
         Test that an authenticated admin can add a meal
         """
         with self.client:
-            self.register_user()
-            token = self.get_token()
-            response = self.add_meal(token)
+            response = self.add_meal()
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
             self.assertEqual(data.get('message'), "Meal successfully created")
-            # Add the same meal and see...
-            res = self.add_meal(self.get_token())
-            data1 = json.loads(res.data.decode())
+
+    def test_add_existing_meal(self):
+        """
+        Test that an authenticated admin can't add an existing meal
+        """
+        with self.client:
+            self.add_meal()
+            response = self.client.post('api/v1/auth/login', 
+            data=json.dumps(dict(
+                                    email="marie@live.com",
+                                    password="magic"
+                                )
+                            ),
+                            content_type='application/json'
+                        )
+            token = json.loads(response.data.decode())['token']
+            res = self.client.post('api/v1/meals', data=json.dumps( dict(
+                                meal_name="beef and rice",
+                                price="15000"
+                            )
+                        ),
+                        content_type='application/json',
+                        headers=({"token": token})
+                    )
+            data = json.loads(res.data.decode())
             self.assertEqual(res.status_code, 400)
-            self.assertEqual(data1.get('message'), "Meal name already exists")
+            self.assertEqual(data.get('message'), "Meal name already exists")
 
     def test_get_meals(self):
         """
         Test that an authenticated admin can get all his meals
         """
         with self.client:
-            self.register_user()
-            token = self.get_token()
-            self.add_meal(token)
-            response = self.get_meals(token)
+            response = self.get_meals()
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertIn(u"beef and rice",
@@ -39,13 +58,8 @@ class Test_meal_options(BaseTestCase):
         Test that an authenticated admin can delete a meal
         """
         with self.client:
-            self.register_user()
-            token = self.get_token()
-            self.add_meal(token)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())[
-                'meals_items'][0]['id']
-            response = self.delete_meal(id, token)
+            self.get_id()
+            response = self.delete_meal()
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertIn("Meal deleted succesfully", data.get('message'))
@@ -55,13 +69,8 @@ class Test_meal_options(BaseTestCase):
         Test that an authenticated admin can edit meal details
         """
         with self.client:
-            self.register_user()
-            token = self.get_token()
-            self.add_meal(token)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())[
-                'meals_items'][0]['id']
-            response = self.put_meal(id, token)
+            self.get_id()
+            response = self.put_meal()
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
             self.assertIn("Meal updated successfully", data.get('message'))

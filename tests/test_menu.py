@@ -8,18 +8,31 @@ class Test_menu_options(BaseTestCase):
         Test that an authenticated admin can add a meal to the menu
         """
         with self.client:
-            self.register_user()
-            token = self.get_token()
-            self.add_meal(token)
-            result = json.loads(self.get_meals(token).data.decode())
-            id = result['meals_items'][0]['id']
-            response = self.add_menu(id, token)
+            response = self.add_menu()
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertIn("Meal successfully added to menu",
                           data.get('message'))
-            # Add the same meal to the menu and see...
-            res = self.add_menu(id, token)
+
+    def test_add_existing_meal_to_menu(self):
+        """
+        Test that an authenticated admin can't add existing meal to the menu
+        """
+        with self.client:
+            self.add_menu()
+            self.add_meal()
+            response = self.client.post('api/v1/auth/login', 
+            data=json.dumps(dict(
+                                    email="marie@live.com",
+                                    password="magic"
+                                )
+                            ),
+                            content_type='application/json'
+                        )
+            token = json.loads(response.data.decode())['token']
+            id = self.get_id()
+            res = self.client.post('api/v1/menu/' + id,
+            content_type='application/json', headers=({"token": token}))
             data1 = json.loads(res.data.decode())
             self.assertEqual(res.status_code, 409)
             self.assertEqual(data1.get('message'),
@@ -30,13 +43,7 @@ class Test_menu_options(BaseTestCase):
         Test that an authenticated user can view the menu
         """
         with self.client:
-            self.register_user()
-            token = self.get_token()
-            self.add_meal(token)
-            result = json.loads(self.get_meals(token).data.decode())
-            id = result['meals_items'][0]['id']
-            self.add_menu(id, token)
-            response = self.get_menu(token)
+            response = self.get_menu()
             data = json.loads(response.data.decode())
             print(data)
             self.assertEqual(response.status_code, 200)
