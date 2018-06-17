@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/magicmarie/book_a_meal.svg?branch=flask=api-databases)](https://travis-ci.org/magicmarie/book_a_meal)
+[![Build Status](https://travis-ci.org/magicmarie/book_a_meal.svg?branch=flask%3Dapi-databases)](https://travis-ci.org/magicmarie/book_a_meal)
 [![Coverage Status](https://coveralls.io/repos/github/magicmarie/book_a_meal/badge.svg?branch=flask=api-databases)](https://coveralls.io/github/magicmarie/book_a_meal?branch=flask+api-databases)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9c86a6940c82472ea181f0adecd25390)](https://www.codacy.com/app/magicmarie/book_a_meal?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=magicmarie/book_a_meal&amp;utm_campaign=Badge_Grade)
 
