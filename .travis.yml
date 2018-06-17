@@ -6,6 +6,9 @@ install:
   - pip3 install -r requirements.txt
   - pip3 install pytest pytest-cov
   - pip3 install coveralls
+before_script:
+  - psql -c "CREATE DATABASE book_test_db;" -U postgres
+  - psql -c "CREATE USER book_test_db WITH PASSWORD 'magic';" -U postgres
 script:
   - pytest --cov=api/
 after_success:
