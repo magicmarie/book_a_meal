@@ -27,7 +27,7 @@ class BaseTestCase(TestCase):
         DB.session.remove()
         DB.drop_all()
 
-    def register_user(self, name, email, password, isAdmin):
+    def register_user(self, name="marie", email="marie@live.com", password="marie", is_admin="True"):
         """
         Method for registering a user with dummy data
         """
@@ -37,7 +37,7 @@ class BaseTestCase(TestCase):
                 name=name,
                 email=email,
                 password=password,
-                isAdmin=isAdmin
+                is_admin=is_admin
             )
             ),
             content_type='application/json'
@@ -47,6 +47,7 @@ class BaseTestCase(TestCase):
         """
         Method for logging a user with dummy data
         """
+        self.register_user()
         return self.client.post(
             'api/v1/auth/login',
             data=json.dumps(
@@ -63,16 +64,14 @@ class BaseTestCase(TestCase):
         Returns a user token
         """
         response = self.login_user(email, password)
-        data = json.loads(response.data.decode())
-        return data['token']
+        return json.loads(response.data.decode())['token']
 
-    def add_meal(self, token, meal_name, price):
+    def add_meal(self, meal_name="fries", price=10000):
         """
         Function to create a meal
         """
-        return self.client.post(
-            'api/v1/meals',
-            data=json.dumps(
+        token = self.get_token()
+        return self.client.post('api/v1/meals', data=json.dumps(
                 dict(
                     meal_name=meal_name,
                     price=price
@@ -82,36 +81,48 @@ class BaseTestCase(TestCase):
             headers=({"token": token})
         )
 
-    def get_meals(self, token):
+    def get_meals(self):
         """
         function to return meals
         """
+        self.add_meal()
+        token = self.get_token()
         return self.client.get('api/v1/meals', headers=({"token": token}))
 
-    def delete_meal(self, token, id):
+    def get_id(self):
+        res = self.get_meals()
+        return 1
+
+    def delete_meal(self):
         """
         function to delete a meal
         """
+        id = self.get_id()
+        token = self.get_token()
         return self.client.delete('api/v1/meals/{}'.format(id), headers=({
             "token": token
         }))
 
-    def put_meal(self, id, token, meal_name, price):
+    def put_meal(self):
         """
         function to edit a meal
         """
+        id = self.get_id()
+        token = self.get_token()
         return self.client.put('api/v1/meals/{}'.format(id),
                                data=json.dumps(dict(
-                                   meal_name=meal_name,
-                                   price=price
+                                   meal_name="chips",
+                                   price=15000
                                )),
                                content_type='application/json',
                                headers=({"token": token}))
 
-    def add_menu(self, id, token):
+    def add_menu(self):
         """
         function to create a menu
         """
+        id = self.get_id()
+        token = self.get_token()
         return self.client.post(
             'api/v1/menu/{}'.format(id),
             content_type='application/json', headers=({"token": token}))
@@ -140,3 +151,15 @@ class BaseTestCase(TestCase):
         function to return all orders for a customer
         """
         return self.client.get('api/v1/orders/{}'.format(id), headers=({"token": token}))
+
+    def customer(self):
+        self.register_user("marie", "marie@live.com", "marie", "False")
+        res = self.client.post('api/v1/auth/login', data=json.dumps(
+                    dict(
+                        email="marie@live.com",
+                        password="marie"
+                        )
+                    ),
+                    content_type='application/json'
+                )
+        return json.loads(res.data.decode())['token']

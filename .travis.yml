@@ -1,13 +1,12 @@
 language: python
 python:
-  - "3.6.5"
-
+  - "3.6.4"
+cache: pip3
 install:
   - pip3 install -r requirements.txt
-
-# command to run tests
+  - pip3 install pytest pytest-cov
+  - pip3 install coveralls
 script:
-  - nosetests --with-coverage tests
-
+  - pytest --cov=api/
 after_success:
   - coveralls

@@ -1,15 +1,18 @@
+
+"""app"""
 import os
-import config
 from flask import Flask
 from flask_restful import Api, reqparse, Resource
 from flasgger import Swagger
 from flask_sqlalchemy import SQLAlchemy
+import config
 
 # initialise app
 APP = Flask(__name__)
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 APP.config['SECRET_KEY'] = os.urandom(24)
-APP.config.from_object(config.app_config['development'])
+environment = os.getenv('environment', 'development')
+APP.config.from_object(config.app_config[environment])
 
 # create instance of app in api
 API = Api(APP)
