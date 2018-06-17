@@ -91,7 +91,11 @@ class BaseTestCase(TestCase):
 
     def get_id(self):
         res = self.get_meals()
-        return 1
+        return json.loads(res.data.decode())['meal_items'][0]['id']
+
+    def get_meal_id(self):
+        res = self.get_menu()
+        return json.loads(res.data.decode())['menu'][0]['meal_id']
 
     def delete_meal(self):
         """
@@ -127,36 +131,44 @@ class BaseTestCase(TestCase):
             'api/v1/menu/{}'.format(id),
             content_type='application/json', headers=({"token": token}))
 
-    def get_menu(self, token):
+    def get_menu(self):
         """
         function to return the menu
         """
+        token = self.get_token()
+        self.add_menu()
         return self.client.get('api/v1/menu', headers=({"token": token}))
 
-    def add_order(self, id, token):
+    def add_order(self):
         """
         function to make an order
         """
+        id = self.get_meal_id()
+        token = self.get_token()
         return self.client.post('api/v1/orders/{}'.format(id), headers=({"token": token}))
 
-    def get_orders(self, token):
+    def get_orders(self):
         """
         function to return orders for authenticated admin
         """
+        self.add_order()
+        token = self.get_token()
         return self.client.get('api/v1/orders', headers=({"token": token}))
 
 
-    def get_user_orders(self, id, token):
+    def get_user_orders(self):
         """
         function to return all orders for a customer
         """
-        return self.client.get('api/v1/orders/{}'.format(id), headers=({"token": token}))
+        self.add_order()
+        token = self.get_token()
+        return self.client.get('api/v1/user/orders', headers=({"token": token}))
 
     def customer(self):
-        self.register_user("marie", "marie@live.com", "marie", "False")
+        self.register_user("marie", "marie@gmail.com", "marie", "False")
         res = self.client.post('api/v1/auth/login', data=json.dumps(
                     dict(
-                        email="marie@live.com",
+                        email="marie@gmail.com",
                         password="marie"
                         )
                     ),

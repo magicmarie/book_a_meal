@@ -5,6 +5,9 @@
 
 Book A Meal  is a web application  that allows customers to make food orders and
 helps the food vendor to know what the customers want to eat.
+
+This API is currently hosted on heroku https://book-a-meal-api-db.herokuapp.com/apidocs/#/
+
 ## Features
 The application has a couple of features as listed below:-
  * Users can create an account and log in

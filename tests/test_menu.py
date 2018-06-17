@@ -23,7 +23,6 @@ class Test_menu_options(BaseTestCase):
             response = self.client.post(
             'api/v1/menu/{}'.format(id),
             content_type='application/json', headers=({"token": token}))
-            data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 409)
 
     def test_token_missing_add_menu(self):
@@ -39,21 +38,9 @@ class Test_menu_options(BaseTestCase):
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'), "Token is missing")
 
-    def test_invalid_token_add_menu(self):
-        """
-        Test for valid token when sending add menurequest
-        """
-        with self.client:
-            id = self.get_id()
-            response = self.client.post('api/v1/menu/{}'.format(id),
-            content_type='application/json', headers=({"token": "12345"}))
-            data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
-            self.assertEqual(data.get('message'), "Invalid token.Please login")
-
     def test_none_admin_add_menu(self):
         """
-        Test none admin on adding meals to a menu
+        Test none admin can not add a meal to the menu
         """
 
         with self.client:
@@ -68,7 +55,7 @@ class Test_menu_options(BaseTestCase):
 
     def test_non_existent_meal(self):
         """
-        Test none existent meal 
+        Test admin add a non existent meal 
         """
 
         with self.client:
@@ -81,3 +68,13 @@ class Test_menu_options(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal not found")
             self.assertEqual(response.status_code, 404)
+
+    def test_missing_token_get_menu(self):
+        """
+        Test missing token on get menu request
+        """
+        with self.client:
+            response = self.client.get('api/v1/menu',headers=({"token": ""}))
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(data.get('message'), "Token is missing")   
