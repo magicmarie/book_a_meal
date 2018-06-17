@@ -26,7 +26,7 @@ class OrderPost(Resource):
         order = Menu.query.filter_by(mealId=meal_id).first()
         if not order:
             return make_response(jsonify({
-                "meassage": "Meal does not exist"
+                "message": "Meal does not exist"
             }), 404)
         new_order = Order(mealId=meal_id, \
         userId=res['decoded']['id'], adminId=order.meal.userId)
@@ -82,7 +82,7 @@ class OrderGet(Resource):
     """orderget class"""
     @staticmethod
     @swag_from('../apidocs/get_order.yml')
-    def get(user_id):
+    def get():
         """
         Return all orders made by authenticated user
         token is required to get user Id
@@ -109,4 +109,4 @@ class OrderGet(Resource):
         }), 200)
 
 
-api.add_resource(OrderGet, '/api/v1/orders/<user_id>')
+api.add_resource(OrderGet, '/api/v1/user/orders')

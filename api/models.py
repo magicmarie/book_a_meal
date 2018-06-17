@@ -23,10 +23,10 @@ class User(DB.Model):
 
     def __repr__(self):
         """defines the representation of an object"""
-        return "id:{} name:{} email:{} is_admin:{}".format(self.id,
-                                                           self.name,
-                                                           self.email,
-                                                           self.is_admin)
+        return "id:{} name:{} email:{} is_admin:{}".format(self.id,#pragma:no cover
+                                                           self.name,#pragma:no cover
+                                                           self.email,#pragma:no cover
+                                                           self.is_admin)#pragma:no cover
 
 
 class Order(DB.Model):
@@ -40,9 +40,9 @@ class Order(DB.Model):
     meal = DB.relationship('Meal', backref='orders')
 
     def __repr__(self):
-        return "id:{} mealId:{} userId:{}".format(self.orderId,
-                                                  self.mealId,
-                                                  self.userId)
+        return "id:{} mealId:{} userId:{}".format(self.orderId,#pragma:no cover
+                                                  self.mealId,#pragma:no cover
+                                                  self.userId)#pragma:no cover
 
 
 class Meal(DB.Model):
@@ -55,10 +55,10 @@ class Meal(DB.Model):
     user = DB.relationship('User', backref='meals')
 
     def __repr__(self):
-        return "id:{} meal_name:{} price:{} userId:{}".format(self.id,
-                                                              self.meal_name,
-                                                              self.price,
-                                                              self.userId)
+        return "id:{} meal_name:{} price:{} userId:{}".format(self.id,#pragma:no cover
+                                                              self.meal_name,#pragma:no cover
+                                                              self.price,#pragma:no cover
+                                                              self.userId)#pragma:no cover
 
 
 class Menu(DB.Model):
@@ -69,7 +69,7 @@ class Menu(DB.Model):
     meal = DB.relationship('Meal', backref='menus')
 
     def __repr__(self):
-        return "id:{} mealId:{}".format(self.id, self.mealId)
+        return "id:{} mealId:{}".format(self.id, self.mealId)#pragma:no cover
 
 def use_token(parser):
     """function to check for token"""
@@ -131,9 +131,9 @@ def generate_token(user_id, is_admin):
         ).decode('UTF-8')
         return jwt_string
 
-    except Exception as e:
+    except Exception as e:#pragma:no cover
         # return an error in string format if an exception occurs
-        return str(e)
+        return str(e)#pragma:no cover
 
 
 def decode_token(token):

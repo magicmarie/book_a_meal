@@ -80,7 +80,6 @@ class Login(Resource):
             access_token = generate_token(user.id, user.is_admin)
             return make_response(jsonify({
                 "token": access_token,
-                "user_id": decode_token(access_token)['id'],
                 "message": "User logged in successfully"
             }), 200)
         return make_response(jsonify({

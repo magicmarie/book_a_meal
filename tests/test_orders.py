@@ -1,54 +1,92 @@
-# from tests.base import BaseTestCase
-# import json
+from tests.base import BaseTestCase
+import json
 
 
+class Test_order_options(BaseTestCase):
+    def test_post_orders(self):
+        """
+        Test that an authenticated user can make an order
+        """
+        response = self.add_order()
+        self.assertEqual(response.status_code, 201)
 
-# class Test_order_options(BaseTestCase):
-#     def test_post_orders(self):
-#         """
-#         Test that an authenticated user can make an order
-#         """
-#         self.register_user("marie", "marie@live.com", "marie", "True")
-#         token = self.get_token()
-#         self.add_meal(token, "pilawo", 15000)
-#         get_meal = self.get_meals(token)
-#         id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-#         self.add_menu(id, token)
-#         response = self.add_order(id, token)
-#         data = json.loads(response.data.decode())
-#         self.assertEqual(response.status_code, 201)
-#         self.assertEqual(data.get('message'), "Order sent successfully")
+    def test_get_orders(self):
+        """
+        Test that an authenticated admin can get all orders made from his meals
+        """
+        response = self.get_orders()
+        self.assertEqual(response.status_code, 200)
 
-#     def test_get_orders(self):
-#         """
-#         Test that an authenticated admin can get all orders made from his meals
-#         """
-#         self.register_user("marie", "marie@live.com", "marie", "True")
-#         token = self.get_token()
-#         self.add_meal(token, "pilawo", 15000)
-#         get_meal = self.get_meals(token)
-#         id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-#         self.add_menu(id, token)
-#         self.add_order(id, token)
-#         response = self.get_orders(token)
-#         data = json.loads(response.data.decode())
-#         self.assertEqual(response.status_code, 200)
-#         self.assertEqual(data['order_items'][0]['mealId'], 1)
+    def test_get_user_orders(self):
+        """
+        Test that an authenticated user can get his orders
+        """
+        response = self.get_user_orders()
+        data = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data.get('status'), "success")
 
-#     def test_get_user_orders(self):
-#         """
-#         Test that an authenticated user can get his orders
-#         """
-#         self.register_user("marie", "marie@live.com", "marie", "True")
-#         token = self.get_token()
-#         self.add_meal(token, "pilawo",15000)
-#         get_meal = self.get_meals(token)
-#         id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-#         self.add_menu(id, token)
-#         self.add_order(id, token)
-#         response = self.get_user_orders(id, token)
-#         data = json.loads(response.data.decode())
-#         self.assertEqual(response.status_code, 200)
-#         self.assertEqual(data.get('status'), "success")
-
+    def test_invalid_token_post(self):
+        """
+        Test invalid token on post order request
+        """
+        with self.client:
+            id = self.get_meal_id()
+            response = self.client.post('api/v1/orders/{}'.format(id), headers=({"token": "12345"}))
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(data.get('message'), "Invalid token.Please login")
     
+    def test_non_existent_meal_post(self):
+        """
+        Test authenticated cannot make an order that doesnt exist on the menu
+        """
+        with self.client:
+            id = 100
+            token = self.get_token()
+            response = self.client.post('api/v1/orders/{}'.format(id), headers=({"token": token}))
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(data['message'], "Meal does not exist")
+
+    def test_invalid_token_admin_get(self):
+        """
+        Test invalid token on get all orders by admin request
+        """
+        with self.client:           
+            response = self.client.get('api/v1/orders', headers=({"token": "12345"}))
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(data.get('message'), "Invalid token.Please login")
+    
+    def test_non_admin_get(self):
+        """
+        Test a customer can not get orders of other users
+        """
+        with self.client:
+            token = self.customer()
+            response = self.client.get('api/v1/orders', headers=({"token": token}))
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(data.get('message'), "Customer is not allowed to view this")
+
+    def test_invalid_token_customer_get(self):
+        """
+        Test invalid token on get all orders by customer request
+        """
+        with self.client:           
+            response = self.client.get('api/v1/user/orders', headers=({"token": "12345"}))
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(data.get('message'), "Invalid token.Please login")
+
+    def test_no_orders_customer(self):
+        """
+        Test customer has no orderlist before making first order
+        """
+        with self.client:
+            token = self.customer()
+            response = self.client.get('api/v1/user/orders', headers=({"token": token}))
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(data.get('message'), "No orders found")

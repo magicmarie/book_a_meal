@@ -51,9 +51,6 @@ class MenuPost(Resource):
             return make_response(jsonify({
                 "message": "Meal already exists in menu"
             }), 409)
-        return make_response(jsonify({
-            "message": "You are not authorized to perform that action"
-        }), 404)
 
 
 api.add_resource(MenuPost, '/api/v1/menu/<int:meal_id>')
@@ -74,24 +71,18 @@ class Menus(Resource):
             return make_response(jsonify({"message": res['message']}), 400)
 
         user = User.query.filter_by(id=res['decoded']['id']).first()
-        if not user:
-            return make_response(jsonify({
-                "message": "Doesn't exist, Create an account"
-            }))
-        menu = Menu.query.all()
-        menu_items = []
-        if not menu:
-            return make_response(jsonify({
-                "message": "Menu name does not exist"
-            }))
-        for menu_item in menu:
-            menu_data = {
-                "meal_id": menu_item.meal.id,
-                "meal_name": menu_item.meal.meal_name,
-                "price": menu_item.meal.price
-            }
-            menu_items.append(menu_data)
-        return make_response(jsonify({"menu": menu_items}), 200)
+        if user: 
+            menu = Menu.query.all()
+            menu_items = []
+            if menu:
+                for menu_item in menu:
+                    menu_data = {
+                        "meal_id": menu_item.meal.id,
+                        "meal_name": menu_item.meal.meal_name,
+                        "price": menu_item.meal.price
+                    }
+                    menu_items.append(menu_data)
+                return make_response(jsonify({"menu": menu_items}), 200)
 
 
 api.add_resource(Menus, '/api/v1/menu')
