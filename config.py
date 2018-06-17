@@ -1,5 +1,5 @@
 """configurations for app"""
-
+import os
 
 class BaseConfig(object):
     """
@@ -29,7 +29,7 @@ class ProductionConfig(BaseConfig):
     """
     Production configurations
     """
-
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     DEBUG = False
 
 
