@@ -9,9 +9,7 @@ class Test_meal_options(BaseTestCase):
         Test that an authenticated admin can add a meal
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            response = self.add_meal(token, "pilawo", 15000)
+            response = self.add_meal("pilawo", 15000)
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
             self.assertEqual(data.get('message'), "Meal successfully created")
@@ -21,9 +19,7 @@ class Test_meal_options(BaseTestCase):
         Test that the meal_name details are set when sending request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            response = self.add_meal(token, "", 15000)
+            response = self.add_meal("", 15000)
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "invalid, Enter meal name please")
@@ -34,22 +30,27 @@ class Test_meal_options(BaseTestCase):
         Test that the mealname details are valid characters when sending request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            response = self.add_meal(token, "@#$%&*", 15000)
+            response = self.add_meal("@#$%&*", 15000)
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Invalid characters not allowed")
-            self.assertEqual(response.status_code, 401)
+            self.assertEqual(response.status_code, 400)
 
     def test_token_missing_post(self):
         """
         Test for token when sending post request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            self.get_token()
-            response = self.add_meal("", "pilawo", 15000)
+            token = ""
+            response = self.client.post('api/v1/meals',data=json.dumps(
+                dict(
+                    meal_name="fries",
+                    price=10000
+                    )
+                ),
+                content_type='application/json',
+                headers=({"token": token})
+            )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'), "Token is missing")
@@ -59,9 +60,16 @@ class Test_meal_options(BaseTestCase):
         Test for valid token when sending post request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
             token = "12345"
-            response = self.add_meal(token, "pilawo", 15000)
+            response = self.client.post('api/v1/meals',data=json.dumps(
+                dict(
+                    meal_name="fries",
+                    price=10000
+                    )
+                ),
+                content_type='application/json',
+                headers=({"token": token})
+            )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
@@ -72,10 +80,8 @@ class Test_meal_options(BaseTestCase):
         """
 
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            response = self.add_meal(token, "fries", 10000)
-            response = self.add_meal(token, "fries", 10000)
+            self.add_meal( "fries", 10000)
+            response = self.add_meal( "fries", 10000)
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal name already exists")
             self.assertEqual(response.status_code, 400)
@@ -84,11 +90,17 @@ class Test_meal_options(BaseTestCase):
         """
         Test none admin on adding meal
         """
-
-        with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "False")
-            token = self.get_token()
-            response = self.add_meal(token, "fries", 10000)
+        with self.client:    
+            token = self.customer()
+            response = self.client.post('api/v1/meals', data=json.dumps(
+                                dict(
+                                    meal_name="fries",
+                                    price=10000
+                                )
+                            ),
+                            content_type='application/json',
+                            headers=({"token": token})
+                        )
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Customer is not authorized to create meals")
@@ -99,10 +111,8 @@ class Test_meal_options(BaseTestCase):
         Test that an authenticated admin can get all his meals
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            self.add_meal(token, "fries", 10000)
-            response = self.get_meals(token)
+            self.add_meal("fries", 10000)
+            response = self.get_meals()
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertIn(u"fries",
@@ -114,10 +124,8 @@ class Test_meal_options(BaseTestCase):
         """
 
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "False")
-            token = self.get_token()
-            self.add_meal(token, "fries", 10000)
-            response = self.get_meals(token)
+            token = self.customer()
+            response = self.client.get('api/v1/meals', headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Customer is not authorized to view meals")
@@ -128,10 +136,7 @@ class Test_meal_options(BaseTestCase):
         Test for token when sending get all meals request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            self.add_meal(token, "pilawo", 15000)
-            response = self.get_meals("")
+            response = self.client.get('api/v1/meals', headers=({"token": ""}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'), "Token is missing")
@@ -141,10 +146,7 @@ class Test_meal_options(BaseTestCase):
         Test for valid token when sending get all meals request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            self.add_meal(token, "pilawo", 15000)
-            response = self.get_meals("12345")
+            response = self.client.get('api/v1/meals', headers=({"token": "12345"}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
@@ -154,13 +156,7 @@ class Test_meal_options(BaseTestCase):
         Test that an authenticated admin can delete a meal
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            self.add_meal(token, "pilawo", 15000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-            print(id)
-            response = self.delete_meal(token, id)
+            response = self.delete_meal()
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertIn("Meal deleted succesfully", data.get('message'))
@@ -170,12 +166,10 @@ class Test_meal_options(BaseTestCase):
         Test for valid token when sending delete request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            self.add_meal(token, "pilawo", 15000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-            response = self.delete_meal("12345", id)
+            id = self.get_id()
+            response = self.client.delete('api/v1/meals/{}'.format(id), headers=({
+                            "token": "12345"
+                        }))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
@@ -185,12 +179,10 @@ class Test_meal_options(BaseTestCase):
         Test for token when delete request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            self.add_meal(token, "pilawo", 15000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-            response = self.delete_meal("", id)
+            id = self.get_id()
+            response = self.client.delete('api/v1/meals/{}'.format(id), headers=({
+                            "token": ""
+                        }))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'), "Token is missing")
@@ -201,15 +193,11 @@ class Test_meal_options(BaseTestCase):
         """
 
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            self.add_meal(token, "fries", 10000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-
-            self.register_user("marie", "mariam@live.com", "marie", "False")
-            token = self.get_token("mariam@live.com")
-            response = self.delete_meal(token, id)
+            token = self.customer()
+            id = 1
+            response = self.client.delete('api/v1/meals/{}'.format(id), headers=({
+                            "token": token
+                        }))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Customer is not allowed to do this")
@@ -221,10 +209,12 @@ class Test_meal_options(BaseTestCase):
         """
 
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
+            self.get_meals()
+            id = 100
             token = self.get_token()
-            self.add_meal(token, "fries", 10000)
-            response = self.delete_meal(token, 7)
+            response = self.client.delete('api/v1/meals/{}'.format(id), headers=({
+                            "token": token
+                        }))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal not found")
             self.assertEqual(response.status_code, 404)
@@ -234,12 +224,7 @@ class Test_meal_options(BaseTestCase):
         Test that an authenticated admin can edit meal details
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            self.add_meal(token, "fries", 10000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-            response = self.put_meal(id, token, "friess", 15000)
+            response = self.put_meal()
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
             self.assertIn("Meal updated successfully", data.get('message'))
@@ -249,12 +234,14 @@ class Test_meal_options(BaseTestCase):
         Test for valid token when sending put request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            self.add_meal(token, "pilawo", 15000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-            response = self.put_meal(id, "12345", "friess", 15000)
+            id = self.get_id()
+            response = self.client.put('api/v1/meals/{}'.format(id),
+                               data=json.dumps(dict(
+                                   meal_name="chips",
+                                   price=15000
+                               )),
+                               content_type='application/json',
+                               headers=({"token": "12345"}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
@@ -264,12 +251,14 @@ class Test_meal_options(BaseTestCase):
         Test for token when put request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            self.add_meal(token, "pilawo", 15000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-            response = self.put_meal(id, "", "friess", 15000)
+            id = self.get_id()
+            response = self.client.put('api/v1/meals/{}'.format(id),
+                               data=json.dumps(dict(
+                                   meal_name="chips",
+                                   price=15000
+                               )),
+                               content_type='application/json',
+                               headers=({"token": ""}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'), "Token is missing")
@@ -280,15 +269,15 @@ class Test_meal_options(BaseTestCase):
         """
 
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
-            token = self.get_token()
-            self.add_meal(token, "fries", 10000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-
-            self.register_user("marie", "mariam@live.com", "marie", "False")
-            token = self.get_token("mariam@live.com")
-            response = self.put_meal(id, token, "friess", 15000)
+            token = self.customer()
+            id = 1
+            response = self.client.put('api/v1/meals/{}'.format(id),
+                               data=json.dumps(dict(
+                                   meal_name="chips",
+                                   price=15000
+                               )),
+                               content_type='application/json',
+                               headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Customer is not allowed to do this")
@@ -300,12 +289,15 @@ class Test_meal_options(BaseTestCase):
         """
 
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
             token = self.get_token()
-            self.add_meal(token, "fries", 10000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-            response = self.put_meal(7, token, "friess", 15000)
+            id = 4
+            response = self.client.put('api/v1/meals/{}'.format(id),
+                               data=json.dumps(dict(
+                                   meal_name="chips",
+                                   price=15000
+                               )),
+                               content_type='application/json',
+                               headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal not found")
             self.assertEqual(response.status_code, 404)
@@ -315,12 +307,15 @@ class Test_meal_options(BaseTestCase):
         Test that the meal_name details are set on put request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
             token = self.get_token()
-            self.add_meal(token, "fries", 15000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-            response = self.put_meal(id, token, "", 10000)
+            id = self.get_id()
+            response = self.client.put('api/v1/meals/{}'.format(id),
+                               data=json.dumps(dict(
+                                   meal_name="",
+                                   price=15000
+                               )),
+                               content_type='application/json',
+                               headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "invalid, Enter meal name please")
@@ -331,13 +326,16 @@ class Test_meal_options(BaseTestCase):
         Test that the mealname details are valid characters on put request
         """
         with self.client:
-            self.register_user("marie", "marie@live.com", "marie", "True")
             token = self.get_token()
-            self.add_meal(token, "fries", 15000)
-            get_meal = self.get_meals(token)
-            id = json.loads(get_meal.data.decode())['meal_items'][0]['id']
-            response = self.add_meal(token, "@#$%&*", 15000)
+            id = self.get_id()
+            response = self.client.put('api/v1/meals/{}'.format(id),
+                               data=json.dumps(dict(
+                                   meal_name="@#$%",
+                                   price=15000
+                               )),
+                               content_type='application/json',
+                               headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Invalid characters not allowed")
-            self.assertEqual(response.status_code, 401)
+            self.assertEqual(response.status_code, 400)

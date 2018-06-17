@@ -1,46 +1,43 @@
-import re
-
-from flask import jsonify, make_response, request
+""" menu views"""
+from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from
 
-from . import menus
-from api.models import User, Menu, Meal, decode_token
+from api.models import User, Menu, Meal, use_token
 from api import DB
+from . import menus
 
 api = Api(menus)
 
 
 class MenuPost(Resource):
+    """menupost class"""
+    @staticmethod
     @swag_from('../apidocs/add_menu.yml')
-    def post(self, meal_id):
+    def post(meal_id):
         """
         Allows authenticated admin to create a menu by adding a meal by Id from
         the meals table.
         token is required to get the admin Id
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('token', location='headers')
-        args = parser.parse_args()
-        if not args['token']:
-            return make_response(jsonify({"message": "Token is missing"}), 400)
-        decoded = decode_token(args['token'])
-        if decoded["status"] == "Failure":
-            return make_response(jsonify({"message": decoded["message"]}), 400)
+        res = use_token(parser)
+        if not res['status']:
+            return make_response(jsonify({"message": res['message']}), 400)
 
-        user = User.query.filter_by(id=decoded['id'], isAdmin="True").first()
+        user = User.query.filter_by(id=res['decoded']['id'], is_admin="True").first()
         if not user:
             return make_response(jsonify({
                 "message": "Customer is not allowed to do this"
             }), 401)
 
         meal = Meal.query.filter_by(
-            id=meal_id, userId=decoded['id']).first()
+            id=meal_id, userId=res['decoded']['id']).first()
         if not meal:
             return make_response(jsonify({
                 "message": "Meal not found"
             }), 404)
-        
+
         mymeal = Menu.query.filter_by(mealId=meal_id).first()
         if not mymeal:
             menu = Menu(mealId=meal_id)
@@ -50,36 +47,33 @@ class MenuPost(Resource):
                 "message": "Meal successfully added to menu"
             }), 200)
 
-        if meal.userId == decoded["id"]:
+        if meal.userId == res['decoded']["id"]:
             return make_response(jsonify({
                 "message": "Meal already exists in menu"
             }), 409)
-        else:
-            return make_response(jsonify({
-                "message": "You are not authorized to perform that action"
-            }), 404)
+        return make_response(jsonify({
+            "message": "You are not authorized to perform that action"
+        }), 404)
 
 
 api.add_resource(MenuPost, '/api/v1/menu/<int:meal_id>')
 
 
 class Menus(Resource):
+    """menu class"""
+    @staticmethod
     @swag_from('../apidocs/get_menu.yml')
-    def get(self):
+    def get():
         """
         Return the menu created by authenticated admin
         token is required to get the admin Id
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('token', location='headers')
-        args = parser.parse_args()
-        if not args['token']:
-            return make_response(jsonify({"message": "Token is missing"}), 400)
-        decoded = decode_token(args['token'])
-        if decoded["status"] == "Failure":
-            return make_response(jsonify({"message": decoded["message"]}), 400)
+        res = use_token(parser)
+        if not res['status']:
+            return make_response(jsonify({"message": res['message']}), 400)
 
-        user = User.query.filter_by(id=decoded['id']).first()
+        user = User.query.filter_by(id=res['decoded']['id']).first()
         if not user:
             return make_response(jsonify({
                 "message": "Doesn't exist, Create an account"

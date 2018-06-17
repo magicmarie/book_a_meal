@@ -13,7 +13,7 @@ parameters:
         - "name"
         - "email"
         - "password"
-        - "isAdmin"
+        - "is_admin"
       properties:
         name:
           type: "string"
@@ -25,7 +25,7 @@ parameters:
           type: "string"
           format: password
           example: "mz0987"
-        isAdmin:
+        is_admin:
           type: "string"
           example: "True"
 

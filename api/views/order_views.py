@@ -1,38 +1,35 @@
-import re
-
+""" order views"""
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from
-
-from . import orders
-from api.models import User, Menu, Meal, Order, decode_token
+from api.models import User, Menu, Order, use_token
 from api import DB
+from . import orders
 
 api = Api(orders)
 
 
 class OrderPost(Resource):
+    """orderpost class"""
+    @staticmethod
     @swag_from('../apidocs/add_order.yml')
-    def post(self, meal_id):
+    def post(meal_id):
         """
         Allows authenticated user to make an order from the menu
         token is required to get user Id
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('token', location='headers')
-        args = parser.parse_args()
-        if not args['token']:
-            return make_response(jsonify({"message": "Token is missing"}), 400)
-        decoded = decode_token(args['token'])
-        if decoded["status"] == "Failure":
-            return make_response(jsonify({"message": decoded["message"]}), 400)
+        res = use_token(parser)
+        if not res['status']:
+            return make_response(jsonify({"message": res['message']}), 400)
 
         order = Menu.query.filter_by(mealId=meal_id).first()
         if not order:
             return make_response(jsonify({
                 "meassage": "Meal does not exist"
             }), 404)
-        new_order = Order(mealId=meal_id, userId=decoded['id'], adminId=order.meal.userId)
+        new_order = Order(mealId=meal_id, \
+        userId=res['decoded']['id'], adminId=order.meal.userId)
         DB.session.add(new_order)
         DB.session.commit()
         return make_response(jsonify({
@@ -44,27 +41,25 @@ api.add_resource(OrderPost, '/api/v1/orders/<meal_id>')
 
 
 class OrdersGet(Resource):
+    """ordersget class"""
+    @staticmethod
     @swag_from('../apidocs/get_orders.yml')
-    def get(self):
+    def get():
         """
         Returns all orders made for authenticated admin
         token is required to get admin id
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('token', location='headers')
-        args = parser.parse_args()
-        if not args['token']:
-            return make_response(jsonify({"message": "Token is missing"}), 400)
-        decoded = decode_token(args['token'])
-        if decoded["status"] == "Failure":
-            return make_response(jsonify({"message": decoded["message"]}), 400)
+        res = use_token(parser)
+        if not res['status']:
+            return make_response(jsonify({"message": res['message']}), 400)
         total = 0
-        user = User.query.filter_by(id=decoded['id'], isAdmin="True").first()
+        user = User.query.filter_by(id=res['decoded']['id'], is_admin="True").first()
         if not user:
             return make_response(jsonify({
                 "message": "Customer is not allowed to view this"
             }), 401)
-        orderz = Order.query.filter_by(adminId=decoded['id']).all()
+        orderz = Order.query.filter_by(adminId=res['decoded']['id']).all()
         order_items = []
         for order in orderz:
             order_data = {
@@ -84,22 +79,20 @@ api.add_resource(OrdersGet, '/api/v1/orders')
 
 
 class OrderGet(Resource):
+    """orderget class"""
+    @staticmethod
     @swag_from('../apidocs/get_order.yml')
-    def get(self, user_id):
+    def get(user_id):
         """
         Return all orders made by authenticated user
         token is required to get user Id
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('token', location='headers')
-        args = parser.parse_args()
-        if not args['token']:
-            return make_response(jsonify({"message": "Token is missing"}), 400)
-        decoded = decode_token(args['token'])
-        if decoded["status"] == "Failure":
-            return make_response(jsonify({"message": decoded["message"]}), 400)
+        res = use_token(parser)
+        if not res['status']:
+            return make_response(jsonify({"message": res['message']}), 400)
 
-        order = Order.query.filter_by(userId=decoded['id']).all()
+        order = Order.query.filter_by(userId=res['decoded']['id']).all()
         my_order_items = []
         if not order:
             return make_response(jsonify({"message": "No orders found"}), 404)
@@ -111,7 +104,7 @@ class OrderGet(Resource):
             }
             my_order_items.append(my_order_data)
         return make_response(jsonify({
-            "Orders": my_order_items, 
+            "Orders": my_order_items,
             "status": "success"
         }), 200)
 
