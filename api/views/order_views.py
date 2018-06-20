@@ -93,18 +93,18 @@ class OrderGet(Resource):
             return make_response(jsonify({"message": res['message']}), 400)
 
         order = Order.query.filter_by(userId=res['decoded']['id']).all()
-        my_order_items = []
+        user_order_items = []
         if not order:
             return make_response(jsonify({"message": "No orders found"}), 404)
         for item in order:
-            my_order_data = {
+            user_order_data = {
                 "id": item.id,
                 "mealId": item.mealId,
                 "userId": item.userId
             }
-            my_order_items.append(my_order_data)
+            user_order_items.append(user_order_data)
         return make_response(jsonify({
-            "Orders": my_order_items,
+            "Orders": user_order_items,
             "status": "success"
         }), 200)
 

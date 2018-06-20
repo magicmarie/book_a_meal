@@ -21,7 +21,7 @@ responses:
     schema:
      type: object
      properties:
-      my_order_items:
+      user_order_items:
         type: array
         items: 
           type: object
