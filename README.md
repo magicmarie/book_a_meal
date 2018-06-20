@@ -40,14 +40,35 @@ For windows
 
 Prerequisites
 
-*. Git
+a. Git
 
-*. python 3.6 or higher
+b. python 3.6 or higher
 
 c. Install pip here
 
-d. To install virtual environment pip install virtualenv
+d. To install virtual environment: pip install virtualenv
 
-e. To setup virtual environment virtualenv venv
+e. To setup virtual environment: virtualenv venv
 
-f. To activate virtual environment venv\Scripts\activate
+f. To activate virtual environment: venv\Scripts\activate
+
+## API End points
+
+| EndPoint                       | Method |
+| ------------------------------ | ------ |
+| `/api/v1/auth/signup`          | POST   |
+| `/api/v1/auth/login`           | POST   |
+| `/api/v1/meals`                | GET    |
+| `/api/v1/meals`                | POST   |
+| `/api/v1/meals/<int:mealId>`   | DELETE |
+| `/api/v1/meals/<int:mealId>`   | PUT    |
+| `/api/v1/menu`                 | GET    |
+| `/api/v1/menu/<int:meal_id>`   | POST   |
+| `/api/v1/orders`               | GET    |
+| `/api/v1/orders<meal_id>`      | POST   |
+| `/api/v1/user/orders`          | GET    |
+
+1.  Test the endpoints using Postman
+
+2.  To test the endpoints Run `pytest test`
+
