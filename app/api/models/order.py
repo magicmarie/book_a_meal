@@ -4,6 +4,7 @@ import json
 
 
 class Order:
+    """order model"""
     def __init__(self, meal_id, user_id):
         self.id = uuid.uuid4().hex
         self.meal_id = meal_id

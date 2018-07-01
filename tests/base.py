@@ -1,7 +1,10 @@
 from flask_testing import TestCase
 from app import app, app_config
 import json
-from app.api.views.user_views import users_list, meals_list, menu_list, order_list
+from app.api.models.user import users_list
+from app.api.models.meal import meals_list
+from app.api.views.menu_views import menu_list
+from app.api.views.order_views import order_list
 
 
 class BaseTestCase(TestCase):

@@ -39,7 +39,7 @@ class Test_meal_options(BaseTestCase):
                         headers=({"token": token})
                     )
             data = json.loads(res.data.decode())
-            self.assertEqual(res.status_code, 400)
+            self.assertEqual(res.status_code, 409)
             self.assertEqual(data.get('message'), "Meal name already exists")
 
     def test_get_meals(self):

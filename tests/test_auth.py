@@ -21,7 +21,7 @@ class Test_auth(BaseTestCase):
             self.register_user()
             res = self.register_user()
             data1 = json.loads(res.data.decode())
-            self.assertEqual(res.status_code, 400)
+            self.assertEqual(res.status_code, 409)
             self.assertEqual(data1.get('message'), "email already in use")
 
     def test_login(self):

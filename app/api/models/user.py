@@ -1,11 +1,13 @@
 """ control properties of the user object"""
 import uuid
-import jwt
 import re
 import json
 from datetime import datetime, timedelta
+import jwt
+
 from flask import current_app
 
+users_list = []
 
 class User:
     """
@@ -31,9 +33,70 @@ class User:
             'password': self.password,
             'is_admin': self.is_admin
         })
+    def save(self):
+        """
+        saves the user
+        """
+        new_user = json.loads(User(self.name, self.email, self.password, self.is_admin).json())
+        for user in users_list:
+            if self.email == user['email']:
+                return {
+                    "status": False,
+                    "exists": True,
+                    "message": "email already in use"
+                }
+        users_list.append(new_user)
+        return {"status": True, "message": "User successfully created"}
 
+    def validate_input(self):
+        """
+        validates the user input
+        """
+        if self.name.strip() == "" or len(self.name.strip()) < 3:
+            return {
+                "status": False,
+                "message": "Enter name with more than 2 characters please"
+            }
+
+        if not bool(re.fullmatch('^[A-Za-z ]*$', self.name)):
+            return {"status": False, "message": "Invalid characters not allowed"}
+
+        if not re.match(r"([\w\.-]+)@([\w\.-]+)(\.[\w\.]+$)", self.email):
+            return {"status": False, "message": "Enter valid email "}
+
+        if self.password.strip() == "":
+            return {"status": False, "message": "Enter password"}
+
+        if len(self.password) < 5:
+            return {
+                "status": False,
+                "message": "Password is less than 5 characters"
+            }
+        return {"status":True}
+
+    @staticmethod
+    def log_user(email, password):
+        """
+        logs in the user
+        """
+        for user in users_list:
+            if email == user['email'] and password == user['password']:
+                access_token = "{}".format(
+                    generate_token(user['id'], user['is_admin']))
+                return {
+                    "status": True,
+                    "token": access_token,
+                    "message": "User logged in successfully"
+                }
+        return {
+            "status": False,
+            "message": "wrong email or password credentials"
+        }
 
 def use_token(parser):
+    """
+    Function to test valid token
+    """
     parser.add_argument('token', location='headers')
     args = parser.parse_args()
     if not args['token']:
@@ -42,26 +105,6 @@ def use_token(parser):
     if decoded["status"] == "Failure":
         return {"status": False, "message": decoded["message"]}
     return {"status": True, "decoded": decoded}
-
-
-def validate_input(name="", email="", password=""):
-    
-    if name.strip() == "" or len(name.strip()) < 2:
-        return {"status": False, "message": "invalid, Enter name please"}
-
-    if not bool(re.fullmatch('^[A-Za-z ]*$', name)):
-        return {"status": False, "message": "Invalid characters not allowed"}
-
-    if not re.match(r"([\w\.-]+)@([\w\.-]+)(\.[\w\.]+$)", email):
-        return {"status": False, "message": "Enter valid email "}
-
-    if password.strip() == "":
-        return {"status": False, "message": "Enter password"}
-
-    if len(password) < 5:
-        return {"status": False, "message": "Password is too short, < 5"}
-    return {"status":True}
-
 
 def generate_token(user_id, is_admin):
     """Generates the access token to be used as the Authorization header"""

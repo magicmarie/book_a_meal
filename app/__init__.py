@@ -1,5 +1,5 @@
 """app"""
-from flask import Flask
+from flask import Flask, jsonify
 from flasgger import Swagger
 from .config import app_config
 
@@ -11,8 +11,8 @@ def create_app():
 
     return app_
 
-
 app = create_app()
+
 # load from config.py in root folder
 app.config.from_object(app_config["development"])
 
@@ -51,3 +51,4 @@ app.register_blueprint(users)
 app.register_blueprint(meals)
 app.register_blueprint(menus)
 app.register_blueprint(orders)
+from app import errors

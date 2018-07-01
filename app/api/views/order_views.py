@@ -5,12 +5,13 @@ from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from
 
 from app.api.models.order import Order
-from .user_views import order_list, menu_list, meals_list
-
 from app.api.models.user import use_token
+from app.api.views.menu_views import menu_list, meals_list
 from . import orders
 
 api = Api(orders)
+
+order_list = []
 
 
 class OrderOne(Resource):
@@ -26,7 +27,7 @@ class OrderOne(Resource):
         parser.add_argument('meal_id', type=str, required=True)
         res = use_token(parser)
         if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 400)
+            return make_response(jsonify({"message": res['message']}), 401)
         args = parser.parse_args()
         for order in order_list:
             if order['id'] == order_id:
@@ -56,11 +57,11 @@ class OrderPost(Resource):
         parser = reqparse.RequestParser()
         res = use_token(parser)
         if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 400)
+            return make_response(jsonify({"message": res['message']}), 401)
 
         new_order = Order(meal_id, res['decoded']["id"])
         for meal in menu_list:
-            if meal_id == meal["id"]:
+            if meal_id == meal['id']:
                 order_list.append({
                     "IDs": json.loads(new_order.json()),
                     "meal_name": meal['meal_name']
@@ -69,7 +70,6 @@ class OrderPost(Resource):
                     "message": "Order sent successfully"
                 }), 201)
         return make_response(jsonify({"meassage": "Meal does not exist"}), 404)
-
 
 api.add_resource(OrderPost, '/api/v1/orders/<meal_id>')
 
@@ -86,18 +86,18 @@ class OrdersGet(Resource):
         parser = reqparse.RequestParser()
         res = use_token(parser)
         if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 400)
-        my_orders = []
+            return make_response(jsonify({"message": res['message']}), 401)
+        admin_orders = []
         total = 0
         if res['decoded']['is_admin'] == "True":
             for order in order_list:
                 for meal in meals_list:
                     if order['IDs']['meal_id'] == meal['id']:
                         if meal['admin_id'] == res['decoded']['id']:
-                            my_orders.append(order)
+                            admin_orders.append(order)
                             total += meal['price']
-            if my_orders:
-                return make_response(jsonify({"Orders": my_orders,
+            if admin_orders:
+                return make_response(jsonify({"Orders": admin_orders,
                                               "Total": total,
                                               "status": "success"
                                              }), 200)
@@ -122,16 +122,16 @@ class OrderGet(Resource):
         parser = reqparse.RequestParser()
         res = use_token(parser)
         if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 400)
+            return make_response(jsonify({"message": res['message']}), 401)
 
-        ma_orders = []
+        user_orders = []
         for order in order_list:
             if order['IDs']['user_id'] == res['decoded']['id']:
-                ma_orders.append(order)
+                user_orders.append(order)
 
-        if ma_orders:
+        if user_orders:
             return make_response(jsonify({
-                "Orders": ma_orders,
+                "Orders": user_orders,
                 "status": "success"
             }), 200)
         return make_response(jsonify({"message": "No orders found"}), 404)
