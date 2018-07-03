@@ -38,9 +38,9 @@ python run.py
 
 ## API End points
 | EndPoint                       | Method | Functionality                                     | Access
-| ------------------------------ | ------ |                                                   | PUBLIC
+| ------------------------------ | ------ | --------------------------------------------------| --------
 | `/api/v1/auth/signup`          | POST   | Users(Admins and customers) can create an account | PUBLIC
-| `/api/v1/auth/login`           | POST   | Users can log in to their accounts                | PRIVATE
+| `/api/v1/auth/login`           | POST   | Users can log in to their accounts                | PUBLIC
 | `/api/v1/meals`                | GET    | Admin can get all meal options he created         | PRIVATE
 | `/api/v1/meals`                | POST   | Admin can add a meal option                       | PRIVATE 
 | `/api/v1/meals/<int:mealId>`   | DELETE | Admin can delete an existing meal by meal_id      | PRIVATE
