@@ -1,5 +1,4 @@
 """ meal views"""
-import json
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from
@@ -62,7 +61,7 @@ class MealsList(Resource):
                     args['price'],
                     res['decoded']['id'])
                 res = meal.validate_inputs()
-                if not res['status']:  
+                if not res['status']:
                     return make_response(jsonify({
                         "message": res['message']
                     }), 400)
@@ -129,10 +128,7 @@ class MealOne(Resource):
         if res['decoded']['is_admin'] == "True":
             for meal in meals_list:
                 if meal.id == meal_id and meal.admin_id == res['decoded']['id']:
-                    updated_meal = Meal(
-                    args['meal_name'],
-                    args['price'],
-                    res['decoded']['id'])
+                    updated_meal = Meal(args['meal_name'], args['price'], res['decoded']['id'])
                     response = updated_meal.validate_inputs()
                     if not response['status']:
                         return make_response(jsonify({

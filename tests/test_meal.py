@@ -1,9 +1,10 @@
-from tests.base import BaseTestCase
+"""test meals"""
 import json
+from tests.base import BaseTestCase
 
 
-class Test_meal_options(BaseTestCase):
-
+class TestMealOptions(BaseTestCase):
+    """class test meal options"""
 
     def test_add_meal(self):
         """
@@ -21,7 +22,7 @@ class Test_meal_options(BaseTestCase):
         """
         with self.client:
             self.add_meal()
-            response = self.client.post('api/v1/auth/login', 
+            response = self.client.post('api/v1/auth/login',
             data=json.dumps(dict(
                                     email="marie@live.com",
                                     password="magic"
@@ -30,7 +31,7 @@ class Test_meal_options(BaseTestCase):
                             content_type='application/json'
                         )
             token = json.loads(response.data.decode())['token']
-            res = self.client.post('api/v1/meals', data=json.dumps( dict(
+            res = self.client.post('api/v1/meals', data=json.dumps(dict(
                                 meal_name="beef and rice",
                                 price="15000"
                             )

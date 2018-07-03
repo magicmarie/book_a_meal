@@ -1,8 +1,10 @@
-from tests.base import BaseTestCase
+"""test auth"""
 import json
+from tests.base import BaseTestCase
 
 
-class Test_auth(BaseTestCase):
+class TestAuth(BaseTestCase):
+    """class Test_auth"""
     def test_signup(self):
         """
         Test a user is successfully created through the api

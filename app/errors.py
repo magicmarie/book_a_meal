@@ -1,4 +1,7 @@
-from flask import jsonify, make_response
+"""
+Custom error messages
+"""
+from flask import jsonify
 # from flask_errorhandler import ErrorHandler
 from app import app
 

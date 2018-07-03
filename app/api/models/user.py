@@ -57,6 +57,11 @@ class User:
                 "status": False,
                 "message": "Enter name with more than 2 characters please"
             }
+        if len(self.name.strip()) > 25:
+            return {
+                "status": False,
+                "message": "Enter name with 25 characters or less"
+            }
 
         if not bool(re.fullmatch('^[A-Za-z ]*$', self.name)):
             return {"status": False, "message": "Invalid characters not allowed"}

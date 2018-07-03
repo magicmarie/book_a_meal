@@ -1,9 +1,10 @@
-from tests.base import BaseTestCase
+"""tests orders"""
 import json
+from tests.base import BaseTestCase
 
 
-class Test_order_options(BaseTestCase):
-    
+class TestOrderOptions(BaseTestCase):
+    """class test orders"""
     def test_get_user_orders(self):
         """
         Test that an authenticated user can get his orders

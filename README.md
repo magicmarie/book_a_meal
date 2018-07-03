@@ -6,48 +6,59 @@
 Book A Meal  is a web application  that allows customers to make food orders and
 helps the food vendor to know what the customers want to eat.
 
-This API is currently hosted on heroku https://book-a-meal-api-heroku.herokuapp.com/
+*This API is currently hosted on heroku [url](https://book-a-meal-api-heroku.herokuapp.com/)*
 
-## Features
-The application has a couple of features as listed below:-
- * Users can create an account and log in
- * Admin (Caterer) should be able to manage (i.e: add, modify and delete) meal options in the application. Examples of meal options are: Beef with rice, Beef with fries etc
- * Admin (Caterer) should be able to setup menu for a specific day by selecting from the meal options available on the system.
- * Authenticated users (customers) should be able to see the menu for a specific day and select an option out of the menu.
- * Authenticated users (customers) should be able to change their meal choice.
- * Admin (Caterer) should be able to see the orders made by the user
- * Admin should be able to see amount of money made by end of day
- * Authenticated users (customers) should be able to see their order history
- * Authenticated users (customers) should be able to get notifications when the menu for the day has been set.
- * Admin (Caterer) should be able to see order history
- * The application should be able to host more than one caterer.
-
+## Requirements
+- `Python3` - A programming language that lets us work more quickly.
+- `Flask` - A microframework for Python based on Werkzeug, Jinja 2 and good intentions.
+- `Virtualenv` - A tool to create an isolated virtual environment.
+- `Git` - Versio Control System for tracking your changes.
 
 ## Setup
 First clone it to your local machine by running
-
 ```
 git clone https://github.com/magicmarie/book_a_meal.git
 cd book_a_meal
 ```
+Create virtual environment and activate it
+```
+$ virtualenv --python=python3 venv
+$ source /venv/bin/activate
+```
+Then install all the necessary dependencies
+```
+pip install -r requirements.txt
+```
+
 ## Starting the application
 In order to run the application, run the command below to start the application.
 ```
 python run.py
 ```
-##How to setup the API backend
-For windows
 
-Prerequisites
+## API End points
+| EndPoint                       | Method | Functionality                                     | Access
+| ------------------------------ | ------ |                                                   | PUBLIC
+| `/api/v1/auth/signup`          | POST   | Users(Admins and customers) can create an account | PUBLIC
+| `/api/v1/auth/login`           | POST   | Users can log in to their accounts                | PRIVATE
+| `/api/v1/meals`                | GET    | Admin can get all meal options he created         | PRIVATE
+| `/api/v1/meals`                | POST   | Admin can add a meal option                       | PRIVATE 
+| `/api/v1/meals/<int:mealId>`   | DELETE | Admin can delete an existing meal by meal_id      | PRIVATE
+| `/api/v1/meals/<int:mealId>`   | PUT    | Admin can update an existing meal by meal_id      | PRIVATE
+| `/api/v1/menu`                 | GET    | Users can get the menu                            | PRIVATE
+| `/api/v1/menu/<int:meal_id>`   | POST   | Admin can add a meal he created to the menu by id | PRIVATE
+| `/api/v1/orders`               | GET    | Admin can get all orders made on his meals        | PRIVATE
+| `/api/v1/orders<meal_id>`      | POST   | User can make an order by meal_id                 | PRIVATE      
+| `/api/v1/user/orders`          | GET    | Users can get all their orders                    | PRIVATE
 
-*. Git
+Test the endpoints using Postman
+*You could use a GUI platform like [postman](https://www.getpostman.com/) to make requests to and fro the api.*
 
-*. python 3.6 or higher
-
-c. Install pip here
-
-d. To install virtual environment pip install virtualenv
-
-e. To setup virtual environment virtualenv venv
-
-f. To activate virtual environment venv\Scripts\activate
+To run tests run this command at the console/terminal
+```
+pytest tests
+```
+To run tests with coverage run this command at the console/terminal
+```
+pytest --cov=app
+```

@@ -1,5 +1,4 @@
 """ user views"""
-import json
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from

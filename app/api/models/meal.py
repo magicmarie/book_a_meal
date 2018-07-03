@@ -34,6 +34,8 @@ class Meal:
         """
         if self.meal_name.strip() == "" or len(self.meal_name.strip()) < 2:
             return {"status": False, "message": "invalid, Enter name please"}
+        if len(self.meal_name.strip()) > 25:
+            return {"status": False, "message": "Enter name not more than 25 characters"}
         if not bool(re.fullmatch('^[A-Za-z ]*$', self.meal_name)):
             return {"status": False, "message": "Invalid characters not allowed"}
 

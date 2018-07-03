@@ -1,8 +1,10 @@
-from tests.base import BaseTestCase
+"""test menu"""
 import json
+from tests.base import BaseTestCase
 
 
-class Test_menu_options(BaseTestCase):
+class TestMenuOptions(BaseTestCase):
+    """test menu options"""
     def test_add_menu(self):
         """
         Test that an authenticated admin can add a meal to the menu

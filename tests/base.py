@@ -1,3 +1,4 @@
+"""base"""
 from flask_testing import TestCase
 from app import app, app_config
 import json
@@ -8,6 +9,7 @@ from app.api.views.order_views import order_list
 
 
 class BaseTestCase(TestCase):
+    """base test case class"""
     def create_app(self):
         """
         Create an instance of the app with the testing configuration
