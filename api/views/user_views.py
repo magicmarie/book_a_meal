@@ -3,7 +3,7 @@ from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from
 
-from api.models import User, generate_token, decode_token, validate_input
+from api.models import User, generate_token, decode_token
 from api import DB
 from . import users
 
@@ -20,37 +20,28 @@ class Signup(Resource):
         """
 
         parser = reqparse.RequestParser()
-        parser.add_argument('name', type=str, required=True)
-        parser.add_argument('email', type=str, required=True)
-        parser.add_argument('password', type=str, required=True)
-        parser.add_argument('is_admin', type=str, required=True)
+        parser.add_argument('name', type=str, help="Name is a required field", required=True)
+        parser.add_argument('email', type=str, help="Email is a required field", required=True)
+        parser.add_argument('password', type=str, help="Password is a required field", required=True)
+        parser.add_argument('is_admin', type=str, help="is_admin is a required field", required=True)
 
         args = parser.parse_args()
-        name = args['name']
-        email = args['email']
-        password = args['password']
-        is_admin = args['is_admin']
+        user = User(args['name'], args['email'], args['password'], args['is_admin'])
 
-        response = validate_input(name, email, password)
+        res= user.validate_input()
+        if not res['status']:
+            return make_response(jsonify({
+                "message": res['message']
+            }), 400)
+
+        response= user.save()
         if not response['status']:
             return make_response(jsonify({
                 "message": response['message']
-            }), 401)
-
-        user = User.query.filter_by(email=email).first()
-        if user:
-            return make_response(jsonify({
-                "message": "Email in use already"
-            }), 401)
-        new_user = User(name=name, email=email,
-                        password=password, is_admin=is_admin)
-        DB.session.add(new_user)
-        DB.session.commit()
+            }), 409)
         return make_response(jsonify({
-            "status": "success",
-            "message": "User successfully created"
-        }), 201)
-
+                "message": response['message']
+            }), 201)
 
 api.add_resource(Signup, '/api/v1/auth/signup')
 
@@ -64,27 +55,19 @@ class Login(Resource):
         Allows users to login to their accounts
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('email', type=str, required=True)
-        parser.add_argument('password', type=str, required=True)
+        parser.add_argument('email', type=str, help="Name is a required field", required=True)
+        parser.add_argument('password', type=str, help="Password is a required field", required=True)
 
         args = parser.parse_args()
-        email = args['email']
-        password = args['password']
 
-        user = User.query.filter_by(email=email).first()
-        if not user:
+        response = User.log_user(args['email'], args['password'])
+        if response["status"]:
             return make_response(jsonify({
-                "message": "User does not exist"
-            }), 400)
-        if email == user.email and password == user.password:
-            access_token = generate_token(user.id, user.is_admin)
-            return make_response(jsonify({
-                "token": access_token,
-                "message": "User logged in successfully"
+                'message': response["message"],
+                'token': response['token']
             }), 200)
         return make_response(jsonify({
-            "message": "wrong email or password"
+            'message': response["message"]
         }), 400)
-
 
 api.add_resource(Login, '/api/v1/auth/login')

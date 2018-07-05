@@ -35,7 +35,7 @@ class Test_menu_options(BaseTestCase):
             'api/v1/menu/{}'.format(id),
             content_type='application/json', headers=({"token": ""}))
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Token is missing")
 
     def test_none_admin_add_menu(self):
@@ -50,7 +50,7 @@ class Test_menu_options(BaseTestCase):
             content_type='application/json', headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
-                             "Customer is not allowed to do this")
+                             "Customer is not authorized to access this page")
             self.assertEqual(response.status_code, 401)
 
     def test_non_existent_meal(self):
@@ -76,5 +76,5 @@ class Test_menu_options(BaseTestCase):
         with self.client:
             response = self.client.get('api/v1/menu',headers=({"token": ""}))
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Token is missing")   
