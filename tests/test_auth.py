@@ -23,8 +23,8 @@ class Test_auth(BaseTestCase):
             response = self.register_user(
                 "", "marie@live.com", "marie", "True")
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'), "invalid, Enter name please")
-            self.assertEqual(response.status_code, 401)
+            self.assertEqual(data.get('message'), "Enter name with more than 2 characters")
+            self.assertEqual(response.status_code, 400)
 
     def test_invalid_name_details(self):
         """
@@ -36,7 +36,7 @@ class Test_auth(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Invalid characters not allowed")
-            self.assertEqual(response.status_code, 401)
+            self.assertEqual(response.status_code, 400)
 
     def test_missing_password_details(self):
         """
@@ -46,7 +46,7 @@ class Test_auth(BaseTestCase):
             response = self.register_user("name", "marie@live.com", "", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Enter password")
-            self.assertEqual(response.status_code, 401)
+            self.assertEqual(response.status_code, 400)
 
     def test_short_password_details(self):
         """
@@ -56,8 +56,8 @@ class Test_auth(BaseTestCase):
             response = self.register_user(
                 "name", "marie@live.com", "mari", "True")
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'), "Password is too short, < 5")
-            self.assertEqual(response.status_code, 401)
+            self.assertEqual(data.get('message'), "Enter password with more than 4 characters")
+            self.assertEqual(response.status_code, 400)
 
     def test_invalid_email(self):
         """
@@ -68,7 +68,7 @@ class Test_auth(BaseTestCase):
                 "marie", "marielive.com", "marie", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Enter valid email")
-            self.assertEqual(response.status_code, 401)
+            self.assertEqual(response.status_code, 400)
 
     def test_user_already_registered_with_email(self):
         """
@@ -82,8 +82,8 @@ class Test_auth(BaseTestCase):
             response = self.register_user(
                 "marie", "marie@gmail.com", "marie", "True")
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'), "Email in use already")
-            self.assertEqual(response.status_code, 401)
+            self.assertEqual(data.get('message'), "email already in use")
+            self.assertEqual(response.status_code, 409)
 
     def test_login_unknown_user(self):
         """
@@ -107,7 +107,7 @@ class Test_auth(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'),
-                             "wrong email or password")
+                             "wrong password credentials")
 
     def test_login(self):
         """

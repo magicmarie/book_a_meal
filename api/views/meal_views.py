@@ -3,7 +3,7 @@ from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from
 
-from api.models import User, Meal, validate_inputs, use_token
+from api.models import User, Meal, use_token
 from api import DB
 from . import meals
 
@@ -20,39 +20,32 @@ class Mealsdb(Resource):
         token is required to get admin Id
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('meal_name', type=str, required=True)
-        parser.add_argument('price', type=int, required=True)
+        parser.add_argument('meal_name', type=str, help="mneal_name is a required field", required=True)
+        parser.add_argument('price', type=int, help="Price is a required field", required=True)
         args = parser.parse_args()
         res = use_token(parser)
         if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 400)
-
-        user = User.query.filter_by(id=res['decoded']['id'], is_admin="True").first()
-        if not user:
-            return make_response(jsonify({
-                "message": "Customer is not authorized to create meals"
-            }), 401)
-        meal_name = args['meal_name']
-        price = args['price']
-
-        response = validate_inputs(meal_name)
+            return make_response(jsonify({"message": res['message']}), 401)
+        meal= Meal(meal_name=args["meal_name"], price=args['price'])
+        response = User.user_is_admin(res)
         if not response['status']:
             return make_response(jsonify({
                 "message": response['message']
-            }), 400)
-
-        meal = Meal.query.filter_by(meal_name=meal_name, userId=res['decoded']['id']).first()
-        if meal:
+            }), 401)
+        validate = meal.validate_inputs()
+        if not validate['status']:
             return make_response(jsonify({
-                "message": 'Meal name already exists'
+                "message": validate['message']
             }), 400)
-        new_meal = Meal(meal_name=meal_name, price=price, userId=res['decoded']['id'])
-        DB.session.add(new_meal)
-        DB. session.commit()
+        new_meal = meal.save_meal(args["meal_name"], args['price'], res)
+        if not new_meal['status']:
+            return make_response(jsonify({
+                "message": new_meal['message']
+            }), 400)
         return make_response(jsonify({
-            'message': 'Meal successfully created'
+            'message': new_meal['message']
         }), 201)
-
+        
     @staticmethod
     @swag_from('../apidocs/get_meals.yml')
     def get():
@@ -63,23 +56,16 @@ class Mealsdb(Resource):
         parser = reqparse.RequestParser()
         res = use_token(parser)
         if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 400)
+            return make_response(jsonify({"message": res['message']}), 401)
 
-        user = User.query.filter_by(id=res['decoded']['id'], is_admin="True").first()
-        if not user:
+        response = User.user_is_admin(res)
+    
+        if not response['status']:
             return make_response(jsonify({
-                "message": "Customer is not authorized to view meals"
+                "message": response['message']
             }), 401)
-        meals = Meal.query.filter_by(userId=res['decoded']['id']).all()
-        meal_items = []
-        for meal in meals:
-            meal_data = {
-                "id": meal.id,
-                "price": meal.price,
-                "meal_name": meal.meal_name,
-                "userId": meal.userId
-            }
-            meal_items.append(meal_data)
+        meals  = Meal.get_meals(res)
+        meal_items = Meal.meals_serializer(meals)
         return make_response(jsonify({
             "meal_items": meal_items
         }), 200)
@@ -100,18 +86,17 @@ class MealOne(Resource):
         parser = reqparse.RequestParser()
         res = use_token(parser)
         if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 400)
+            return make_response(jsonify({"message": res['message']}), 401)
 
-        user = User.query.filter_by(id=res['decoded']['id'], is_admin="True").first()
-        if not user:
+        response = User.user_is_admin(res)
+        if not response['status']:
             return make_response(jsonify({
-                "message": "Customer is not allowed to do this"
+                "message": response['message']
             }), 401)
-
-        meal = Meal.query.filter_by(userId=res['decoded']['id'], id=meal_id).first()
-        if not meal:
+        meal = Meal.find_meal(meal_id, res)
+        if not res['status']:
             return make_response(jsonify({
-                "message": "Meal not found"
+                "message": res['message']
             }), 404)
         DB.session.delete(meal)
         DB.session.commit()
@@ -127,36 +112,33 @@ class MealOne(Resource):
         token is required to get admin Id
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('meal_name', type=str, required=True)
-        parser.add_argument('price', type=int, required=True)
+        parser.add_argument('meal_name', type=str, help="meal_name is a required field", required=True)
+        parser.add_argument('price', type=int, help="Name is a required field",required=True)
+        args = parser.parse_args()
         res = use_token(parser)
         if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 400)
+            return make_response(jsonify({"message": res['message']}), 401)
 
-        user = User.query.filter_by(id=res['decoded']['id'], is_admin="True").first()
-        if not user:
+        response = User.user_is_admin(res)
+        if not response['status']:
             return make_response(jsonify({
-                "message": "Customer is not allowed to do this"
+                "message": response['message']
             }), 401)
-
-        meal = Meal.query.filter_by(userId=res['decoded']['id'], id=meal_id).first()
-        if not meal:
+        meal = Meal()
+        res1 = meal.find_meal(meal_id ,res)
+        if not res1['status']:
             return make_response(jsonify({
-                "message": "Meal not found"
+                "message": res1['message']
             }), 404)
-        args = parser.parse_args()
-        response = validate_inputs(args['meal_name'])
+        response = res1['meal'].validate_inputs(args['meal_name'])
         if not response['status']:
             return make_response(jsonify({
                 "message": response['message']
             }), 400)
-        meal.meal_name = args['meal_name']
-        meal.price = args['price']
-        DB.session.add(meal)
-        DB.session.commit()
-        return make_response(jsonify({
-            "message": "Meal updated successfully"
-        }), 201)
-
+        new_meal = res1['meal'].edit_meal(args['meal_name'], args['price'])
+        if  new_meal['status']:
+            return make_response(jsonify({
+                "message": new_meal['message']
+            }), 201)
 
 api.add_resource(MealOne, '/api/v1/meals/<int:meal_id>')

@@ -21,7 +21,7 @@ class OrderPost(Resource):
         parser = reqparse.RequestParser()
         res = use_token(parser)
         if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 400)
+            return make_response(jsonify({"message": res['message']}), 401)
 
         order = Menu.query.filter_by(mealId=meal_id).first()
         if not order:
@@ -52,12 +52,12 @@ class OrdersGet(Resource):
         parser = reqparse.RequestParser()
         res = use_token(parser)
         if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 400)
+            return make_response(jsonify({"message": res['message']}), 401)
         total = 0
-        user = User.query.filter_by(id=res['decoded']['id'], is_admin="True").first()
-        if not user:
+        response = User.user_is_admin(res)
+        if not response['status']:
             return make_response(jsonify({
-                "message": "Customer is not allowed to view this"
+                "message": response['message']
             }), 401)
         orderz = Order.query.filter_by(adminId=res['decoded']['id']).all()
         order_items = []
@@ -90,7 +90,7 @@ class OrderGet(Resource):
         parser = reqparse.RequestParser()
         res = use_token(parser)
         if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 400)
+            return make_response(jsonify({"message": res['message']}), 401)
 
         order = Order.query.filter_by(userId=res['decoded']['id']).all()
         user_order_items = []

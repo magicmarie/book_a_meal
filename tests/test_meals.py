@@ -52,7 +52,7 @@ class Test_meal_options(BaseTestCase):
                 headers=({"token": token})
             )
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Token is missing")
 
     def test_invalid_token_post(self):
@@ -71,7 +71,7 @@ class Test_meal_options(BaseTestCase):
                 headers=({"token": token})
             )
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
 
     def test_meal_name_already_exists(self):
@@ -84,7 +84,7 @@ class Test_meal_options(BaseTestCase):
             response = self.add_meal( "fries", 10000)
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal name already exists")
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 409)
 
     def test_none_admin_post(self):
         """
@@ -103,7 +103,7 @@ class Test_meal_options(BaseTestCase):
                         )
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
-                             "Customer is not authorized to create meals")
+                             "Customer is not authorized to access this page")
             self.assertEqual(response.status_code, 401)
 
     def test_get_meals(self):
@@ -128,7 +128,7 @@ class Test_meal_options(BaseTestCase):
             response = self.client.get('api/v1/meals', headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
-                             "Customer is not authorized to view meals")
+                             "Customer is not authorized to access this page")
             self.assertEqual(response.status_code, 401)
 
     def test_token_missing_get_all(self):
@@ -138,7 +138,7 @@ class Test_meal_options(BaseTestCase):
         with self.client:
             response = self.client.get('api/v1/meals', headers=({"token": ""}))
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Token is missing")
 
     def test_invalid_token_get_all(self):
@@ -148,7 +148,7 @@ class Test_meal_options(BaseTestCase):
         with self.client:
             response = self.client.get('api/v1/meals', headers=({"token": "12345"}))
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
 
     def test_delete_meal(self):
@@ -171,7 +171,7 @@ class Test_meal_options(BaseTestCase):
                             "token": "12345"
                         }))
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
 
     def test_token_missing_delete(self):
@@ -184,7 +184,7 @@ class Test_meal_options(BaseTestCase):
                             "token": ""
                         }))
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Token is missing")
 
     def test_none_admin_delete(self):
@@ -200,7 +200,7 @@ class Test_meal_options(BaseTestCase):
                         }))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
-                             "Customer is not allowed to do this")
+                             "Customer is not authorized to access this page")
             self.assertEqual(response.status_code, 401)
 
     def test_wrong_admin_delete(self):
@@ -243,7 +243,7 @@ class Test_meal_options(BaseTestCase):
                                content_type='application/json',
                                headers=({"token": "12345"}))
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
 
     def test_token_missing_edit(self):
@@ -260,7 +260,7 @@ class Test_meal_options(BaseTestCase):
                                content_type='application/json',
                                headers=({"token": ""}))
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Token is missing")
 
     def test_none_admin_edit(self):
@@ -280,7 +280,7 @@ class Test_meal_options(BaseTestCase):
                                headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
-                             "Customer is not allowed to do this")
+                             "Customer is not authorized to access this page")
             self.assertEqual(response.status_code, 401)
 
     def test_wrong_admin_put(self):

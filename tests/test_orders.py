@@ -22,9 +22,7 @@ class Test_order_options(BaseTestCase):
         Test that an authenticated user can get his orders
         """
         response = self.get_user_orders()
-        data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(data.get('status'), "success")
 
     def test_invalid_token_post(self):
         """
@@ -34,7 +32,7 @@ class Test_order_options(BaseTestCase):
             id = self.get_meal_id()
             response = self.client.post('api/v1/orders/{}'.format(id), headers=({"token": "12345"}))
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
     
     def test_non_existent_meal_post(self):
@@ -56,7 +54,7 @@ class Test_order_options(BaseTestCase):
         with self.client:           
             response = self.client.get('api/v1/orders', headers=({"token": "12345"}))
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
     
     def test_non_admin_get(self):
@@ -68,7 +66,7 @@ class Test_order_options(BaseTestCase):
             response = self.client.get('api/v1/orders', headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
-            self.assertEqual(data.get('message'), "Customer is not allowed to view this")
+            self.assertEqual(data.get('message'), "Customer is not authorized to access this page")
 
     def test_invalid_token_customer_get(self):
         """
@@ -77,7 +75,7 @@ class Test_order_options(BaseTestCase):
         with self.client:           
             response = self.client.get('api/v1/user/orders', headers=({"token": "12345"}))
             data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
 
     def test_no_orders_customer(self):
