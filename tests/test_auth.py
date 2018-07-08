@@ -1,6 +1,6 @@
 from tests.base import BaseTestCase
 import unittest
-from api.models import User
+from api.models.user import User
 from api import DB
 import json
 
@@ -24,6 +24,17 @@ class Test_auth(BaseTestCase):
                 "", "marie@live.com", "marie", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Enter name with more than 2 characters")
+            self.assertEqual(response.status_code, 400)
+
+    def test_long_name_details(self):
+        """
+        Test that the name details are not too long when sending request
+        """
+        with self.client:
+            response = self.register_user(
+                "qwertyuiopljkhgfdsazxcvbnmmagicmarie", "marie@live.com", "marie", "True")
+            data = json.loads(response.data.decode())
+            self.assertEqual(data.get('message'), "Enter name with less than 25 characters")
             self.assertEqual(response.status_code, 400)
 
     def test_invalid_name_details(self):
@@ -107,7 +118,7 @@ class Test_auth(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertEqual(data.get('message'),
-                             "wrong password credentials")
+                             "wrong password or email credentials")
 
     def test_login(self):
         """

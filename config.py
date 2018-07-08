@@ -1,6 +1,7 @@
 """configurations for app"""
 import os
 
+
 class BaseConfig(object):
     """
     Common configurations
