@@ -1,5 +1,5 @@
 from tests.base import BaseTestCase
-from api.models import Menu
+from api.models.menu import Menu
 import json
 
 

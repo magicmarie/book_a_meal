@@ -1,5 +1,5 @@
 from tests.base import BaseTestCase
-from api.models import Meal
+from api.models.meal import Meal
 import json
 
 
@@ -22,7 +22,40 @@ class Test_meal_options(BaseTestCase):
             response = self.add_meal("", 15000)
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
-                             "invalid, Enter meal name please")
+                             "Enter meal name with more than 2 characters")
+            self.assertEqual(response.status_code, 400)
+
+    def test_short_meal_name_details(self):
+        """
+        Test that the meal_name details are set right when sending request
+        """
+        with self.client:
+            response = self.add_meal("qwertyuioplkjhgfdsazxcvbnmqwertyu", 15000)
+            data = json.loads(response.data.decode())
+            self.assertEqual(data.get('message'),
+                             "Enter meal name with less than 25 characters")
+            self.assertEqual(response.status_code, 400)
+
+    def test_positive_price_details(self):
+        """
+        Test that the price details are positive when sending request
+        """
+        with self.client:
+            response = self.add_meal("beef", -15000)
+            data = json.loads(response.data.decode())
+            self.assertEqual(data.get('message'),
+                             "Price must be a positive number")
+            self.assertEqual(response.status_code, 400)
+
+    def test_price_details_number(self):
+        """
+        Test that the price details are numbers when sending request
+        """
+        with self.client:
+            response = self.add_meal("beef", "jasmine")
+            data = json.loads(response.data.decode())
+            self.assertEqual(data.get('message'),
+                             "Price must be a number")
             self.assertEqual(response.status_code, 400)
 
     def test_invalid_name_details(self):
@@ -301,25 +334,6 @@ class Test_meal_options(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal not found")
             self.assertEqual(response.status_code, 404)
-
-    def test_missing_meal_name_details_put(self):
-        """
-        Test that the meal_name details are set on put request
-        """
-        with self.client:
-            token = self.get_token()
-            id = self.get_id()
-            response = self.client.put('api/v1/meals/{}'.format(id),
-                               data=json.dumps(dict(
-                                   meal_name="",
-                                   price=15000
-                               )),
-                               content_type='application/json',
-                               headers=({"token": token}))
-            data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'),
-                             "invalid, Enter meal name please")
-            self.assertEqual(response.status_code, 400)
 
     def test_invalid_name_details_put(self):
         """

@@ -58,8 +58,8 @@ python run.py
 | `/api/v1/auth/login`           | POST   | Users can log in to their accounts                | PUBLIC
 | `/api/v1/meals`                | GET    | Admin can get all meal options he created         | PRIVATE
 | `/api/v1/meals`                | POST   | Admin can add a meal option                       | PRIVATE 
-| `/api/v1/meals/<int:mealId>`   | DELETE | Admin can delete an existing meal by meal_id      | PRIVATE
-| `/api/v1/meals/<int:mealId>`   | PUT    | Admin can update an existing meal by meal_id      | PRIVATE
+| `/api/v1/meals/<int:meal_id>`   | DELETE | Admin can delete an existing meal by meal_id      | PRIVATE
+| `/api/v1/meals/<int:meal_id>`   | PUT    | Admin can update an existing meal by meal_id      | PRIVATE
 | `/api/v1/menu`                 | GET    | Users can get the menu                            | PRIVATE
 | `/api/v1/menu/<int:meal_id>`   | POST   | Admin can add a meal he created to the menu by id | PRIVATE
 | `/api/v1/orders`               | GET    | Admin can get all orders made on his meals        | PRIVATE

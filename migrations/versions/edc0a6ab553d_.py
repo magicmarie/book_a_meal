@@ -31,23 +31,23 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('meal_name', sa.String(length=50), nullable=True),
     sa.Column('price', sa.Integer(), nullable=True),
-    sa.Column('userId', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['userId'], ['users.id'], ),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('menus',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('mealId', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['mealId'], ['meals.id'], ),
+    sa.Column('meal_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['meal_id'], ['meals.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('orders',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('mealId', sa.Integer(), nullable=True),
-    sa.Column('userId', sa.Integer(), nullable=True),
-    sa.Column('adminId', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['mealId'], ['meals.id'], ),
-    sa.ForeignKeyConstraint(['userId'], ['users.id'], ),
+    sa.Column('meal_id', sa.Integer(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('admin_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['meal_id'], ['meals.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

@@ -35,6 +35,18 @@ class Test_order_options(BaseTestCase):
             self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
     
+    def test_missing_token_post(self):
+        """
+        Test for missing token on post order request
+        """
+        with self.client:
+            id = self.get_meal_id()
+            response = self.client.post('api/v1/orders/{}'.format(id), headers=({"token": ""}))
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(data.get('message'), "Token is missing")
+    
+
     def test_non_existent_meal_post(self):
         """
         Test authenticated cannot make an order that doesnt exist on the menu

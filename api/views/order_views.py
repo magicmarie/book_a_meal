@@ -2,8 +2,10 @@
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from
-from api.models import User, Menu, Order, use_token
-from api import DB
+
+from api.models.user import User
+from api.models.order import Order
+from api.auth_token import use_token
 from . import orders
 
 api = Api(orders)
@@ -22,16 +24,11 @@ class OrderPost(Resource):
         res = use_token(parser)
         if not res['status']:
             return make_response(jsonify({"message": res['message']}), 401)
-
-        order = Menu.query.filter_by(mealId=meal_id).first()
+        order = Order().add_order(res, meal_id)
         if not order:
             return make_response(jsonify({
                 "message": "Meal does not exist"
             }), 404)
-        new_order = Order(mealId=meal_id, \
-        userId=res['decoded']['id'], adminId=order.meal.userId)
-        DB.session.add(new_order)
-        DB.session.commit()
         return make_response(jsonify({
             "message": "Order sent successfully"
         }), 201)
@@ -53,26 +50,21 @@ class OrdersGet(Resource):
         res = use_token(parser)
         if not res['status']:
             return make_response(jsonify({"message": res['message']}), 401)
-        total = 0
+
         response = User.user_is_admin(res)
         if not response['status']:
             return make_response(jsonify({
                 "message": response['message']
             }), 401)
-        orderz = Order.query.filter_by(adminId=res['decoded']['id']).all()
-        order_items = []
-        for order in orderz:
-            order_data = {
-                "id": order.id,
-                "mealId": order.mealId,
-                "userId": order.userId
-            }
-            order_items.append(order_data)
-            total += order.meal.price
+        res1 = Order().get_admin_orders(res)
+        if res1:
+            return make_response(jsonify({
+                "order_items": res1['order_items'],
+                "Total": res['total']
+            }), 200)
         return make_response(jsonify({
-            "order_items": order_items,
-            "Total": total
-        }), 200)
+            "message": "orders not found"
+        }), 404)
 
 
 api.add_resource(OrdersGet, '/api/v1/orders')
@@ -92,20 +84,13 @@ class OrderGet(Resource):
         if not res['status']:
             return make_response(jsonify({"message": res['message']}), 401)
 
-        order = Order.query.filter_by(userId=res['decoded']['id']).all()
-        user_order_items = []
-        if not order:
-            return make_response(jsonify({"message": "No orders found"}), 404)
-        for item in order:
-            user_order_data = {
-                "id": item.id,
-                "mealId": item.mealId,
-                "userId": item.userId
-            }
-            user_order_items.append(user_order_data)
+        response = Order().get_user_orders(res)
+        if not response['status']:
+            return make_response(jsonify({
+                "message": "No orders found"
+            }), 404)
         return make_response(jsonify({
-            "Orders": user_order_items,
-            "status": "success"
+            "Orders": response['order_items']
         }), 200)
 
 

@@ -3,8 +3,10 @@ from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from
 
-from api.models import User, Menu, Meal, use_token
-from api import DB
+from api.models.menu import Menu
+from api.models.user import User
+from api.models.meal import Meal
+from api.auth_token import use_token
 from . import menus
 
 api = Api(menus)
@@ -39,11 +41,12 @@ class MenuPost(Resource):
         menu = Menu().save_menu(meal_id, res)
         if not menu['status']:
             return make_response(jsonify({
-                "message": menu['message']
+                "message": "Meal already exists in menu"
             }), 409)
         return make_response(jsonify({
-                "message": menu['message']
-            }), 201)
+            "message": "Meal successfully added to menu"
+        }), 201)
+
 
 api.add_resource(MenuPost, '/api/v1/menu/<int:meal_id>')
 
@@ -64,22 +67,9 @@ class Menus(Resource):
 
         menu = Menu.get_menu(res)
         if menu['status']:
-           return make_response(jsonify({
+            return make_response(jsonify({
                 "message": menu['menu']
-            }), 200) 
-        # user = User.query.filter_by(id=res['decoded']['id']).first()
-        # if user: 
-        #     menu = Menu.query.all()
-        #     menu_items = []
-        #     if menu:
-        #         for menu_item in menu:
-        #             menu_data = {
-        #                 "meal_id": menu_item.meal.id,
-        #                 "meal_name": menu_item.meal.meal_name,
-        #                 "price": menu_item.meal.price
-        #             }
-        #             menu_items.append(menu_data)
-        #         return make_response(jsonify({"menu": menu_items}), 200)
+            }), 200)
 
 
 api.add_resource(Menus, '/api/v1/menu')
