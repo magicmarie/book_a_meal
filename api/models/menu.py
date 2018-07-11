@@ -1,6 +1,7 @@
 """control properties of the menu object"""
 from api import DB
 from api.models.user import User
+from api.models.meal import Meal
 
 
 class Menu(DB.Model):
@@ -16,11 +17,11 @@ class Menu(DB.Model):
             self.id, self.meal_id)  # pragma:no cover
 
     def save_menu(self, meal_id, res):
-        meal = self.query.filter_by(
+        menu_item = Menu.query.filter_by(
             meal_id=meal_id).first()
-        if not meal:
-            menu = self(meal_id=meal_id)
-            DB.session.add(menu)
+        if not menu_item:
+            self.meal_id = meal_id
+            DB.session.add(self)
             DB.session.commit()
             return {"status": True}
         return {"status": False}
@@ -33,10 +34,12 @@ class Menu(DB.Model):
             menu_items = []
             if menu:
                 for menu_item in menu:
+                    meal = Meal.query.filter_by(id=menu_item.meal_id).first()
                     menu_data = {
-                        "meal_id": menu_item.meal.id,
-                        "meal_name": menu_item.meal.meal_name,
-                        "price": menu_item.meal.price
+                        "id": menu_item.id,
+                        "meal_id": menu_item.meal_id,
+                        "meal_name": meal.meal_name,
+                        "price": meal.price
                     }
                     menu_items.append(menu_data)
                 return {"status": True, "menu": menu_items}

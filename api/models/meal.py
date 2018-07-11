@@ -95,3 +95,7 @@ class Meal(DB.Model):
         self.meal_name = meal_name
         self.price = price
         return {"status": True, "meal": self}
+
+    def delete_meal(self):
+        DB.session.delete(self)
+        DB.session.commit()

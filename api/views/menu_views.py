@@ -38,8 +38,9 @@ class MenuPost(Resource):
             return make_response(jsonify({
                 "message": meal['message']
             }), 404)
-        menu = Menu().save_menu(meal_id, res)
-        if not menu['status']:
+        menu = Menu()
+        new_menu = menu.save_menu(meal_id, res)
+        if not new_menu['status']:
             return make_response(jsonify({
                 "message": "Meal already exists in menu"
             }), 409)
@@ -68,7 +69,7 @@ class Menus(Resource):
         menu = Menu.get_menu(res)
         if menu['status']:
             return make_response(jsonify({
-                "message": menu['menu']
+                "Menu": menu['menu']
             }), 200)
 
 

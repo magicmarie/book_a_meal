@@ -95,7 +95,7 @@ class BaseTestCase(TestCase):
 
     def get_meal_id(self):
         res = self.get_menu()
-        return json.loads(res.data.decode())['menu'][0]['meal_id']
+        return json.loads(res.data.decode())['Menu'][0]['meal_id']
 
     def delete_meal(self):
         """
@@ -139,13 +139,18 @@ class BaseTestCase(TestCase):
         self.add_menu()
         return self.client.get('api/v1/menu', headers=({"token": token}))
 
+    def get_menu_id(self):
+        res = self.get_menu()
+        return json.loads(res.data.decode())['Menu'][0]['id']
+
     def add_order(self):
         """
         function to make an order
         """
         id = self.get_meal_id()
+        menu_id = self.get_menu_id()
         token = self.get_token()
-        return self.client.post('api/v1/orders/{}'.format(id), headers=({"token": token}))
+        return self.client.post('api/v1/orders/{}/{}'.format(menu_id, id), headers=({"token": token}))
 
     def get_orders(self):
         """

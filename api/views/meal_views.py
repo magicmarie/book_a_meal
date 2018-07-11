@@ -106,8 +106,7 @@ class MealOne(Resource):
             return make_response(jsonify({
                 "message": meal['message']
             }), 404)
-        DB.session.delete(meal)
-        DB.session.commit()
+        meal['meal'].delete_meal()
         return make_response(jsonify({
             "message": "Meal deleted succesfully"
         }), 200)
@@ -145,14 +144,14 @@ class MealOne(Resource):
                 "message": res1['message']
             }), 404)
         new_meal = res1['meal'].edit_meal(args['meal_name'], args['price'])
-        response = new_meal.validate_inputs()
+        response = new_meal['meal'].validate_inputs()
         if not response['status']:
             return make_response(jsonify({
                 "message": response['message']
             }), 400)
         DB.session.commit()
         return make_response(jsonify({
-            "message": "Meal updated succesfully"
+            "message": "Meal updated successfully"
         }), 201)
 
 
