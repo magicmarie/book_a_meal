@@ -25,7 +25,6 @@ class OrderPost(Resource):
         if not res['status']:
             return make_response(jsonify({"message": res['message']}), 401)
         order = orderz.add_order(res, menu_id, meal_id)
-        print(order)
         if not order['status']:
             return make_response(jsonify({
                 "message": "Meal does not exist"
