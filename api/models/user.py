@@ -12,7 +12,7 @@ class User(DB.Model):
     name = DB.Column(DB.String(25))
     email = DB.Column(DB.String, unique=True)
     password = DB.Column(DB.String(25))
-    is_admin = DB.Column(DB.String, default=False)
+    is_admin = DB.Column(DB.String)
 
     def __init__(self, name, email, password, is_admin):
         self.name = name
