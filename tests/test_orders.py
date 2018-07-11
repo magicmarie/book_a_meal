@@ -3,19 +3,6 @@ import json
 
 
 class Test_order_options(BaseTestCase):
-    def test_post_orders(self):
-        """
-        Test that an authenticated user can make an order
-        """
-        response = self.add_order()
-        self.assertEqual(response.status_code, 201)
-
-    def test_get_orders(self):
-        """
-        Test that an authenticated admin can get all orders made from his meals
-        """
-        response = self.get_orders()
-        self.assertEqual(response.status_code, 200)
 
     def test_get_user_orders(self):
         """
@@ -30,7 +17,8 @@ class Test_order_options(BaseTestCase):
         """
         with self.client:
             id = self.get_meal_id()
-            response = self.client.post('api/v1/orders/{}'.format(id), headers=({"token": "12345"}))
+            menu_id = self.get_menu_id()
+            response = self.client.post('api/v1/orders/{}/{}'.format(menu_id, id), headers=({"token": "12345"}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
@@ -41,7 +29,8 @@ class Test_order_options(BaseTestCase):
         """
         with self.client:
             id = self.get_meal_id()
-            response = self.client.post('api/v1/orders/{}'.format(id), headers=({"token": ""}))
+            menu_id = self.get_menu_id()
+            response = self.client.post('api/v1/orders/{}/{}'.format(menu_id, id), headers=({"token": ""}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Token is missing")
@@ -54,7 +43,8 @@ class Test_order_options(BaseTestCase):
         with self.client:
             id = 100
             token = self.get_token()
-            response = self.client.post('api/v1/orders/{}'.format(id), headers=({"token": token}))
+            menu_id = self.get_menu_id()
+            response = self.client.post('api/v1/orders/{}/{}'.format(menu_id, id), headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 404)
             self.assertEqual(data['message'], "Meal does not exist")

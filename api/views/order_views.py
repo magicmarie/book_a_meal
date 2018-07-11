@@ -9,13 +9,13 @@ from api.auth_token import use_token
 from . import orders
 
 api = Api(orders)
-
+orderz = Order()
 
 class OrderPost(Resource):
     """orderpost class"""
     @staticmethod
     @swag_from('../apidocs/add_order.yml')
-    def post(meal_id):
+    def post(menu_id, meal_id):
         """
         Allows authenticated user to make an order from the menu
         token is required to get user Id
@@ -24,8 +24,9 @@ class OrderPost(Resource):
         res = use_token(parser)
         if not res['status']:
             return make_response(jsonify({"message": res['message']}), 401)
-        order = Order().add_order(res, meal_id)
-        if not order:
+        order = orderz.add_order(res, menu_id, meal_id)
+        print(order)
+        if not order['status']:
             return make_response(jsonify({
                 "message": "Meal does not exist"
             }), 404)
@@ -34,7 +35,7 @@ class OrderPost(Resource):
         }), 201)
 
 
-api.add_resource(OrderPost, '/api/v1/orders/<meal_id>')
+api.add_resource(OrderPost, '/api/v1/orders/<menu_id>/<meal_id>')
 
 
 class OrdersGet(Resource):
@@ -56,11 +57,11 @@ class OrdersGet(Resource):
             return make_response(jsonify({
                 "message": response['message']
             }), 401)
-        res1 = Order().get_admin_orders(res)
+        res1 = orderz.get_admin_orders(res)
         if res1:
             return make_response(jsonify({
                 "order_items": res1['order_items'],
-                "Total": res['total']
+                "Total": res1['total']
             }), 200)
         return make_response(jsonify({
             "message": "orders not found"

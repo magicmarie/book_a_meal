@@ -48,7 +48,7 @@ $ python manage.py db upgrade
 ## Starting the application
 In order to run the application, run the command below to start the application.
 ```
-python run.py
+python manage.py runserver
 ```
 
 ## API End points

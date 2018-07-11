@@ -10,7 +10,7 @@ class Test_menu_options(BaseTestCase):
         """
         with self.client:
             response = self.add_menu()
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 201)
 
     def test_add_existing_meal(self):
         """
