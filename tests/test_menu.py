@@ -67,7 +67,7 @@ class Test_menu_options(BaseTestCase):
                         }))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal not found")
-            self.assertEqual(response.status_code, 404)
+            self.assertEqual(response.status_code, 400)
 
     def test_missing_token_get_menu(self):
         """

@@ -1,7 +1,7 @@
 """generate and decode token"""
 from datetime import datetime, timedelta
 import jwt
-from flask import current_app
+from flask import current_app, g
 from api import APP
 
 
@@ -38,25 +38,15 @@ def decode_token(token):
     """
     try:
         payload = jwt.decode(token, current_app.config.get('SECRET_KEY'))
-        return {
+        user = {
             "status": True,
             "id": payload['sub'],
             "is_admin": payload['is_admin']
         }
+        g.user = user
+        return user
     except jwt.InvalidTokenError:
         return {
             "status": False,
             "message": "Invalid token.Please login"
         }
-
-
-def use_token(parser):
-    """function to check for token"""
-    parser.add_argument('token', location='headers')
-    args = parser.parse_args()
-    if not args['token']:
-        return {"status": False, "message": "Token is missing"}
-    decoded = decode_token(args['token'])
-    if not decoded['status']:
-        return {"status": False, "message": decoded["message"]}
-    return {"status": True, "decoded": decoded}

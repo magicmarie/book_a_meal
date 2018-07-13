@@ -85,20 +85,3 @@ class User(DB.Model):
                 "token": access_token
             }
         return {"status": False, "exists": True}
-
-    @classmethod
-    def user_is_admin(cls, res):
-        """
-        Test for admin is True
-        """
-        user = User.query.filter_by(
-            id=res['decoded']['id'],
-            is_admin="True").first()
-        if not user:
-            return {
-                "status": False,
-                "message": "Customer is not authorized to access this page",
-            }
-        return {
-            "status": True,
-        }
