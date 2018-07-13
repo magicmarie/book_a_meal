@@ -250,7 +250,7 @@ class Test_meal_options(BaseTestCase):
                         }))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal not found")
-            self.assertEqual(response.status_code, 404)
+            self.assertEqual(response.status_code, 400)
 
     def test_put_meal(self):
         """
@@ -333,7 +333,7 @@ class Test_meal_options(BaseTestCase):
                                headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal not found")
-            self.assertEqual(response.status_code, 404)
+            self.assertEqual(response.status_code, 400)
 
     def test_invalid_name_details_put(self):
         """

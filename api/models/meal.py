@@ -46,8 +46,8 @@ class Meal(DB.Model):
         return{"status": True}
 
     @classmethod
-    def get_meals(cls, res):
-        meals = cls.query.filter_by(user_id=res['decoded']['id']).all()
+    def get_meals(cls, user):
+        meals = cls.query.filter_by(user_id=user['id']).all()
         return meals
 
     @staticmethod
@@ -63,23 +63,23 @@ class Meal(DB.Model):
             meal_items.append(meal_data)
         return meal_items
 
-    def save_meal(self, meal_name, price, res):
+    def save_meal(self, meal_name, price, user):
         meal = self.query.filter_by(
             meal_name=meal_name,
-            user_id=res['decoded']['id']).first()
+            user_id=user['id']).first()
         if meal:
             return {"status": False}
         self.meal_name = meal_name
         self.price = price
-        self.user_id = res['decoded']['id']
+        self.user_id = user['id']
         DB.session.add(self)
         DB. session.commit()
         return {"status": True}
 
     @classmethod
-    def find_meal(cls, meal_id, res):
+    def find_meal(cls, meal_id, user):
         meal = Meal.query.filter_by(
-            user_id=res['decoded']['id'],
+            user_id=user['id'],
             id=meal_id).first()
         if not meal:
             return {

@@ -22,8 +22,8 @@ DB = SQLAlchemy(APP)
 
 from .models import *
 
-APP.config['swagger'] = {'swagger': '2.0', 'title': 'Book-a-meal-api', \
-            'description': "is a web based app that enables users to \
+APP.config['swagger'] = {'swagger': '2.0', 'title': 'Book-a-meal-api',
+                         'description': "is a web based app that enables users to \
             checkout menus, make orders and also check their order \
             history. The meals, menus are made by the caterers, who \
                view the user orders as well.",
@@ -52,9 +52,7 @@ APP.config['swagger'] = {'swagger': '2.0', 'title': 'Book-a-meal-api', \
 
 swagger = Swagger(APP)
 
-from .views import *
-# register blueprints
-APP.register_blueprint(users)
-APP.register_blueprint(meals)
-APP.register_blueprint(menus)
-APP.register_blueprint(orders)
+from .views import api_bp
+
+# register API blueprint
+APP.register_blueprint(api_bp, url_prefix='/api/v1')

@@ -72,11 +72,11 @@ class BaseTestCase(TestCase):
         """
         token = self.get_token()
         return self.client.post('api/v1/meals', data=json.dumps(
-                dict(
-                    meal_name=meal_name,
-                    price=price
-                )
-            ),
+            dict(
+                meal_name=meal_name,
+                price=price
+            )
+        ),
             content_type='application/json',
             headers=({"token": token})
         )
@@ -152,14 +152,13 @@ class BaseTestCase(TestCase):
         token = self.get_token()
         return self.client.post('api/v1/orders/{}/{}'.format(menu_id, id), headers=({"token": token}))
 
-    def get_orders(self):
+    def get_admin_orders(self):
         """
         function to return orders for authenticated admin
         """
-        self.add_order()
+        # self.add_order()
         token = self.get_token()
         return self.client.get('api/v1/orders', headers=({"token": token}))
-
 
     def get_user_orders(self):
         """
@@ -172,11 +171,11 @@ class BaseTestCase(TestCase):
     def customer(self):
         self.register_user("marie", "marie@gmail.com", "marie", "False")
         res = self.client.post('api/v1/auth/login', data=json.dumps(
-                    dict(
-                        email="marie@gmail.com",
-                        password="marie"
-                        )
-                    ),
-                    content_type='application/json'
-                )
+            dict(
+                email="marie@gmail.com",
+                password="marie"
+            )
+        ),
+            content_type='application/json'
+        )
         return json.loads(res.data.decode())['token']

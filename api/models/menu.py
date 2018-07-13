@@ -27,8 +27,8 @@ class Menu(DB.Model):
         return {"status": False}
 
     @classmethod
-    def get_menu(cls, res):
-        user = User.query.filter_by(id=res['decoded']['id']).first()
+    def get_menu(cls, user):
+        user = User.query.filter_by(id=user['id']).first()
         if user:
             menu = Menu.query.all()
             menu_items = []

@@ -1,97 +1,65 @@
 """ order views"""
-from flask import jsonify, make_response
+from flask import jsonify, make_response, g
 from flask_restful import Resource, reqparse, Api
 from flasgger.utils import swag_from
 
+from .decorators import authenticate, admin_required
 from api.models.user import User
 from api.models.order import Order
-from api.auth_token import use_token
-from . import orders
 
-api = Api(orders)
 orderz = Order()
+
 
 class OrderPost(Resource):
     """orderpost class"""
     @staticmethod
+    @authenticate
     @swag_from('../apidocs/add_order.yml')
     def post(menu_id, meal_id):
         """
         Allows authenticated user to make an order from the menu
         token is required to get user Id
         """
-        parser = reqparse.RequestParser()
-        res = use_token(parser)
-        if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 401)
-        order = orderz.add_order(res, menu_id, meal_id)
+        order = orderz.add_order(g.user, menu_id, meal_id)
         if not order['status']:
             return make_response(jsonify({
                 "message": "Meal does not exist"
-            }), 404)
+            }), 400)
         return make_response(jsonify({
             "message": "Order sent successfully"
         }), 201)
 
 
-api.add_resource(OrderPost, '/api/v1/orders/<menu_id>/<meal_id>')
-
-
 class OrdersGet(Resource):
     """ordersget class"""
     @staticmethod
+    @authenticate
+    @admin_required
     @swag_from('../apidocs/get_orders.yml')
     def get():
         """
         Returns all orders made for authenticated admin
         token is required to get admin id
         """
-        parser = reqparse.RequestParser()
-        res = use_token(parser)
-        if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 401)
-
-        response = User.user_is_admin(res)
-        if not response['status']:
-            return make_response(jsonify({
-                "message": response['message']
-            }), 401)
-        res1 = orderz.get_admin_orders(res)
-        if res1:
-            return make_response(jsonify({
-                "order_items": res1['order_items'],
-                "Total": res1['total']
-            }), 200)
+        res1 = orderz.get_admin_orders(g.user)
         return make_response(jsonify({
-            "message": "orders not found"
-        }), 404)
-
-
-api.add_resource(OrdersGet, '/api/v1/orders')
+            "order_items": res1['order_items'],
+            "Total": res1['total'],
+            "status": res1['status']
+        }), 200)
 
 
 class OrderGet(Resource):
     """orderget class"""
     @staticmethod
+    @authenticate
     @swag_from('../apidocs/get_order.yml')
     def get():
         """
         Return all orders made by authenticated user
         token is required to get user Id
         """
-        parser = reqparse.RequestParser()
-        res = use_token(parser)
-        if not res['status']:
-            return make_response(jsonify({"message": res['message']}), 401)
-
-        response = Order().get_user_orders(res)
-        if not response['status']:
-            return make_response(jsonify({
-                "message": "No orders found"
-            }), 404)
+        response = Order().get_user_orders(g.user)
         return make_response(jsonify({
             "Orders": response['order_items']
         }), 200)
-
-
-api.add_resource(OrderGet, '/api/v1/user/orders')
