@@ -75,7 +75,7 @@ class BaseTestCase(TestCase):
             dict(
                 meal_name=meal_name,
                 price=price
-            )
+            ) 
         ),
             content_type='application/json',
             headers=({"token": token})

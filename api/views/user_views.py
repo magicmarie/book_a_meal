@@ -34,7 +34,6 @@ class Signup(Resource):
         res = user.validate_input()
         if not res['status']:
             abort(http_status_code=400, message=res['message'])
-
         response = user.save()
         if not response['status']:
             abort(http_status_code=409, message="email already in use")

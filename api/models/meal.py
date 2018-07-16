@@ -20,30 +20,25 @@ class Meal(DB.Model):
 
     def validate_inputs(self):
         """function to validate meal details"""
-        if self.meal_name.strip() == "" or len(self.meal_name.strip()) < 3:
-            return {
-                "status": False,
-                "message": "Enter meal name with more than 2 characters"}
-
-        if len(self.meal_name.strip()) > 25:
-            return {
-                "status": False,
-                "message": "Enter meal name with less than 25 characters"}
-
-        if not bool(re.fullmatch('^[A-Za-z ]*$', self.meal_name)):
-            return {
-                "status": False,
-                "message": "Invalid characters not allowed"}
-
+        status = True
+        messages = []
+        meal_name = self.meal_name.strip()
+        if meal_name == "" or len(meal_name) < 3 or len(meal_name) > 25:
+            status = False
+            messages.append(
+                "Meal name must be between 3 to 25 characters long")
+        if not bool(re.fullmatch('^[A-Za-z ]*$', meal_name)):
+            status = False
+            messages.append("Invalid characters not allowed")
         if self.price <= "0":
-            return {
-                "status": False,
-                'message': "Price must be a positive number"}
+            status = False
+            messages.append("Price must be a positive number")
         try:
             int(self.price)
         except ValueError:
-            return {"status": False, "message": "Price must be a number"}
-        return{"status": True}
+            status = False
+            messages.append("Price must be a number")
+        return {"status": status, "message": ", ".join(messages)}
 
     @classmethod
     def get_meals(cls, user):

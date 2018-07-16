@@ -27,16 +27,10 @@ responses:
               type: integer
             user_id:
               type: integer
-    
-  404:
-    description: Orders non-existent
-    schema:
-      type: object
-      properties:
-        message:
-          type: string
-          enum:
-            - "Orders not found"
+            meal_name:
+              type: string
+            price:
+              type: integer
   400:
     description: Failed to return the orders
     schema:
@@ -46,5 +40,4 @@ responses:
           type: string
           enum:
             - "token missing"
-            - "Expired token. Please log in to get a new token"
             - "Invalid token. Please register or login"
