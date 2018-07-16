@@ -30,7 +30,7 @@ parameters:
           example: "True"
 
 responses:
-  200:
+  201:
     description: User successfully registered
     schema:
       type: object

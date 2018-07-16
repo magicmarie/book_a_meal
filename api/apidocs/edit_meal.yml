@@ -57,8 +57,9 @@ responses:
         message:
           type: string
           enum:
-            
             - "Customer is not authorized to access this page"
+            - "token missing"
+            - "Invalid token. Please register or login"
   400:
     description: Failed to edit meal
     schema:
@@ -67,8 +68,6 @@ responses:
         message:
           type: string
           enum:
-            - "token missing"
-            - "Invalid token. Please register or login"
             - "Price must be a positive number"
             - "Meal not found"
             - "Meal name must be between 3 to 25 characters long"

@@ -39,7 +39,7 @@ responses:
           type: string
           enum:
             - "Customer is not authorized to access this page"
-  400:
+  401:
     description: Failed to return all meals
     schema:
       type: object

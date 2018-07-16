@@ -29,7 +29,7 @@ responses:
           type: string
           enum:
             - "Order sent successfully"
-  400:
+  401:
     description: Failed to make an order
     schema:
       type: object
@@ -39,4 +39,12 @@ responses:
           enum:
             - "token missing"
             - "Invalid token. Please register or login"
+  400:
+    description: Failed to make an order
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
             - "Meal does not exist"

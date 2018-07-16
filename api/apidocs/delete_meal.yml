@@ -32,8 +32,6 @@ responses:
         message:
           type: string
           enum:
-            - "token missing"
-            - "Invalid token. Please register or login"
             - "Meal not found"
   401:
     description: Failed to delete the meal
@@ -44,3 +42,5 @@ responses:
           type: string
           enum:
             - "Customer is not authorized to access this page"
+            - "token missing"
+            - "Invalid token. Please register or login"
