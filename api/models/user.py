@@ -1,5 +1,4 @@
 """control properties of the user object"""
-import json
 import re
 from api import DB
 from api.auth_token import generate_token

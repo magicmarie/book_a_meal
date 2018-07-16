@@ -1,9 +1,8 @@
 """ user views"""
 from flask import jsonify, make_response
-from flask_restful import Resource, reqparse, Api, fields, abort
+from flask_restful import Resource, reqparse, abort
 from flasgger.utils import swag_from
 from api.models.user import User
-from . import api
 
 
 class Signup(Resource):

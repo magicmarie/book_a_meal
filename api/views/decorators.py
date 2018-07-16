@@ -1,5 +1,4 @@
 from flask import request, g
-from api.models.user import User
 from api.auth_token import decode_token
 from flask_restful import abort
 from functools import wraps

@@ -27,7 +27,12 @@ class BaseTestCase(TestCase):
         DB.session.remove()
         DB.drop_all()
 
-    def register_user(self, name="marie", email="marie@live.com", password="marie", is_admin="True"):
+    def register_user(
+            self,
+            name="marie",
+            email="marie@live.com",
+            password="marie",
+            is_admin="True"):
         """
         Method for registering a user with dummy data
         """
@@ -75,7 +80,7 @@ class BaseTestCase(TestCase):
             dict(
                 meal_name=meal_name,
                 price=price
-            ) 
+            )
         ),
             content_type='application/json',
             headers=({"token": token})
@@ -150,7 +155,8 @@ class BaseTestCase(TestCase):
         id = self.get_meal_id()
         menu_id = self.get_menu_id()
         token = self.get_token()
-        return self.client.post('api/v1/orders/{}/{}'.format(menu_id, id), headers=({"token": token}))
+        return self.client.post(
+            'api/v1/orders/{}/{}'.format(menu_id, id), headers=({"token": token}))
 
     def get_admin_orders(self):
         """
@@ -166,7 +172,8 @@ class BaseTestCase(TestCase):
         """
         self.add_order()
         token = self.get_token()
-        return self.client.get('api/v1/user/orders', headers=({"token": token}))
+        return self.client.get('api/v1/user/orders',
+                               headers=({"token": token}))
 
     def customer(self):
         self.register_user("marie", "marie@gmail.com", "marie", "False")

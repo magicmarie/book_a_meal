@@ -1,5 +1,4 @@
 """control properties of the meal object"""
-import json
 import re
 from api import DB
 

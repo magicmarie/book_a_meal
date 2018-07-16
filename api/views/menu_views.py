@@ -1,10 +1,9 @@
 """ menu views"""
 from flask import jsonify, make_response, g
-from flask_restful import Resource, reqparse, Api, abort
+from flask_restful import Resource, abort
 from flasgger.utils import swag_from
 from .decorators import authenticate, admin_required
 from api.models.menu import Menu
-from api.models.user import User
 from api.models.meal import Meal
 
 

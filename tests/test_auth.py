@@ -1,5 +1,4 @@
 from tests.base import BaseTestCase
-import unittest
 from api.models.user import User
 from api import DB
 import json
@@ -23,7 +22,8 @@ class Test_auth(BaseTestCase):
             response = self.register_user(
                 "", "marie@live.com", "marie", "True")
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'), "Enter name with more than 2 characters")
+            self.assertEqual(data.get('message'),
+                             "Name must be between 3 to 25 characters long")
             self.assertEqual(response.status_code, 400)
 
     def test_long_name_details(self):
@@ -34,7 +34,8 @@ class Test_auth(BaseTestCase):
             response = self.register_user(
                 "qwertyuiopljkhgfdsazxcvbnmmagicmarie", "marie@live.com", "marie", "True")
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'), "Enter name with less than 25 characters")
+            self.assertEqual(data.get('message'),
+                             "Name must be between 3 to 25 characters long")
             self.assertEqual(response.status_code, 400)
 
     def test_invalid_name_details(self):
@@ -56,7 +57,8 @@ class Test_auth(BaseTestCase):
         with self.client:
             response = self.register_user("name", "marie@live.com", "", "True")
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'), "Enter password")
+            self.assertEqual(data.get('message'),
+                             "Enter password with more than 5 characters")
             self.assertEqual(response.status_code, 400)
 
     def test_short_password_details(self):
@@ -67,7 +69,8 @@ class Test_auth(BaseTestCase):
             response = self.register_user(
                 "name", "marie@live.com", "mari", "True")
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'), "Enter password with more than 4 characters")
+            self.assertEqual(data.get('message'),
+                             "Enter password with more than 5 characters")
             self.assertEqual(response.status_code, 400)
 
     def test_invalid_email(self):
