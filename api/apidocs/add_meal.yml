@@ -35,18 +35,6 @@ responses:
           type: string
           enum:
             - "Meal successfully created"
-  401:
-    description: Failed to create meal
-    schema:
-      type: object
-      properties:
-        message:
-          type: string
-          enum:
-            - "invalid, Enter name please"
-            - "Invalid characters not allowed"
-            - "Customer is not authorized to create meals"
-            - "Doesn't exist, Create an account please"
   400:
     description: Failed to create meal
     schema:
@@ -55,7 +43,28 @@ responses:
         message:
           type: string
           enum:
+            - "Meal name must be between 3 to 25 characters long"
+            - "Invalid characters not allowed"
+            - "Price must be a positive number"
+            - "Price must be a number"
+  401:
+    description: Failed to create meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
             - "token missing"
-            - "Expired token. Please log in to get a new token"
             - "Invalid token. Please register or login"
+            - "Meal name already exists"
+            - "Customer is not authorized to access this page"
+  409:
+    description: Failed to create meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
             - "Meal name already exists"

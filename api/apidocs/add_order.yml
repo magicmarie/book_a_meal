@@ -13,6 +13,11 @@ parameters:
     type: string
     in: path
     required: true
+  - name: id
+    description: Menu id
+    type: string
+    in: path
+    required: true
 
 responses:
   200:
@@ -24,15 +29,6 @@ responses:
           type: string
           enum:
             - "Order sent successfully"
-  404:
-    description: Meal non-existent
-    schema:
-      type: object
-      properties:
-        message:
-          type: string
-          enum:
-            - "Meal does not exist"
   400:
     description: Failed to make an order
     schema:
@@ -42,5 +38,5 @@ responses:
           type: string
           enum:
             - "token missing"
-            - "Expired token. Please log in to get a new token"
             - "Invalid token. Please register or login"
+            - "Meal does not exist"

@@ -21,6 +21,8 @@ responses:
         items: 
           type: object
           properties:
+            menu_id:
+              type: integer
             meal_id:
               type: integer
             price:
@@ -38,5 +40,4 @@ responses:
           type: string
           enum:
             - "token missing"
-            - "Expired token. Please log in to get a new token"
             - "Invalid token. Please register or login"

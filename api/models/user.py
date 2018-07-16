@@ -27,32 +27,22 @@ class User(DB.Model):
 
     def validate_input(self):
         """function to validate  sign up details"""
-        if self.name.strip() == "" or len(self.name.strip()) < 3:
-            return {
-                "status": False,
-                "message": "Enter name with more than 2 characters"}
-
-        if len(self.name.strip()) > 25:
-            return {
-                "status": False,
-                "message": "Enter name with less than 25 characters"}
-
-        if not bool(re.fullmatch('^[A-Za-z ]*$', self.name)):
-            return {
-                "status": False,
-                "message": "Invalid characters not allowed"}
-
+        status = True
+        messages = []
+        name = self.name.strip()
+        if name == "" or len(name) < 3 or len(name) > 25:
+            status = False
+            messages.append("Name must be between 3 to 25 characters long")
+        if not bool(re.fullmatch('^[A-Za-z ]*$', name)):
+            status = False
+            messages.append("Invalid characters not allowed")
         if not re.match(r"([\w\.-]+)@([\w\.-]+)(\.[\w\.]+$)", self.email):
-            return {"status": False, "message": "Enter valid email"}
-
-        if self.password.strip() == "":
-            return {"status": False, "message": "Enter password"}
-
-        if len(self.password) < 5:
-            return {
-                "status": False,
-                "message": "Enter password with more than 4 characters"}
-        return {"status": True}
+            status = False
+            messages.append("Enter valid email")
+        if self.password.strip() == "" or len(self.password) < 5:
+            status = False
+            messages.append("Enter password with more than 5 characters")
+        return {"status": status, "message": ", ".join(messages)}
 
     def save(self):
         """

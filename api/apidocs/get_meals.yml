@@ -38,7 +38,7 @@ responses:
         message:
           type: string
           enum:
-            - "Customer is not authorized to view this"
+            - "Customer is not authorized to access this page"
   400:
     description: Failed to return all meals
     schema:
@@ -48,5 +48,4 @@ responses:
           type: string
           enum:
             - "token missing"
-            - "Expired token. Please log in to get a new token"
             - "Invalid token. Please register or login"
