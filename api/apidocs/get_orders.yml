@@ -31,7 +31,7 @@ responses:
               type: string
             price:
               type: integer
-  400:
+  401:
     description: Failed to return the orders
     schema:
       type: object
