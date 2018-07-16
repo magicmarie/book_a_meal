@@ -71,5 +71,5 @@ responses:
             - "Invalid token. Please register or login"
             - "Price must be a positive number"
             - "Meal not found"
-            - "Meal name must be between 3 to 25 characters long""
+            - "Meal name must be between 3 to 25 characters long"
             - "Invalid characters not allowed"
