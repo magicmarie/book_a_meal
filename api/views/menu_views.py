@@ -35,7 +35,6 @@ class Menus(Resource):
     """menu class"""
     @staticmethod
     @authenticate
-    @admin_required
     @swag_from('../apidocs/get_menu.yml')
     def get():
         """

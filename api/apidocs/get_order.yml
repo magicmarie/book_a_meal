@@ -9,11 +9,6 @@ parameters:
     type: string
     in: header
     required: true
-  - name: id
-    description: The unique id of customer
-    type: string
-    in: path
-    required: true
 
 responses:
   200:

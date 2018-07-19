@@ -9,12 +9,12 @@ parameters:
     in: header
     required: true
   - name: id
-    description: Meal id
+    description: Menu id
     type: string
     in: path
     required: true
-  - name: id
-    description: Menu id
+  - name: id2
+    description: Meal id
     type: string
     in: path
     required: true
