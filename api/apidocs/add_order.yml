@@ -8,12 +8,12 @@ parameters:
     type: string
     in: header
     required: true
-  - name: id
+  - name: menu_id
     description: Menu id
     type: string
     in: path
     required: true
-  - name: id2
+  - name: meal_id
     description: Meal id
     type: string
     in: path
