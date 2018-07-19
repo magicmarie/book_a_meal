@@ -43,6 +43,7 @@ def decode_token(token):
             "id": payload['sub'],
             "is_admin": payload['is_admin']
         }
+        # add user to the context
         g.user = user
         return user
     except jwt.InvalidTokenError:
