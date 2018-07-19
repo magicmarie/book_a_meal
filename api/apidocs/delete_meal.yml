@@ -8,7 +8,7 @@ parameters:
     type: string
     in: header
     required: true
-  - name: id
+  - name: meal_id
     description: The unique id of the meal
     type: string
     in: path

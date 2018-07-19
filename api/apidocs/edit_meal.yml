@@ -7,7 +7,7 @@ parameters:
     description: this contains edit a meal details
     in: body
     required: true
-  - name: id
+  - name: meal_id
     description: The unique id of the meal
     type: string
     in: path
