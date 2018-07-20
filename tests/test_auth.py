@@ -32,7 +32,8 @@ class Test_auth(BaseTestCase):
         """
         with self.client:
             response = self.register_user(
-                "qwertyuiopljkhgfdsazxcvbnmmagicmarie", "marie@live.com", "marie", "True")
+                "qwertyuiopljkhgfdsazxcvbnmmagicmarie",
+                "marie@live.com", "marie", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Enter name with less than 25 characters")
             self.assertEqual(response.status_code, 400)

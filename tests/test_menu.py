@@ -1,5 +1,4 @@
 from tests.base import BaseTestCase
-from api.models.menu import Menu
 import json
 
 
@@ -21,8 +20,8 @@ class Test_menu_options(BaseTestCase):
             token = self.get_token()
             id = self.get_id()
             response = self.client.post(
-            'api/v1/menu/{}'.format(id),
-            content_type='application/json', headers=({"token": token}))
+                'api/v1/menu/{}'.format(id),
+                content_type='application/json', headers=({"token": token}))
             self.assertEqual(response.status_code, 409)
 
     def test_token_missing_add_menu(self):
@@ -32,8 +31,8 @@ class Test_menu_options(BaseTestCase):
         with self.client:
             id = self.get_id()
             response = self.client.post(
-            'api/v1/menu/{}'.format(id),
-            content_type='application/json', headers=({"token": ""}))
+                'api/v1/menu/{}'.format(id),
+                content_type='application/json', headers=({"token": ""}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Token is missing")
@@ -47,7 +46,8 @@ class Test_menu_options(BaseTestCase):
             token = self.customer()
             id = self.get_id()
             response = self.client.post('api/v1/menu/{}'.format(id),
-            content_type='application/json', headers=({"token": token}))
+                                        content_type='application/json',
+                                        headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Customer is not authorized to access this page")
@@ -55,7 +55,7 @@ class Test_menu_options(BaseTestCase):
 
     def test_non_existent_meal(self):
         """
-        Test admin add a non existent meal 
+        Test admin add a non existent meal
         """
 
         with self.client:
@@ -63,8 +63,8 @@ class Test_menu_options(BaseTestCase):
             id = 100
             token = self.get_token()
             response = self.client.post('api/v1/menu/{}'.format(id), headers=({
-                            "token": token
-                        }))
+                "token": token
+            }))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal not found")
             self.assertEqual(response.status_code, 400)
@@ -74,7 +74,7 @@ class Test_menu_options(BaseTestCase):
         Test missing token on get menu request
         """
         with self.client:
-            response = self.client.get('api/v1/menu',headers=({"token": ""}))
+            response = self.client.get('api/v1/menu', headers=({"token": ""}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
-            self.assertEqual(data.get('message'), "Token is missing")   
+            self.assertEqual(data.get('message'), "Token is missing")

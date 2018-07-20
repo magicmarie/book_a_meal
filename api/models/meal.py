@@ -16,7 +16,10 @@ class Meal(DB.Model):
     def __repr__(self):
         """defines the representation of an object"""
         return "id:{} meal_name:{} price:{} user_id:{}".format(
-            self.id, self.meal_name, self.price, self.user_id)  # pragma:no cover
+            self.id,
+            self.meal_name,
+            self.price,
+            self.user_id)  # pragma:no cover
 
     def validate_inputs(self):
         """function to validate meal details"""
