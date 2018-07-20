@@ -13,7 +13,8 @@ class BaseConfig(object):
 
 class TestingConfig(BaseConfig):
     """Configurations for Testing, with a separate test database."""
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:magic@localhost/book_test_db"
+    SQLALCHEMY_DATABASE_URI =\
+        "postgresql://postgres:magic@localhost/book_test_db"
     TESTING = True
     DEBUG = True
 
@@ -22,7 +23,8 @@ class DevelopmentConfig(BaseConfig):
     """
     Development configurations
     """
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:magic@localhost/book_a_meal_db"
+    SQLALCHEMY_DATABASE_URI =\
+        "postgresql://postgres:magic@localhost/book_a_meal_db"
     DEBUG = True
 
 

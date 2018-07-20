@@ -20,8 +20,9 @@ class Test_meal_options(BaseTestCase):
         with self.client:
             response = self.add_meal("", 15000)
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'),
-                             "Meal name must be between 3 to 25 characters long")
+            self.assertEqual(
+                data.get('message'),
+                "Meal name must be between 3 to 25 characters long")
             self.assertEqual(response.status_code, 400)
 
     def test_short_meal_name_details(self):
@@ -32,8 +33,9 @@ class Test_meal_options(BaseTestCase):
             response = self.add_meal(
                 "qwertyuioplkjhgfdsazxcvbnmqwertyu", 15000)
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'),
-                             "Meal name must be between 3 to 25 characters long")
+            self.assertEqual(
+                data.get('message'),
+                "Meal name must be between 3 to 25 characters long")
             self.assertEqual(response.status_code, 400)
 
     def test_positive_price_details(self):
@@ -60,7 +62,8 @@ class Test_meal_options(BaseTestCase):
 
     def test_invalid_name_details(self):
         """
-        Test that the mealname details are valid characters when sending request
+        Test that the mealname details are valid
+        characters when sending request
         """
         with self.client:
             response = self.add_meal("@#$%&*", 15000)
@@ -202,9 +205,8 @@ class Test_meal_options(BaseTestCase):
         """
         with self.client:
             id = self.get_id()
-            response = self.client.delete('api/v1/meals/{}'.format(id), headers=({
-                "token": "12345"
-            }))
+            response = self.client.delete(
+                'api/v1/meals/{}'.format(id), headers=({"token": "12345"}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
@@ -215,9 +217,8 @@ class Test_meal_options(BaseTestCase):
         """
         with self.client:
             id = self.get_id()
-            response = self.client.delete('api/v1/meals/{}'.format(id), headers=({
-                "token": ""
-            }))
+            response = self.client.delete(
+                'api/v1/meals/{}'.format(id), headers=({"token": ""}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Token is missing")
@@ -230,9 +231,8 @@ class Test_meal_options(BaseTestCase):
         with self.client:
             token = self.customer()
             id = 1
-            response = self.client.delete('api/v1/meals/{}'.format(id), headers=({
-                "token": token
-            }))
+            response = self.client.delete('api/v1/meals/{}'.format(id),
+                                          headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Customer is not authorized to access this page")
@@ -247,9 +247,8 @@ class Test_meal_options(BaseTestCase):
             self.get_meals()
             id = 100
             token = self.get_token()
-            response = self.client.delete('api/v1/meals/{}'.format(id), headers=({
-                "token": token
-            }))
+            response = self.client.delete(
+                'api/v1/meals/{}'.format(id), headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Meal not found")
             self.assertEqual(response.status_code, 400)

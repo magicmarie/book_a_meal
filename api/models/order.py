@@ -17,7 +17,8 @@ class Order(DB.Model):
     def __repr__(self):
         """defines the representation of an object"""
         return "id:{} meal_id:{} user_id:{} admin_id:{}".format(
-            self.id, self.meal_id, self.customer_id, self.admin_id)  # pragma:no cover
+            self.id,
+            self.meal_id, self.customer_id, self.admin_id)  # pragma:no cover
 
     def add_order(self, user, menu_id, meal_id):
         order = Menu.query.filter_by(id=menu_id, meal_id=meal_id).first()

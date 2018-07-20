@@ -46,7 +46,8 @@ class Test_menu_options(BaseTestCase):
             token = self.customer()
             id = self.get_id()
             response = self.client.post('api/v1/menu/{}'.format(id),
-                                        content_type='application/json', headers=({"token": token}))
+                                        content_type='application/json',
+                                        headers=({"token": token}))
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Customer is not authorized to access this page")

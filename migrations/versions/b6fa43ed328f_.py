@@ -29,7 +29,8 @@ def upgrade():
                     )
     op.create_table('meals',
                     sa.Column('id', sa.Integer(), nullable=False),
-                    sa.Column('meal_name', sa.String(length=25), nullable=True),
+                    sa.Column('meal_name', sa.String(length=25),
+                              nullable=True),
                     sa.Column('price', sa.Integer(), nullable=True),
                     sa.Column('user_id', sa.Integer(), nullable=True),
                     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),

@@ -6,10 +6,10 @@ api_bp = Blueprint("api", __name__)
 
 api = Api(api_bp)
 
-from .user_views import Signup, Login
-from .meal_views import Mealsdb, MealOne
-from .menu_views import Menus, MenuPost
-from .order_views import OrderGet, OrdersGet, OrderPost
+from .user_views import Signup, Login  # noqa E402
+from .meal_views import Mealsdb, MealOne  # noqa E402
+from .menu_views import Menus, MenuPost  # noqa E402
+from .order_views import OrderGet, OrdersGet, OrderPost  # noqa E402
 
 api.add_resource(Signup, '/auth/signup')
 api.add_resource(Login, '/auth/login')

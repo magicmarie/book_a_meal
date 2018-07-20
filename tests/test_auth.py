@@ -32,7 +32,8 @@ class Test_auth(BaseTestCase):
         """
         with self.client:
             response = self.register_user(
-                "qwertyuiopljkhgfdsazxcvbnmmagicmarie", "marie@live.com", "marie", "True")
+                "qwertyuiopljkhgfdsazxcvbnmmagicmarie",
+                "marie@live.com", "marie", "True")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),
                              "Name must be between 3 to 25 characters long")

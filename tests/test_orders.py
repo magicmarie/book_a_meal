@@ -26,7 +26,8 @@ class Test_order_options(BaseTestCase):
             id = self.get_meal_id()
             menu_id = self.get_menu_id()
             response = self.client.post(
-                'api/v1/orders/{}/{}'.format(menu_id, id), headers=({"token": "12345"}))
+                'api/v1/orders/{}/{}'.format(menu_id, id),
+                headers=({"token": "12345"}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Invalid token.Please login")
@@ -39,7 +40,8 @@ class Test_order_options(BaseTestCase):
             id = self.get_meal_id()
             menu_id = self.get_menu_id()
             response = self.client.post(
-                'api/v1/orders/{}/{}'.format(menu_id, id), headers=({"token": ""}))
+                'api/v1/orders/{}/{}'.format(menu_id, id),
+                headers=({"token": ""}))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
             self.assertEqual(data.get('message'), "Token is missing")

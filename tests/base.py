@@ -156,7 +156,8 @@ class BaseTestCase(TestCase):
         menu_id = self.get_menu_id()
         token = self.get_token()
         return self.client.post(
-            'api/v1/orders/{}/{}'.format(menu_id, id), headers=({"token": token}))
+            'api/v1/orders/{}/{}'.format(menu_id, id),
+            headers=({"token": token}))
 
     def get_admin_orders(self):
         """

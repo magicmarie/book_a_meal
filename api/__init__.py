@@ -20,8 +20,6 @@ API = Api(APP)
 # instance of app in SQLAlchemy
 DB = SQLAlchemy(APP)
 
-from .models import *
-
 APP.config['swagger'] = {'swagger': '2.0', 'title': 'Book-a-meal-api',
                          'description': "is a web based app that enables users to \
             checkout menus, make orders and also check their order \
@@ -43,7 +41,8 @@ APP.config['swagger'] = {'swagger': '2.0', 'title': 'Book-a-meal-api',
                              },
                              {
                                  'name': 'Menu',
-                                 'description': 'Menu a meal option is added to'
+                                 'description': 'Menu a meal option is added\
+                                 to'
                              },
                              {
                                  'name': 'Order',
@@ -52,7 +51,7 @@ APP.config['swagger'] = {'swagger': '2.0', 'title': 'Book-a-meal-api',
 
 swagger = Swagger(APP)
 
-from .views import api_bp
+from .views import api_bp  # noqa E402
 
 # register API blueprint
 APP.register_blueprint(api_bp, url_prefix='/api/v1')
