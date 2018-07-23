@@ -7,7 +7,7 @@ parameters:
     description: this contains edit a meal details
     in: body
     required: true
-  - name: id
+  - name: meal_id
     description: The unique id of the meal
     type: string
     in: path
@@ -40,7 +40,7 @@ responses:
           type: string
           enum:
             - "Meal updated successfully"
-  404:
+  409:
     description: Meal non existent
     schema:
       type: object
@@ -48,7 +48,7 @@ responses:
         message:
           type: string
           enum:
-            - "Meal not found"
+            - "Meal name already exists"
   401:
     description: Failed to edit meal
     schema:
@@ -57,10 +57,9 @@ responses:
         message:
           type: string
           enum:
-            - "invalid, Enter name please"
-            - "Invalid characters not allowed"
-            - "Customer is not authorized to edit a meal"
-            - "Doesn't exist, Create an account please"
+            - "Customer is not authorized to access this page"
+            - "token missing"
+            - "Invalid token. Please register or login"
   400:
     description: Failed to edit meal
     schema:
@@ -69,7 +68,7 @@ responses:
         message:
           type: string
           enum:
-            - "token missing"
-            - "Expired token. Please log in to get a new token"
-            - "Invalid token. Please register or login"
-            - "Meal name already exists"
+            - "Price must be a positive number"
+            - "Meal not found"
+            - "Meal name must be between 3 to 25 characters long"
+            - "Invalid characters not allowed"

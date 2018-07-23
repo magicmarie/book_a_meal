@@ -4,7 +4,7 @@ tags:
   - User
 parameters:
   - name: body
-    description: this contains user registration details
+    description: This contains user registration details
     in: body
     required: true
     schema:
@@ -30,7 +30,7 @@ parameters:
           example: "True"
 
 responses:
-  200:
+  201:
     description: User successfully registered
     schema:
       type: object
@@ -39,7 +39,7 @@ responses:
           type: string
           enum:
             - "User successfully created"
-  400:
+  409:
     description: User failed to register
     schema:
       type: object
@@ -48,3 +48,18 @@ responses:
           type: string
           enum:
             - "email already in use"
+
+  400:
+    description: User failed to register
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Name must be between 3 to 25 characters long"
+            - "Invalid characters not allowed"
+            - "Enter valid email"
+            - "Enter password with more than 5 characters"
+
+        

@@ -8,7 +8,7 @@ parameters:
     type: string
     in: header
     required: true
-  - name: id
+  - name: meal_id
     description: Meal id
     type: string
     in: path
@@ -41,17 +41,7 @@ responses:
         message:
           type: string
           enum:
-            - "You are not allowed to add this meal to menu"
-            - "You cannot add this meal to menu"
-  404:
-    description: Meal non-existent
-    schema:
-      type: object
-      properties:
-        message:
-          type: string
-          enum:
-            - "Meal not found"
+            - "Customer is not authorized to access this page"            
   400:
     description: Failed to add meal to the menu
     schema:
@@ -60,6 +50,5 @@ responses:
         message:
           type: string
           enum:
-            - "token missing"
-            - "Expired token. Please log in to get a new token"
-            - "Invalid token. Please register or login"
+            
+            - "Meal not found"

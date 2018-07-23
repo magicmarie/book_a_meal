@@ -27,19 +27,18 @@ class Menu(DB.Model):
         return {"status": False}
 
     @classmethod
-    def get_menu(cls, res):
-        user = User.query.filter_by(id=res['decoded']['id']).first()
+    def get_menu(cls, user):
+        user = User.query.filter_by(id=user['id']).first()
         if user:
-            menu = Menu.query.all()
+            menus = Menu.query.all()
             menu_items = []
-            if menu:
-                for menu_item in menu:
-                    meal = Meal.query.filter_by(id=menu_item.meal_id).first()
-                    menu_data = {
-                        "id": menu_item.id,
-                        "meal_id": menu_item.meal_id,
-                        "meal_name": meal.meal_name,
-                        "price": meal.price
-                    }
-                    menu_items.append(menu_data)
-                return {"status": True, "menu": menu_items}
+            for menu_item in menus:
+                meal = Meal.query.filter_by(id=menu_item.meal_id).first()
+                menu_data = {
+                    "id": menu_item.id,
+                    "meal_id": menu_item.meal_id,
+                    "meal_name": meal.meal_name,
+                    "price": meal.price
+                }
+                menu_items.append(menu_data)
+            return {"status": True, "menu": menu_items}

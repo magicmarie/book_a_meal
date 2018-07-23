@@ -1,5 +1,4 @@
 """control properties of the meal object"""
-import json
 import re
 from api import DB
 
@@ -16,38 +15,36 @@ class Meal(DB.Model):
     def __repr__(self):
         """defines the representation of an object"""
         return "id:{} meal_name:{} price:{} user_id:{}".format(
-            self.id, self.meal_name, self.price, self.user_id)  # pragma:no cover
+            self.id,
+            self.meal_name,
+            self.price,
+            self.user_id)  # pragma:no cover
 
     def validate_inputs(self):
         """function to validate meal details"""
-        if self.meal_name.strip() == "" or len(self.meal_name.strip()) < 3:
-            return {
-                "status": False,
-                "message": "Enter meal name with more than 2 characters"}
-
-        if len(self.meal_name.strip()) > 25:
-            return {
-                "status": False,
-                "message": "Enter meal name with less than 25 characters"}
-
-        if not bool(re.fullmatch('^[A-Za-z ]*$', self.meal_name)):
-            return {
-                "status": False,
-                "message": "Invalid characters not allowed"}
-
+        status = True
+        messages = []
+        meal_name = self.meal_name.strip()
+        if meal_name == "" or len(meal_name) < 3 or len(meal_name) > 25:
+            status = False
+            messages.append(
+                "Meal name must be between 3 to 25 characters long")
+        if not bool(re.fullmatch('^[A-Za-z ]*$', meal_name)):
+            status = False
+            messages.append("Invalid characters not allowed")
         if self.price <= "0":
-            return {
-                "status": False,
-                'message': "Price must be a positive number"}
+            status = False
+            messages.append("Price must be a positive number")
         try:
             int(self.price)
         except ValueError:
-            return {"status": False, "message": "Price must be a number"}
-        return{"status": True}
+            status = False
+            messages.append("Price must be a number")
+        return {"status": status, "message": ", ".join(messages)}
 
     @classmethod
-    def get_meals(cls, res):
-        meals = cls.query.filter_by(user_id=res['decoded']['id']).all()
+    def get_meals(cls, user):
+        meals = cls.query.filter_by(user_id=user['id']).all()
         return meals
 
     @staticmethod
@@ -63,23 +60,23 @@ class Meal(DB.Model):
             meal_items.append(meal_data)
         return meal_items
 
-    def save_meal(self, meal_name, price, res):
+    def save_meal(self, meal_name, price, user):
         meal = self.query.filter_by(
             meal_name=meal_name,
-            user_id=res['decoded']['id']).first()
+            user_id=user['id']).first()
         if meal:
             return {"status": False}
         self.meal_name = meal_name
         self.price = price
-        self.user_id = res['decoded']['id']
+        self.user_id = user['id']
         DB.session.add(self)
         DB. session.commit()
         return {"status": True}
 
     @classmethod
-    def find_meal(cls, meal_id, res):
+    def find_meal(cls, meal_id, user):
         meal = Meal.query.filter_by(
-            user_id=res['decoded']['id'],
+            user_id=user['id'],
             id=meal_id).first()
         if not meal:
             return {

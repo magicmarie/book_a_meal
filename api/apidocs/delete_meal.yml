@@ -8,7 +8,7 @@ parameters:
     type: string
     in: header
     required: true
-  - name: id
+  - name: meal_id
     description: The unique id of the meal
     type: string
     in: path
@@ -24,15 +24,6 @@ responses:
           type: object
           enum:
           - "Meal deleted succesfully"
-  404:
-    description: Meal non-existent
-    schema:
-      type: object
-      properties:
-        "message":
-          type: string
-          enum:
-            - "Meal not found"
   400:
     description: Failed to delete the meal
     schema:
@@ -41,6 +32,15 @@ responses:
         message:
           type: string
           enum:
+            - "Meal not found"
+  401:
+    description: Failed to delete the meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Customer is not authorized to access this page"
             - "token missing"
-            - "Expired token. Please log in to get a new token"
             - "Invalid token. Please register or login"

@@ -2,7 +2,7 @@
 """app"""
 import os
 from flask import Flask
-from flask_restful import Api, reqparse, Resource
+from flask_restful import Api
 from flasgger import Swagger
 from flask_sqlalchemy import SQLAlchemy
 import config
@@ -10,7 +10,7 @@ import config
 # initialise app
 APP = Flask(__name__)
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-APP.config['SECRET_KEY'] = os.urandom(24)
+APP.config['SECRET_KEY'] = "secret"
 environment = os.getenv('environment', 'development')
 APP.config.from_object(config.app_config[environment])
 
@@ -20,10 +20,8 @@ API = Api(APP)
 # instance of app in SQLAlchemy
 DB = SQLAlchemy(APP)
 
-from .models import *
-
-APP.config['swagger'] = {'swagger': '2.0', 'title': 'Book-a-meal-api', \
-            'description': "is a web based app that enables users to \
+APP.config['swagger'] = {'swagger': '2.0', 'title': 'Book-a-meal-api',
+                         'description': "is a web based app that enables users to \
             checkout menus, make orders and also check their order \
             history. The meals, menus are made by the caterers, who \
                view the user orders as well.",
@@ -43,7 +41,8 @@ APP.config['swagger'] = {'swagger': '2.0', 'title': 'Book-a-meal-api', \
                              },
                              {
                                  'name': 'Menu',
-                                 'description': 'Menu a meal option is added to'
+                                 'description': 'Menu a meal option is added\
+                                 to'
                              },
                              {
                                  'name': 'Order',
@@ -52,9 +51,7 @@ APP.config['swagger'] = {'swagger': '2.0', 'title': 'Book-a-meal-api', \
 
 swagger = Swagger(APP)
 
-from .views import *
-# register blueprints
-APP.register_blueprint(users)
-APP.register_blueprint(meals)
-APP.register_blueprint(menus)
-APP.register_blueprint(orders)
+from .views import api_bp  # noqa E402
+
+# register API blueprint
+APP.register_blueprint(api_bp, url_prefix='/api/v1')

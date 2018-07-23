@@ -31,7 +31,7 @@ responses:
           type: string
           enum:
             - "User logged in successfully"
-  401:
+  400:
     description: User failed to login
     schema:
       type: object
@@ -39,4 +39,5 @@ responses:
         message:
           type: string
           enum:
-            - "wrong credentials"
+            - "wrong password or email credentials"
+            - "User does not exist"
