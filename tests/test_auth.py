@@ -1,5 +1,4 @@
 from tests.base import BaseTestCase
-import unittest
 from api.models.user import User
 from api import DB
 import json
@@ -59,9 +58,8 @@ class Test_auth(BaseTestCase):
         with self.client:
             response = self.register_user("name", "marie@live.com", "", "True")
             data = json.loads(response.data.decode())
-            self.assertEqual(
-                data.get('message'),
-                "Enter password with more than 5 characters")
+            self.assertEqual(data.get('message'),
+                             "Enter password with more than 5 characters")
             self.assertEqual(response.status_code, 400)
 
     def test_short_password_details(self):

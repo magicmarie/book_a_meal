@@ -4,9 +4,7 @@ from flask_restful import Resource, reqparse, abort
 from flasgger.utils import swag_from
 from .decorators import authenticate, admin_required
 from api.models.meal import Meal
-from api.models.user import User
 from api import DB
-from . import api
 
 
 class Mealsdb(Resource):

@@ -1,7 +1,7 @@
 """empty message
 
 Revision ID: b6fa43ed328f
-Revises: 
+Revises:
 Create Date: 2018-07-10 22:07:07.397714
 
 """
@@ -29,8 +29,8 @@ def upgrade():
                     )
     op.create_table('meals',
                     sa.Column('id', sa.Integer(), nullable=False),
-                    sa.Column('meal_name', sa.String(
-                        length=25), nullable=True),
+                    sa.Column('meal_name', sa.String(length=25),
+                              nullable=True),
                     sa.Column('price', sa.Integer(), nullable=True),
                     sa.Column('user_id', sa.Integer(), nullable=True),
                     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),

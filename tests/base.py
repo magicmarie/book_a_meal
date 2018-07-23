@@ -27,8 +27,12 @@ class BaseTestCase(TestCase):
         DB.session.remove()
         DB.drop_all()
 
-    def register_user(self, name="marie", email="marie@live.com",
-                      password="marie", is_admin="True"):
+    def register_user(
+            self,
+            name="marie",
+            email="marie@live.com",
+            password="marie",
+            is_admin="True"):
         """
         Method for registering a user with dummy data
         """

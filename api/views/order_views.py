@@ -1,10 +1,9 @@
 """ order views"""
 from flask import jsonify, make_response, g
-from flask_restful import Resource, reqparse, Api
+from flask_restful import Resource
 from flasgger.utils import swag_from
 
 from .decorators import authenticate, admin_required
-from api.models.user import User
 from api.models.order import Order
 
 orderz = Order()
