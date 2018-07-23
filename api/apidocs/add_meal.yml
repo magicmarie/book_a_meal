@@ -1,0 +1,70 @@
+Endpoint to create a meal by a registered admin
+---
+tags:
+  - Meal
+parameters:
+  - name: body
+    description: this contains add a meal details
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "meal_name"
+        - "price"
+      properties:
+        meal_name:
+          type: "string"
+          example: "Fish fillet"
+        price:
+          type: "integer"
+          example: 15000
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+
+responses:
+  201:
+    description: Meal successfully created
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal successfully created"
+  400:
+    description: Failed to create meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal name must be between 3 to 25 characters long"
+            - "Invalid characters not allowed"
+            - "Price must be a positive number"
+            - "Price must be a number"
+  401:
+    description: Failed to create meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "token missing"
+            - "Invalid token. Please register or login"
+            - "Meal name already exists"
+            - "Customer is not authorized to access this page"
+  409:
+    description: Failed to create meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal name already exists"
