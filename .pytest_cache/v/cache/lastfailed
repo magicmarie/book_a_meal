@@ -1,0 +1,9 @@
+{
+  "tests/test_meals.py::Test_meal_options::test_missing_meal_name_details_put": true,
+  "tests/test_menu.py::Test_menu_options::test_add_existing_meal_to_menu": true,
+  "tests/test_menu.py::Test_menu_options::test_admin1_add_admin2_meal": true,
+  "tests/test_menu.py::test_missing_token_get_menu": true,
+  "tests/test_order.py::Test_order_options::test_get_orders": true,
+  "tests/test_orders.py::Test_order_options::test_no_orders_customer": true,
+  "tests/test_orders.py::Test_order_options::test_post_orders": true
+}
