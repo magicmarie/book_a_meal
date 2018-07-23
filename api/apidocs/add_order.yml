@@ -1,0 +1,50 @@
+Endpoint to make an order from the menu
+---
+tags:
+  - Order
+parameters:
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+  - name: menu_id
+    description: Menu id
+    type: string
+    in: path
+    required: true
+  - name: meal_id
+    description: Meal id
+    type: string
+    in: path
+    required: true
+
+responses:
+  200:
+    description: Order successfully created
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Order sent successfully"
+  401:
+    description: Failed to make an order
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "token missing"
+            - "Invalid token. Please register or login"
+  400:
+    description: Failed to make an order
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal does not exist"

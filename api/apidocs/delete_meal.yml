@@ -1,0 +1,46 @@
+Endpoint to delete a meal using an id value
+---
+tags:
+  - Meal
+parameters:
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+  - name: meal_id
+    description: The unique id of the meal
+    type: string
+    in: path
+    required: true
+
+responses:
+  200:
+    description: Meal successfully deleted
+    schema:
+      type: object
+      properties:
+        "message":
+          type: object
+          enum:
+          - "Meal deleted succesfully"
+  400:
+    description: Failed to delete the meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal not found"
+  401:
+    description: Failed to delete the meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Customer is not authorized to access this page"
+            - "token missing"
+            - "Invalid token. Please register or login"

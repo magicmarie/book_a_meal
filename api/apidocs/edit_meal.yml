@@ -1,0 +1,74 @@
+Endpoint to edit a specific meal by id by a registered admin
+---
+tags:
+  - Meal
+parameters:
+  - name: body
+    description: this contains edit a meal details
+    in: body
+    required: true
+  - name: meal_id
+    description: The unique id of the meal
+    type: string
+    in: path
+    required: true
+    schema:
+      type: object
+      required:
+        - "meal_name"
+        - "price"
+      properties:
+        meal_name:
+          type: "string"
+          example: "Fish fillet"
+        price:
+          type: "integer"
+          example: 15000
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+
+responses:
+  201:
+    description: Meal successfully edited
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal updated successfully"
+  409:
+    description: Meal non existent
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal name already exists"
+  401:
+    description: Failed to edit meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Customer is not authorized to access this page"
+            - "token missing"
+            - "Invalid token. Please register or login"
+  400:
+    description: Failed to edit meal
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Price must be a positive number"
+            - "Meal not found"
+            - "Meal name must be between 3 to 25 characters long"
+            - "Invalid characters not allowed"

@@ -1,0 +1,43 @@
+Endpoint to get specific orders made to a specific admin
+---
+tags:
+  - Order
+parameters:
+
+  - name: token
+    description: A json web token to be used for each user request
+    type: string
+    in: header
+    required: true
+
+responses:
+  200:
+    description: All order options made for specific admin are returned
+    schema:
+     type: object
+     properties:
+      Orders:
+        type: array
+        items: 
+          type: object
+          properties:
+            order_id:
+              type: integer
+            meal_id:
+              type: integer
+            user_id:
+              type: integer
+            meal_name:
+              type: string
+            price:
+              type: integer
+  401:
+    description: Failed to return the orders
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "token missing"
+            - "Invalid token. Please register or login"
