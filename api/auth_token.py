@@ -5,7 +5,7 @@ from flask import current_app, g
 from api import APP
 
 
-def generate_token(user_id, is_admin):
+def generate_token(user_id, email, is_admin):
     """Generates the access token to be used as the Auth header"""
 
     try:
@@ -16,6 +16,7 @@ def generate_token(user_id, is_admin):
             'iat': datetime.utcnow(),
             # default  to user id
             'sub': user_id,
+            'email': email,
             'is_admin': is_admin
         }
         # create the byte string token using the payload and the SECRET key
@@ -41,6 +42,7 @@ def decode_token(token):
         user = {
             "status": True,
             "id": payload['sub'],
+            "email": payload['email'],
             "is_admin": payload['is_admin']
         }
         # add user to the context

@@ -43,22 +43,61 @@ class Meal(DB.Model):
         return {"status": status, "message": ", ".join(messages)}
 
     @classmethod
-    def get_meals(cls, user):
-        meals = cls.query.filter_by(user_id=user['id']).all()
+    def get_meals(cls, user, limit, page):
+        if limit and page:
+            try:
+                limit = int(limit)
+                page = int(page)
+            except ValueError:
+                status = False
+                return {
+                    "status": status,
+                    'message': 'limit and page query parameters should be\
+                    integers'
+                }
+        meals = cls.query.filter_by(
+            user_id=user['id']).order_by(Meal.id.desc()).paginate(
+            page=page, per_page=limit,
+            error_out=False
+        )
         return meals
 
     @staticmethod
     def meals_serializer(meals):
-        meal_items = []
+        total_items = meals.total
+        total_pages = meals.pages
+        current_page = meals.page
+        items_per_page = meals.per_page
+        prev_page = None
+        next_page = ''
+
+        if meals.has_prev:
+            prev_page = meals.prev_num
+        if meals.has_next:
+            next_page = meals.next_num
+
+        meals = meals.items
+
+        meals_list = []
         for meal in meals:
-            meal_data = {
-                "id": meal.id,
-                "price": meal.price,
-                "meal_name": meal.meal_name,
-                "user_id": meal.user_id
-            }
-            meal_items.append(meal_data)
-        return meal_items
+            meal_data = {}
+            meal_data['id'] = meal.id
+            meal_data['user_id'] = meal.user_id
+            meal_data['name'] = meal.meal_name
+            meal_data['price'] = meal.price
+            meals_list.append(meal_data)
+
+        responseObject = {
+            'status': 'sucess',
+            'nextPage': next_page,
+            'previousPage': prev_page,
+            'totalCount': total_items,
+            'pages': total_pages,
+            'currentPage': current_page,
+            'perPage': items_per_page,
+            'meals': meals_list
+        }
+        return responseObject
 
     def save_meal(self, meal_name, price, user):
         meal = self.query.filter_by(
@@ -71,7 +110,8 @@ class Meal(DB.Model):
         self.user_id = user['id']
         DB.session.add(self)
         DB. session.commit()
-        return {"status": True}
+        return {"status": True, "id": self.id,
+                "meal_name": self.meal_name, "price": self.price}
 
     @classmethod
     def find_meal(cls, meal_id, user):

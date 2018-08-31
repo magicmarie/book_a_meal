@@ -68,7 +68,7 @@ class User(DB.Model):
             }
         if email == user.email and password == user.password:
             access_token = "{}".format(
-                generate_token(user.id, user.is_admin))
+                generate_token(user.id, user.email, user.is_admin))
             return {
                 "status": True,
                 "token": access_token

@@ -1,44 +1,38 @@
 """control properties of the menu object"""
 from api import DB
-from api.models.user import User
-from api.models.meal import Meal
 
 
 class Menu(DB.Model):
     """ control properties of the menu object"""
     __tablename__ = "menus"
     id = DB.Column(DB.Integer, primary_key=True)
+    menu_name = DB.Column(DB.String(10))
+    admin_id = DB.Column(DB.Integer)
     meal_id = DB.Column(DB.Integer, DB.ForeignKey("meals.id"))
-    meal = DB.relationship('Meal', backref='menus')
+    meals = DB.relationship('Meal', backref=DB.backref(
+        "menus", cascade="all, delete-orphan"))
 
     def __repr__(self):
         """defines the representation of an object"""
-        return "id:{} meal_id:{}".format(
-            self.id, self.meal_id)  # pragma:no cover
+        return "id:{} meal_id:{} menu_name:{}".format(
+            self.id, self.meal_id, self.menu_name)  # pragma:no cover
 
     def save_menu(self, meal_id, res):
         menu_item = Menu.query.filter_by(
-            meal_id=meal_id).first()
+            meal_id=meal_id, menu_name=self.menu_name).first()
         if not menu_item:
             self.meal_id = meal_id
+            self.admin_id = res["id"]
             DB.session.add(self)
             DB.session.commit()
             return {"status": True}
         return {"status": False}
 
-    @classmethod
-    def get_menu(cls, user):
-        user = User.query.filter_by(id=user['id']).first()
-        if user:
-            menus = Menu.query.all()
-            menu_items = []
-            for menu_item in menus:
-                meal = Meal.query.filter_by(id=menu_item.meal_id).first()
-                menu_data = {
-                    "id": menu_item.id,
-                    "meal_id": menu_item.meal_id,
-                    "meal_name": meal.meal_name,
-                    "price": meal.price
-                }
-                menu_items.append(menu_data)
-            return {"status": True, "menu": menu_items}
+    def find_menu_meal(self, menu_id, res):
+        menu_item = self.query.filter_by(
+            id=menu_id,
+            admin_id=res['id']).first()
+        if not menu_item:
+            return {"status": False}
+        return {"status": True,
+                "meal": menu_item}

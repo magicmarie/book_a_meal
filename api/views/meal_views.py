@@ -1,5 +1,5 @@
 """ meal views"""
-from flask import jsonify, make_response, g
+from flask import jsonify, make_response, g, request
 from flask_restful import Resource, reqparse, abort
 from flasgger.utils import swag_from
 from .decorators import authenticate, admin_required
@@ -35,7 +35,8 @@ class Mealsdb(Resource):
         if not new_meal['status']:
             abort(http_status_code=409, message='Meal name already exists')
         return make_response(jsonify({
-            'message': 'Meal successfully created'
+            'message': 'Meal successfully created',
+            'meal': new_meal
         }), 201)
 
     @staticmethod
@@ -47,12 +48,16 @@ class Mealsdb(Resource):
         Return all meals created by authenticated admin
         token is required to get admin Id
         """
+        limit = request.args.get('limit', 12)
+        page = request.args.get('page', 1)
         current_user = g.user
-        meals = Meal.get_meals(current_user)
-        meal_items = Meal.meals_serializer(meals)
-        return make_response(jsonify({
-            "meal_items": meal_items
-        }), 200)
+        meals = Meal.get_meals(current_user, limit, page)
+        if meals:
+            meal_items = Meal.meals_serializer(meals)
+            return make_response(jsonify({
+                "meal_items": meal_items
+            }), 200)
+        abort(http_status_code=400, message=meals['message'])
 
 
 class MealOne(Resource):
@@ -104,3 +109,18 @@ class MealOne(Resource):
         return make_response(jsonify({
             "message": "Meal updated successfully"
         }), 201)
+
+    @staticmethod
+    @admin_required
+    def get(meal_id):
+        """
+        Return a meal by Id created by authenticated admin
+        token is required to get admin Id
+        """
+        current_user = g.user
+        response = Meal.find_meal(meal_id, current_user)
+        if not response['status']:
+            abort(http_status_code=400, message=response['message'])
+        return make_response(jsonify({
+            'message': 'Customer is not allowed to view this'
+        }), 401)
