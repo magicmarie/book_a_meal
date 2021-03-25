@@ -56,7 +56,7 @@ python-axolotl-curve25519==0.4.1.post2
 python-dateutil==2.7.3
 python-editor==1.0.3
 pytz==2018.4
-PyYAML==3.12
+PyYAML==5.4
 requests==2.18.4
 simplejson==3.16.0
 six==1.11.0
